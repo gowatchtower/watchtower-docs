@@ -19,8 +19,6 @@ layout: hextra-home
 
 <div class="wt-home-section">
 
-## Documentation
-
 {{< cards >}}
   {{< card link="/quickstart/" title="Quickstart" icon="lightning-bolt" subtitle="Run Watchtower in minutes" >}}
   {{< card link="/getting-started/" title="Getting Started" icon="book-open" subtitle="Install, configure, and use Watchtower" >}}
