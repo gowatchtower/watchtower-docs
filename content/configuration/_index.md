@@ -1,5 +1,6 @@
 ---
 title: Configuration
+description: Reference for Watchtower configuration options and behavior.
 weight: 3
 type: docs
 cascade:

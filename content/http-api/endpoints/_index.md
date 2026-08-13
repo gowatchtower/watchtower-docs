@@ -1,5 +1,6 @@
 ---
 title: Endpoints
+description: HTTP API endpoint reference.
 weight: 3
 type: docs
 ---

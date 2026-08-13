@@ -55,7 +55,10 @@ menu:
         icon: github
 
 params:
-  description: Documentation for Watchtower, a solution for automating Docker container image updates.
+  title: Watchtower
+  description: Automate Docker container image updates.
+  images:
+    - images/og-image.png
 
   navbar:
     displayTitle: true

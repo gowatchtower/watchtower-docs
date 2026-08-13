@@ -1,6 +1,7 @@
 ---
 title: API
 linkTitle: API
+description: HTTP API overview, configuration, and endpoint reference.
 weight: 5
 type: docs
 cascade:

@@ -1,5 +1,6 @@
 ---
 title: Quickstart
+description: Run Watchtower in minutes with a single Docker command.
 weight: 1
 type: docs
 cascade:

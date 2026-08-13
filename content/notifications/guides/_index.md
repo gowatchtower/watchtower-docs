@@ -1,5 +1,6 @@
 ---
 title: Guides
+description: Service-specific notification setup guides.
 weight: 6
 type: docs
 ---

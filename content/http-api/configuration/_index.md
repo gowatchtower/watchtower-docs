@@ -1,5 +1,6 @@
 ---
 title: Configuration
+description: Configure the HTTP API server host, authentication, and TLS.
 weight: 2
 type: docs
 ---

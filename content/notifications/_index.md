@@ -1,5 +1,6 @@
 ---
 title: Notifications
+description: Configure notification services, templates, and related settings via Shoutrrr.
 weight: 4
 type: docs
 cascade:

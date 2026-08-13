@@ -1,5 +1,6 @@
 ---
 title: Advanced Features
+description: Advanced deployment patterns and operational features.
 weight: 6
 type: docs
 cascade:

@@ -1,6 +1,7 @@
 ---
 title: Watchtower
 layout: hextra-home
+description: A solution for automating Docker container image updates.
 ---
 
 <div class="wt-home-hero not-prose">

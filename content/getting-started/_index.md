@@ -1,5 +1,6 @@
 ---
 title: Getting Started
+description: Get up and running with Watchtower — installation, usage, and core concepts.
 weight: 2
 type: docs
 cascade:

@@ -1,5 +1,6 @@
 ---
 title: Deprecations
+description: Legacy notification backends and migration guidance. Prefer Shoutrrr URLs going forward.
 weight: 5
 type: docs
 ---
