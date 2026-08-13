@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="/template-preview/styles.css">
+
+<script src="/wasm_exec.js"></script>
+
+<script src="/template-preview/script.js"></script>
+
+<form id="tplprev" role="form">
+
+<pre class="loading">loading wasm...</pre>
+
+<div class="template-wrapper">
+
+    <div class="template-header-container">
+
+        <div class="template-header">Template Input</div>
+
+    </div>
+
+    <textarea name="template" rows="20">{{- if .Report -}}
+ {{- with .Report -}}
+   {{len .Scanned}} Scanned, {{len .Updated}} Updated, {{len .Failed}} Failed, {{len .Restarted}} Restarted
+   {{- if ( or .Updated .Failed .Restarted ) -}}
+     {{- range .Updated}}
+- {{.Name}} ({{.ImageName}}): {{.CurrentImageID.ShortID}} updated to {{.LatestImageID.ShortID}}
+     {{- end -}}
+     {{- range .Restarted}}
+- {{.Name}} ({{.ImageName}}): {{.State}}
+     {{- end -}}
+     {{- range .Fresh}}
+- {{.Name}} ({{.ImageName}}): {{.State}}
+     {{- end -}}
+     {{- range .Skipped}}
+- {{.Name}} ({{.ImageName}}): {{.State}}: {{.Error}}
+     {{- end -}}
+     {{- range .Failed}}
+- {{.Name}} ({{.ImageName}}): {{.State}}: {{.Error}}
+     {{- end -}}
+   {{- end -}}
+ {{- end -}}
+{{- else -}}
+ {{range .Entries -}}{{.Message}}{{"\n"}}{{- end -}}
+{{- end -}}</textarea>
+
+</div>
+
+<div class="controls">
+    <div class="control-bar" id="report-fieldset">
+        <input type="hidden" name="report" value="yes" />
+        <label class="control-enable">
+            <input type="checkbox" data-toggle="report" checked />
+            <span>Container report</span>
+        </label>
+        <div class="numfield-row" role="group" aria-label="Container report counts">
+            <label class="numfield"><span class="numfield-label">Skipped</span><input type="number" name="skipped" value="3" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Scanned</span><input type="number" name="scanned" value="3" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Updated</span><input type="number" name="updated" value="3" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Failed</span><input type="number" name="failed" value="3" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Restarted</span><input type="number" name="restarted" value="3" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Fresh</span><input type="number" name="fresh" value="3" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Stale</span><input type="number" name="stale" value="3" min="0" /></label>
+        </div>
+    </div>
+
+    <div class="control-bar" id="log-fieldset">
+        <input type="hidden" name="log" value="yes" />
+        <label class="control-enable">
+            <input type="checkbox" data-toggle="log" checked />
+            <span>Log entries</span>
+        </label>
+        <div class="numfield-row" role="group" aria-label="Log entry counts">
+            <label class="numfield"><span class="numfield-label">Error</span><input type="number" name="error" value="1" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Warning</span><input type="number" name="warning" value="2" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Info</span><input type="number" name="info" value="3" min="0" /></label>
+            <label class="numfield"><span class="numfield-label">Debug</span><input type="number" name="debug" value="4" min="0" /></label>
+        </div>
+    </div>
+</div>
+
+<div class="result-wrapper">
+
+    <div id="result"></div>
+
+</div>
+
+</form>

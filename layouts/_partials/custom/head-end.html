@@ -1,0 +1,60 @@
+{{- /* Force Watchtower dark theme; ignore stored light/system preference. */ -}}
+<script>
+  (function () {
+    try {
+      localStorage.removeItem("color-theme");
+    } catch (e) {}
+    document.documentElement.classList.remove("light");
+    document.documentElement.classList.add("dark");
+  })();
+</script>
+<style>
+  html {
+    color-scheme: dark;
+    background-color: hsl(199deg 15% 21%);
+  }
+</style>
+{{- /* Extend Hextra page context menu with "Copy page link". */ -}}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const closeDropdown = (container) => {
+      if (!container) return;
+      const toggle = container.querySelector(".hextra-page-context-menu-toggle");
+      const menu = container.querySelector(".hextra-page-context-menu-dropdown");
+      if (!toggle || !menu) return;
+      const chevron = toggle.querySelector("[data-chevron]");
+      toggle.dataset.state = "closed";
+      toggle.setAttribute("aria-expanded", "false");
+      menu.classList.add("hx:hidden");
+      if (chevron) chevron.style.transform = "";
+    };
+
+    document
+      .querySelectorAll(
+        '.hextra-page-context-menu-dropdown button[data-action="copy-link"]',
+      )
+      .forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const container = btn.closest(".hextra-page-context-menu");
+          const url = btn.dataset.url || window.location.href;
+          const label = btn.querySelector(".hextra-copy-link-label");
+          const original = label ? label.textContent : "";
+
+          try {
+            await navigator.clipboard.writeText(url);
+            if (label) {
+              label.textContent = {{ i18n "copiedPageLink" | jsonify }};
+              setTimeout(() => {
+                label.textContent = original;
+              }, 1200);
+            }
+          } catch (err) {
+            console.error("Failed to copy page link:", err);
+          }
+
+          closeDropdown(container);
+        });
+      });
+  });
+</script>

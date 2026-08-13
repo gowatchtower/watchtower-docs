@@ -1,0 +1,444 @@
+/*
+  Watchtower dark theme (from legacy MkDocs watchtower-dark).
+  Site is dark-only; no light mode / theme toggle.
+*/
+
+:root {
+  --wt-hue: 199;
+  --primary-hue: 199deg;
+  --primary-saturation: 45%;
+  --primary-lightness: 50%;
+
+  /* Core palette */
+  --wt-bg: hsl(var(--wt-hue) 15% 21%);
+  --wt-bg-elevated: hsl(var(--wt-hue) 15% 25%);
+  --wt-bg-soft: hsl(var(--wt-hue) 15% 17%);
+  --wt-bg-code: hsl(var(--wt-hue) 15% 15%);
+  --wt-bg-footer: hsl(var(--wt-hue) 15% 12%);
+  --wt-fg: hsl(var(--wt-hue) 75% 95%);
+  --wt-fg-muted: hsl(var(--wt-hue) 75% 90% / 62%);
+  --wt-fg-faint: hsl(var(--wt-hue) 75% 90% / 32%);
+  --wt-border: hsl(var(--wt-hue) 75% 90% / 12%);
+  --wt-link: hsl(199deg 45% 65%);
+  --wt-accent: hsl(194deg 45% 50%);
+  --wt-primary: hsl(199deg 27% 35%);
+
+  /* Align Hextra/Tailwind dark surface */
+  --color-dark: hsl(var(--wt-hue) 15% 21%);
+}
+
+/* Force dark surfaces even if a stale light class is present */
+html,
+html.dark,
+html.light {
+  color-scheme: dark;
+  background-color: var(--wt-bg);
+  color: var(--wt-fg);
+}
+
+body {
+  background-color: var(--wt-bg) !important;
+  color: var(--wt-fg);
+}
+
+/* Navbar — solid, darker than page bg for clear separation */
+.hextra-nav-container {
+  color: var(--wt-fg);
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.hextra-nav-container-blur {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  /* Slightly darker than --wt-bg (21% L); same hue/sat family as legacy watchtower-dark */
+  background: linear-gradient(
+    180deg,
+    hsl(var(--wt-hue) 16% 15%) 0%,
+    hsl(var(--wt-hue) 15% 16.5%) 55%,
+    hsl(var(--wt-hue) 15% 17.5%) 100%
+  ) !important;
+  box-shadow:
+    0 1px 0 hsl(var(--wt-hue) 75% 90% / 8%),
+    0 4px 12px rgb(0 0 0 / 28%) !important;
+  border-bottom: 1px solid hsl(var(--wt-hue) 15% 24%);
+}
+
+/* Main content / docs chrome */
+.hextra-sidebar-container,
+.hextra-toc,
+.hextra-footer {
+  background-color: transparent;
+}
+
+/* Sidebar nav — brighter labels for dark theme readability */
+.hextra-sidebar-container a {
+  color: hsl(var(--wt-hue) 40% 88%) !important;
+}
+
+.hextra-sidebar-container a:hover {
+  color: var(--wt-fg) !important;
+  background-color: hsl(var(--wt-hue) 15% 26% / 55%);
+}
+
+.hextra-sidebar-container .hextra-sidebar-active-item,
+.hextra-sidebar-container a.hextra-sidebar-active-item,
+.hextra-sidebar-container [data-active="true"] > a,
+.hextra-sidebar-container [data-active="true"] a {
+  color: #ffffff !important;
+  background-color: hsl(var(--wt-hue) 30% 28% / 55%) !important;
+  font-weight: 600;
+}
+
+.hextra-sidebar-container .hextra-sidebar-collapsible-button {
+  color: hsl(var(--wt-hue) 35% 78%) !important;
+}
+
+.hextra-sidebar-container .hextra-sidebar-collapsible-button:hover {
+  color: #ffffff !important;
+}
+
+/* Tighten gap between left sidebar and article (Hextra defaults to md:px-12). */
+@media (min-width: 768px) {
+  main#content.hextra-max-content-width {
+    padding-left: 1.25rem;
+    padding-right: 1.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  main#content.hextra-max-content-width {
+    padding-left: 1.5rem;
+    padding-right: 2rem;
+  }
+}
+
+.hextra-footer {
+  background-color: var(--wt-bg-footer) !important;
+  color: var(--wt-fg-muted);
+}
+
+/* Cards */
+.hextra-card {
+  background-color: var(--wt-bg-soft) !important;
+  border-color: var(--wt-border) !important;
+  color: var(--wt-fg);
+}
+
+.hextra-card:hover {
+  background-color: var(--wt-bg-elevated) !important;
+  border-color: hsl(var(--wt-hue) 45% 45% / 40%) !important;
+}
+
+/* Content links */
+.content a {
+  color: var(--wt-link);
+}
+
+.content a:hover {
+  color: hsl(199deg 55% 75%);
+}
+
+/* Code blocks */
+.hextra-code-block {
+  background-color: var(--wt-bg-code) !important;
+  border: 1px solid var(--wt-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.hextra-code-block pre,
+.content pre,
+.highlight pre {
+  background-color: var(--wt-bg-code) !important;
+  margin: 0;
+  border-radius: 0;
+}
+
+.content :not(pre) > code {
+  background-color: var(--wt-bg-code) !important;
+  color: hsl(var(--wt-hue) 18% 86%);
+  border-radius: 0.25rem;
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--wt-border);
+}
+
+/* Code copy button contrast on dark surfaces */
+.hextra-code-copy-btn-container,
+.hextra-code-copy-btn {
+  color: var(--wt-fg-muted);
+}
+
+/* Tables */
+.content table th,
+.content table td {
+  border-color: var(--wt-border);
+}
+
+.content table th {
+  background-color: var(--wt-bg-soft);
+}
+
+/* Search */
+.hextra-search-input {
+  background-color: var(--wt-bg-soft) !important;
+  color: var(--wt-fg) !important;
+}
+
+.hextra-search-results {
+  background-color: var(--wt-bg-elevated) !important;
+  border-color: var(--wt-border) !important;
+}
+
+/* TOC sticky bottom (Edit this page / Scroll to top)
+   Hextra hardcodes white/#111 surfaces here; retarget to Watchtower dark. */
+.hextra-toc div[class*="bottom-0"] {
+  background-color: var(--wt-bg) !important;
+  border-top-color: var(--wt-border) !important;
+  box-shadow: 0 -12px 16px var(--wt-bg) !important;
+}
+
+.hextra-toc a {
+  color: var(--wt-fg-muted);
+  text-decoration: none;
+}
+
+.hextra-toc a:hover {
+  color: var(--wt-fg);
+}
+
+/* "Edit this page on GitHub" */
+.hextra-toc a[href*="/edit/"] {
+  color: var(--wt-link) !important;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.hextra-toc a[href*="/edit/"]:hover {
+  color: hsl(199deg 55% 75%) !important;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.hextra-toc #backToTop {
+  color: var(--wt-fg-muted) !important;
+}
+
+.hextra-toc #backToTop:hover {
+  color: var(--wt-fg) !important;
+}
+
+.hextra-toc #backToTop svg {
+  border-color: currentColor !important;
+}
+
+/* -------------------------------------------------------------------------
+   Tabs (often wrapping fenced code blocks)
+   Style as a cohesive tabbed panel instead of a lone underline bar.
+   ------------------------------------------------------------------------- */
+
+/* Tablist scroll container + bar */
+.content div:has(> [role="tablist"]) {
+  margin-top: 1rem;
+  border: 1px solid var(--wt-border);
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: var(--wt-bg-soft);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.content [role="tablist"] {
+  margin-top: 0 !important;
+  min-width: 100%;
+  border-bottom: 1px solid var(--wt-border) !important;
+  padding: 0.35rem 0.5rem 0 !important;
+  gap: 0.15rem;
+  background: transparent;
+}
+
+.hextra-tabs-toggle {
+  color: var(--wt-fg-muted) !important;
+  border: 1px solid transparent !important;
+  border-bottom: none !important;
+  border-radius: 0.4rem 0.4rem 0 0 !important;
+  margin-right: 0.15rem !important;
+  margin-bottom: -1px !important;
+  padding: 0.5rem 0.9rem !important;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  background: transparent;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.hextra-tabs-toggle:hover {
+  color: var(--wt-fg) !important;
+  background: hsl(var(--wt-hue) 15% 25% / 55%) !important;
+  border-color: transparent !important;
+}
+
+.hextra-tabs-toggle[data-state="selected"] {
+  color: var(--wt-fg) !important;
+  background: var(--wt-bg-code) !important;
+  border-color: var(--wt-border) !important;
+  border-bottom-color: var(--wt-bg-code) !important;
+  box-shadow: inset 0 2px 0 0 var(--wt-accent);
+}
+
+/* Panel sits flush under the tab bar */
+.content div:has(> .hextra-tabs-panel) {
+  border: 1px solid var(--wt-border);
+  border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background: var(--wt-bg-code);
+  padding: 0.85rem 1rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.hextra-tabs-panel {
+  padding-top: 0 !important;
+  border-radius: 0 !important;
+  color: var(--wt-fg);
+}
+
+.hextra-tabs-panel > :first-child {
+  margin-top: 0 !important;
+}
+
+.hextra-tabs-panel > :last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Code blocks inside tabs: no double chrome / spacing */
+.hextra-tabs-panel .hextra-code-block {
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+  border-color: hsl(var(--wt-hue) 75% 90% / 10%);
+  background: hsl(var(--wt-hue) 15% 13%) !important;
+}
+
+.hextra-tabs-panel .hextra-code-block:first-child {
+  margin-top: 0 !important;
+}
+
+.hextra-tabs-panel .hextra-code-block:last-child {
+  margin-bottom: 0 !important;
+}
+
+.hextra-tabs-panel .hextra-code-block pre,
+.hextra-tabs-panel .highlight pre {
+  background: transparent !important;
+}
+
+/* Nested tabs (e.g. Copy / Download inside Compose) */
+.hextra-tabs-panel div:has(> [role="tablist"]) {
+  margin-top: 0.75rem;
+  background: hsl(var(--wt-hue) 15% 14%);
+}
+
+.hextra-tabs-panel div:has(> .hextra-tabs-panel) {
+  background: hsl(var(--wt-hue) 15% 13%);
+  margin-bottom: 0.75rem;
+}
+
+.hextra-tabs-panel .hextra-tabs-toggle[data-state="selected"] {
+  background: hsl(var(--wt-hue) 15% 13%) !important;
+  border-bottom-color: hsl(var(--wt-hue) 15% 13%) !important;
+}
+
+/* Homepage hero */
+.wt-home {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+.wt-home-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  gap: 0.85rem;
+}
+
+.wt-home-hero img {
+  width: min(200px, 50vw);
+  height: auto;
+  margin-bottom: 0.25rem;
+  filter: drop-shadow(0 8px 28px rgb(0 0 0 / 45%));
+}
+
+.wt-home-hero h1 {
+  margin: 0;
+}
+
+.wt-home-hero p {
+  margin: 0;
+  max-width: 36rem;
+  color: var(--wt-fg-muted);
+}
+
+.wt-home-hero a.not-prose {
+  margin-top: 0.85rem;
+}
+
+.wt-home-section {
+  margin-top: 1rem;
+  width: 100%;
+  padding-inline: 0.25rem;
+}
+
+.wt-home-section > h2 {
+  text-align: center;
+  margin-bottom: 1rem !important;
+}
+
+.wt-home .hextra-cards {
+  width: 100%;
+}
+
+.hextra-nav-container img {
+  object-fit: contain;
+}
+
+/* Section landing pages */
+.wt-section-lead {
+  margin-bottom: 1.25rem;
+  color: var(--wt-fg-muted);
+}
+
+/* Template preview tool inside docs layout */
+#tplprev {
+  max-width: 100%;
+}
+
+#tplprev .template-wrapper,
+#tplprev .controls,
+#tplprev .preview-wrapper {
+  max-width: 100%;
+}
+
+#tplprev textarea,
+#tplprev pre {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Keep wide tables usable */
+.content table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Hide any leftover theme toggles (footer/sidebar) */
+.hextra-theme-toggle,
+.hextra-theme-toggle-options {
+  display: none !important;
+}

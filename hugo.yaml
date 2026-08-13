@@ -1,0 +1,110 @@
+baseURL: https://gowatchtower.org/
+locale: en-us
+title: Watchtower
+enableGitInfo: true
+
+module:
+  imports:
+    - path: github.com/imfing/hextra
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+  tableOfContents:
+    startLevel: 2
+    endLevel: 4
+
+enableInlineShortcodes: true
+
+outputs:
+  home: [html, llms]
+  page: [html, markdown]
+  section: [html, rss, markdown]
+
+menu:
+  main:
+    - name: Quickstart
+      pageRef: /quickstart
+      weight: 1
+    - name: Getting Started
+      pageRef: /getting-started
+      weight: 2
+    - name: Configuration
+      pageRef: /configuration
+      weight: 3
+    - name: Notifications
+      pageRef: /notifications
+      weight: 4
+    - name: API
+      pageRef: /http-api
+      weight: 5
+    - name: Advanced
+      pageRef: /advanced-features
+      weight: 6
+    - name: Search
+      weight: 7
+      params:
+        type: search
+    - name: GitHub
+      weight: 8
+      url: https://github.com/nicholas-fedor/watchtower
+      params:
+        icon: github
+
+params:
+  description: Documentation for Watchtower, a solution for automating Docker container image updates.
+
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: images/logo.png
+      dark: images/logo.png
+      link: /
+      width: 36
+      height: 36
+
+  theme:
+    default: dark
+    displayToggle: false
+
+  footer:
+    displayCopyright: true
+    displayPoweredBy: true
+
+  editURL:
+    enable: true
+    base: https://github.com/gowatchtower/watchtower-docs/edit/main/content
+
+  search:
+    enable: true
+    type: flexsearch
+    flexsearch:
+      index: content
+
+  page:
+    width: normal
+    displayPagination: true
+    tabs:
+      sync: true
+    contextMenu:
+      enable: true
+
+  externalLinkDecoration: true
+
+  displayUpdatedDate: true
+  dateFormat: January 2, 2006
+
+  blog:
+    list:
+      displayTags: false
+
+  toc:
+    displayTags: false
+
+disableKinds:
+  - taxonomy
+  - term
