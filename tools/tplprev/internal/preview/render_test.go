@@ -136,3 +136,49 @@ func TestRenderParseError(t *testing.T) {
 	_, err := Render("{{ .Report", nil, nil)
 	require.Error(t, err)
 }
+
+func TestRenderPorcelainJSONWithNilReport(t *testing.T) {
+	t.Parallel()
+
+	result, err := Render(
+		templates.Templates["porcelain.json"],
+		nil,
+		nil,
+	)
+	require.NoError(t, err)
+
+	var decoded map[string]any
+	require.NoError(t, json.Unmarshal([]byte(result), &decoded))
+	require.Contains(t, decoded, "containers")
+
+	containers, ok := decoded["containers"].([]any)
+	require.True(t, ok)
+	assert.Empty(t, containers)
+}
+
+func TestRenderPorcelainJSONWithContainers(t *testing.T) {
+	t.Parallel()
+
+	result, err := Render(
+		templates.Templates["porcelain.json"],
+		[]State{UpdatedState, FailedState, FreshState},
+		nil,
+	)
+	require.NoError(t, err)
+
+	var decoded map[string]any
+	require.NoError(t, json.Unmarshal([]byte(result), &decoded))
+
+	containers, ok := decoded["containers"].([]any)
+	require.True(t, ok)
+	require.Len(t, containers, 3)
+
+	first, ok := containers[0].(map[string]any)
+	require.True(t, ok)
+	assert.Contains(t, first, "name")
+	assert.Contains(t, first, "image")
+	assert.Contains(t, first, "image_id")
+	assert.Contains(t, first, "latest_image_id")
+	assert.Contains(t, first, "state")
+	assert.Contains(t, first, "update_available")
+}

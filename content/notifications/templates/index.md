@@ -79,6 +79,22 @@ Environment Variable: WATCHTOWER_NOTIFICATION_REPORT
 
 The template is a [Go template](https://golang.org/pkg/text/template/) that processes either a list of log entries (`Message`, `Data`, `Level`, `Time`) captured from [zerolog](https://pkg.go.dev/github.com/rs/zerolog) events or a `notifications.Data` struct, depending on the [`notification-report`](#notification_report) configuration option.
 
+### Named Templates
+
+Pass one of these names to [`notification-template`](#notification_template) instead of an inline template string:
+
+| Name                          | Purpose                                   |
+|-------------------------------|-------------------------------------------|
+| `default`                     | Human-readable session summary            |
+| `default-legacy`              | Per-log-entry formatting                  |
+| `json.v1`                     | Full notification data as JSON (`ToJSON`) |
+| `porcelain.v1.summary-no-log` | One container per line                    |
+| `porcelain.json`              | Stable JSON report (`ToPorcelainJSON`)    |
+
+`porcelain.json` is the template selected by `--porcelain json`. It renders `.Report` through `ToPorcelainJSON` and omits log entries. The JSON shape is documented under [Programmatic Output (Porcelain)](../../configuration/logging-and-output/#programmatic-output-porcelain).
+
+Available template functions: `ToUpper`, `ToLower`, `ToJSON`, `ToPorcelainJSON`, `Title`, and `RFC1123`.
+
 ## Simple Templates
 
 Simple templates are used when the [`notification-report`](#notification_report) configuration option is not set, formatting individual log entries as they occur.
