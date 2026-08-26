@@ -50,6 +50,35 @@ func TestRenderDefaultLegacyEntriesRoot(t *testing.T) {
 	assert.Contains(t, result, "Found new image: techwave/cyberscribe:latest (abc123def456)")
 }
 
+func TestRenderDefaultLegacyUsageCheckSkip(t *testing.T) {
+	t.Parallel()
+
+	payload := notify.Data{
+		Entries: []*notify.Entry{
+			{
+				Message: "Failed to list containers for image usage check, skipping removal",
+				Data: map[string]any{
+					"error":      `Get "http://socket-proxy-write:2375/v1.55/containers/json?all=1": terminated signal received`,
+					"image_id":   "769846626f2f",
+					"image_name": "ghcr.io/amir20/dtop:latest",
+				},
+				Level: "warn",
+				Time:  time.Time{},
+			},
+		},
+	}
+
+	result, err := Execute(templates.Templates["default-legacy"], payload, false)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		"Skipped image cleanup: ghcr.io/amir20/dtop:latest (769846626f2f): "+
+			`Get "http://socket-proxy-write:2375/v1.55/containers/json?all=1": terminated signal received`,
+		result,
+	)
+	assert.NotContains(t, result, " | ")
+}
+
 func TestRenderJSONIncludesReport(t *testing.T) {
 	t.Parallel()
 
