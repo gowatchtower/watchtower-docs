@@ -61,6 +61,8 @@ Changes to the mounted file may require a symlink to ensure updates propagate.
 
 See [Usage](../../getting-started/usage/) and [Private Registries](../../advanced-features/private-registries/).
 
+Public `lscr.io` images are hosted on GitHub Container Registry. Watchtower remaps them to `ghcr.io` for digest checks. To leave the shared anonymous GHCR org bucket, authenticate to **`ghcr.io`** in this config (not only `lscr.io`). That also restores parallel GHCR checks.
+
 {{< /callout >}}
 
 ### Skip Registry TLS Verification
