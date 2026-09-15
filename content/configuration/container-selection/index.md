@@ -215,3 +215,13 @@ Rolling restarts are not supported when any container has linked dependencies (i
 When [`rolling-restart`](../../configuration/update-behavior/#rolling_restart) is enabled, the [`use-compose-depends-on`](../../configuration/container-selection/#use_docker_compose_depends-on) configuration option controls whether Docker Compose `depends_on` labels are included in the dependency validation check.
 
 {{< /callout >}}
+
+## Copy Files During Recreate
+
+Copies named files from the old container into the replacement container during an update.
+
+This is a per-container label, not a Watchtower process option. Set [`com.centurylinklabs.watchtower.copy-file`](../../getting-started/container-selection/#container_labels) to a comma-separated list of absolute paths inside the container.
+
+Use this for [Docker Compose configs](https://docs.docker.com/reference/compose-file/configs/) that use `content:` or `environment:`. Compose `file:` configs are bind-mounts and are already preserved.
+
+See [Copy Files](../../advanced-features/copy-files/) for path rules and Compose examples.
