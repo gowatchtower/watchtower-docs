@@ -10,20 +10,21 @@ This behavior can be customized through a combination of configuration options a
 Container selection works through a **filter chain**: a series of criteria applied in sequence.
 A container is monitored only if it passes every filter in the chain. The filters are evaluated in the following order:
 
-| #  | Filter                                                       | Description                                                                                                                                                   |
-|----|--------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1  | Old Watchtower container exclusion                           | Watchtower containers renamed with a `watchtower-old-` prefix during self-updates are always excluded.                                                        |
-| 2  | [Disabled label check](#enabledisable_labels)                | Containers with the Docker label `com.centurylinklabs.watchtower.enable=false` are excluded.                                                                  |
-| 3  | [Scope filter](#monitoring_scopes)                           | Only containers matching the configured scope are included (default: `"none"`).                                                                               |
+| #  | Filter                                                       | Description                                                                                                                                           |
+|----|--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | Old Watchtower container exclusion                           | Watchtower containers renamed with a `watchtower-old-` prefix during self-updates are always excluded.                                                |
+| 2  | [Disabled label check](#enabledisable_labels)                | Containers with the Docker label `com.centurylinklabs.watchtower.enable=false` are excluded.                                                          |
+| 3  | [Scope filter](#monitoring_scopes)                           | Only containers matching the configured scope are included (default: `"none"`).                                                                       |
 | 4  | [Enable label filter](#enabledisable_labels)                 | If [label enable](../../configuration/container-selection/#enable_label_filter) is set, only containers with the enable label present are included.   |
 | 5  | [Disabled containers by label](#disable_containers_by_label) | Containers matching any [disabled label pair](../../configuration/container-selection/#disable_containers_by_label) are excluded.                     |
 | 6  | [Enabled containers by label](#enable_containers_by_label)   | If set, only containers matching at least one [enabled label pair](../../configuration/container-selection/#enable_containers_by_label) are included. |
 | 7  | [Image skip patterns](#exclude_specific_images)              | Containers whose image matches a [skip pattern](../../configuration/container-selection/#skip_specific_images) are excluded.                          |
 | 8  | [Monitored image name patterns](#monitor_specific_images)    | If set, only containers whose image matches a [monitored pattern](../../configuration/container-selection/#monitor_specific_images) are included.     |
 | 9  | [Disabled container names](#exclude_specific_containers)     | Containers whose name matches a [disable pattern](../../configuration/container-selection/#disable_specific_containers) are excluded.                 |
-| 10 | [Container name arguments](#container_name_filtering)        | If positional name arguments are provided, only containers matching at least one are included.                                                                |
+| 10 | [Container name arguments](#container_name_filtering)        | If positional name arguments are provided, only containers matching at least one are included.                                                        |
 
 {{< callout type="info" >}}
+
 - If an image name pattern is configured, then Watchtower will exclusively manage only the respective container(s).
 - If a container name is provided as an argument, then Watchtower will exclusively manage only the specified container(s).
 
@@ -49,8 +50,8 @@ By default, Watchtower only processes containers in the `running` state.
 
 Two configuration options extend this to include additional states:
 
-| Option                                                                                                          | Environment Variable            | Effect                                        |
-|-----------------------------------------------------------------------------------------------------------------|---------------------------------|-----------------------------------------------|
+| Option                                                                                                  | Environment Variable            | Effect                                        |
+|---------------------------------------------------------------------------------------------------------|---------------------------------|-----------------------------------------------|
 | [Include Stopped Containers](../../configuration/container-selection/#include_stopped_containers)       | `WATCHTOWER_INCLUDE_STOPPED`    | Include `created` and `exited` containers     |
 | [Include Restarting Containers](../../configuration/container-selection/#include_restarting_containers) | `WATCHTOWER_INCLUDE_RESTARTING` | Include `restarting` containers (Docker only) |
 
@@ -88,6 +89,7 @@ When [label enable](../../configuration/container-selection/#enable_label_filter
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     someimage:
@@ -98,6 +100,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --label=com.centurylinklabs.watchtower.enable=true someimage
@@ -106,6 +109,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Dockerfile" >}}
+
 ```dockerfile
 LABEL com.centurylinklabs.watchtower.enable="true"
 ```
@@ -114,12 +118,12 @@ LABEL com.centurylinklabs.watchtower.enable="true"
 
 {{< /tabs >}}
 
-
 To exclude a container, set the label to `false`:
 
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     someimage:
@@ -130,6 +134,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --label=com.centurylinklabs.watchtower.enable=false someimage
@@ -138,6 +143,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Dockerfile" >}}
+
 ```dockerfile
 LABEL com.centurylinklabs.watchtower.enable="false"
 ```
@@ -145,7 +151,6 @@ LABEL com.centurylinklabs.watchtower.enable="false"
 {{< /tab >}}
 
 {{< /tabs >}}
-
 
 ## Monitor-Only Mode
 
@@ -156,6 +161,7 @@ Set the `com.centurylinklabs.watchtower.monitor-only` label to `true` on the con
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     someimage:
@@ -166,6 +172,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --label=com.centurylinklabs.watchtower.monitor-only=true someimage
@@ -174,6 +181,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Dockerfile" >}}
+
 ```dockerfile
 LABEL com.centurylinklabs.watchtower.monitor-only="true"
 ```
@@ -181,7 +189,6 @@ LABEL com.centurylinklabs.watchtower.monitor-only="true"
 {{< /tab >}}
 
 {{< /tabs >}}
-
 
 {{< callout type="info" >}}
 The per-container label has the same effect as the global [monitor-only](../../configuration/update-behavior/#monitor_only) option, but applies only to that specific container.
@@ -202,6 +209,7 @@ When provided, only containers matching at least one name are monitored.
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -214,6 +222,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --name watchtower \
@@ -226,7 +235,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ### Exclude Specific Containers
 
 Use the [disable containers](../../configuration/container-selection/#disable_specific_containers) option to exclude containers by name.
@@ -235,6 +243,7 @@ This supports comma- or space-separated values and regex patterns.
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -248,6 +257,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_DISABLE_CONTAINERS="container1,container2" \
@@ -257,6 +267,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -266,7 +277,6 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
-
 
 ## Label-Based Container Filtering
 
@@ -279,6 +289,7 @@ Use the [enable containers by label](../../configuration/container-selection/#en
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -292,6 +303,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_ENABLE_CONTAINERS_BY_LABEL="env=prod,team=platform" \
@@ -301,6 +313,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -310,7 +323,6 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
-
 
 An empty value (`key=`) matches any container where the label key exists, regardless of its value.
 
@@ -323,6 +335,7 @@ Use the [disable containers by label](../../configuration/container-selection/#d
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -336,6 +349,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_DISABLE_CONTAINERS_BY_LABEL="managed-by=external" \
@@ -345,6 +359,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -354,7 +369,6 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
-
 
 {{< callout type="info" >}}
 Values containing commas are not supported. Use individual `key=value` pairs separated by commas.
@@ -383,6 +397,7 @@ Use the [monitor image names](../../configuration/container-selection/#monitor_s
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -396,6 +411,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_MONITOR_IMAGE_NAMES="nginx:.*,redis:7.*" \
@@ -405,6 +421,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -415,7 +432,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ### Exclude Specific Images
 
 Use the [skip image names](../../configuration/container-selection/#skip_specific_images) option to exclude containers whose image matches at least one pattern.
@@ -423,6 +439,7 @@ Use the [skip image names](../../configuration/container-selection/#skip_specifi
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -436,6 +453,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_SKIP_IMAGE_NAMES="postgres:.*,mcr.microsoft.com/*" \
@@ -445,6 +463,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -454,7 +473,6 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
-
 
 ## Monitoring Scopes
 
@@ -467,6 +485,7 @@ Each instance manages only the containers within its scope.
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     # Scoped Application
@@ -489,6 +508,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --name watchtower-production \
@@ -501,8 +521,8 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 {{< callout type="info" >}}
+
 - Without a [scope filter](../../configuration/container-selection/#scope_filter), Watchtower defaults to scope `"none"` and manages only **unscoped** containers (those without a `com.centurylinklabs.watchtower.scope` label, or with it set to `"none"` or `""`).
 - Containers with a non-empty scope label (e.g., `scope=production`) are **not** monitored by an unscoped Watchtower instance.
 - Set the scope filter to `none` to explicitly manage only unscoped containers (same as the default behavior).
@@ -554,6 +574,7 @@ Exclude all containers starting with a prefix:
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -567,6 +588,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_DISABLE_CONTAINERS="web-.*" \
@@ -576,6 +598,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -586,12 +609,12 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 Include only containers matching specific patterns:
 
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -604,6 +627,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -614,12 +638,12 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 Monitor only containers using nginx or redis images with any tag:
 
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -633,6 +657,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_MONITOR_IMAGE_NAMES="nginx:.*,redis:.*" \
@@ -642,6 +667,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -652,7 +678,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ## Label Precedence
 
 By default, when a container-level label (e.g., `com.centurylinklabs.watchtower.monitor-only`) and a global option (e.g., [monitor-only](../../configuration/update-behavior/#monitor_only)) are both set, the container uses the **combined** effect (either triggers the behavior).
@@ -660,14 +685,14 @@ By default, when a container-level label (e.g., `com.centurylinklabs.watchtower.
 With [label precedence](../../configuration/container-selection/#label_precedence), container labels **override** the global options. This allows per-container control even when global options are set.
 
 | [Label Precedence](../../configuration/container-selection/#label_precedence) | Container Label | Global Option | Result            |
-|---------------------------------------------------------------------------------------|-----------------|---------------|-------------------|
-| false (default)                                                                       | not set         | false         | false             |
-| false (default)                                                                       | not set         | true          | true              |
-| false (default)                                                                       | true            | false         | true              |
-| false (default)                                                                       | true            | true          | true              |
-| true                                                                                  | not set         | any           | global flag value |
-| true                                                                                  | true            | false         | true              |
-| true                                                                                  | false           | true          | false             |
+|-------------------------------------------------------------------------------|-----------------|---------------|-------------------|
+| false (default)                                                               | not set         | false         | false             |
+| false (default)                                                               | not set         | true          | true              |
+| false (default)                                                               | true            | false         | true              |
+| false (default)                                                               | true            | true          | true              |
+| true                                                                          | not set         | any           | global flag value |
+| true                                                                          | true            | false         | true              |
+| true                                                                          | false           | true          | false             |
 
 This applies to the [`monitor-only`](../../configuration/update-behavior/#monitor_only) and [`no-pull`](../../configuration/update-behavior/#disable_image_pulling) configuration options.
 
@@ -691,14 +716,15 @@ This applies to the [`monitor-only`](../../configuration/update-behavior/#monito
 
 ### Container Labels
 
-| Label                                           | Values                | Effect                            |
-|-------------------------------------------------|-----------------------|-----------------------------------|
-| `com.centurylinklabs.watchtower.enable`         | true / false          | Enable or disable management      |
-| `com.centurylinklabs.watchtower.monitor-only`   | true / false          | Monitor without updating          |
-| `com.centurylinklabs.watchtower.no-pull`        | true / false          | Skip image pulls                  |
-| `com.centurylinklabs.watchtower.scope`          | any string            | Assign to a monitoring scope      |
-| `com.centurylinklabs.watchtower.depends-on`     | comma-separated names | Declare container dependencies    |
-| `com.centurylinklabs.watchtower.cooldown-delay` | duration string       | Minimum image age before updating |
+| Label                                                                             | Values                | Effect                                          |
+|-----------------------------------------------------------------------------------|-----------------------|-------------------------------------------------|
+| `com.centurylinklabs.watchtower.enable`                                           | true / false          | Enable or disable management                    |
+| `com.centurylinklabs.watchtower.monitor-only`                                     | true / false          | Monitor without updating                        |
+| `com.centurylinklabs.watchtower.no-pull`                                          | true / false          | Skip image pulls                                |
+| `com.centurylinklabs.watchtower.scope`                                            | any string            | Assign to a monitoring scope                    |
+| `com.centurylinklabs.watchtower.depends-on`                                       | comma-separated names | Declare container dependencies                  |
+| `com.centurylinklabs.watchtower.cooldown-delay`                                   | duration string       | Minimum image age before updating               |
+| [`com.centurylinklabs.watchtower.copy-file`](../../advanced-features/copy-files/) | comma-separated paths | Copy named files onto the replacement container |
 
 ## Common Patterns
 
@@ -709,6 +735,7 @@ Run one instance for production containers and another for development:
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower-prod:
@@ -731,6 +758,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --name watchtower-production \
@@ -749,7 +777,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ### Exclude System Containers
 
 Exclude Watchtower itself and other infrastructure containers:
@@ -757,6 +784,7 @@ Exclude Watchtower itself and other infrastructure containers:
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -770,6 +798,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_DISABLE_CONTAINERS="watchtower,traefik,portainer" \
@@ -779,6 +808,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -789,7 +819,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ### Exclude Containers by Label
 
 Exclude containers managed by third-party orchestrators using arbitrary labels:
@@ -797,6 +826,7 @@ Exclude containers managed by third-party orchestrators using arbitrary labels:
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -810,6 +840,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_DISABLE_CONTAINERS_BY_LABEL="managed-by=external" \
@@ -819,6 +850,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -829,7 +861,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ### Monitor Containers by Label
 
 Only monitor containers with specific labels:
@@ -837,6 +868,7 @@ Only monitor containers with specific labels:
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -850,6 +882,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_ENABLE_CONTAINERS_BY_LABEL="env=prod,team=platform" \
@@ -859,6 +892,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -869,7 +903,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ### Monitor Only Specific Image Registries
 
 Monitor only images from your private registry:
@@ -877,6 +910,7 @@ Monitor only images from your private registry:
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -890,6 +924,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Env Vars)" >}}
+
 ```bash
 docker run -d \
     -e WATCHTOWER_MONITOR_IMAGE_NAMES="registry.example.com/.*" \
@@ -899,6 +934,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Docker CLI (Flags)" >}}
+
 ```bash
 docker run -d \
     nickfedor/watchtower \
@@ -909,7 +945,6 @@ docker run -d \
 
 {{< /tabs >}}
 
-
 ### Selective Monitoring with Enable Label
 
 Use [label enable](../../configuration/container-selection/#enable_label_filter) to explicitly opt containers into monitoring:
@@ -917,6 +952,7 @@ Use [label enable](../../configuration/container-selection/#enable_label_filter)
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -935,6 +971,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 # Start Watchtower with label filtering
 docker run -d \
@@ -950,4 +987,3 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
-
