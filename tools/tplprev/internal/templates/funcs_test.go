@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,11 +9,32 @@ import (
 	"github.com/gowatchtower/tplprev/internal/report"
 )
 
+func TestHasKey(t *testing.T) {
+	t.Parallel()
+
+	data := map[string]any{"usage": int64(0)}
+	assert.True(t, hasKey(data, "usage"))
+	assert.False(t, hasKey(data, "max"))
+	assert.False(t, hasKey("not-a-map", "usage"))
+	assert.False(t, hasKey(nil, "usage"))
+}
+
 func TestToJSON(t *testing.T) {
 	t.Parallel()
 
 	got := toJSON(map[string]any{"title": "Title"})
 	assert.Contains(t, got, `"title": "Title"`)
+}
+
+func TestFormatDiskSpace(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, "10 GB", formatDiskSpace(int64(10_000_000_000)))
+	assert.Equal(t, "0 B", formatDiskSpace(int64(0)))
+	assert.Equal(t, "unknown", formatDiskSpace(nil))
+	assert.Equal(t, "unknown", formatDiskSpace(math.NaN()))
+	assert.Equal(t, "unknown", formatDiskSpace(float64(1<<63)))
+	assert.Equal(t, "-9223.37 PB", formatDiskSpace(int64(math.MinInt64)))
 }
 
 func TestToPorcelainJSON(t *testing.T) {

@@ -13,7 +13,7 @@ If you are using an ARM-based system, then remember to pull the appropriate `nic
 
 ### Docker Socket Requirement
 
-Since Watchtower needs to interact with the Docker API in order to monitor and update containers, you need to mount `/var/run/docker.sock` to the Watchtower container with the `-v` flag.
+Since Watchtower needs to interact with the Docker API in order to monitor and update containers, you need to mount `/var/run/docker.sock` to the Watchtower container with the `-v` flag or specify a host with the `DOCKER_HOST` [variable](../../configuration/docker-connection/#docker_host).
 
 ### Docker Engine Dependency
 
