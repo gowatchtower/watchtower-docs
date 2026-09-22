@@ -50,11 +50,12 @@ Environment Variable: DOCKER_CERT_PATH
 ```
 
 {{< callout type="info" >}}
+
 - This specifies the directory where Watchtower's Docker client should find the certificate files within the Watchtower container.
 - Docker expects the following filenames:
-    - `ca.pem`
-    - `cert.pem`
-    - `key.pem`
+  - `ca.pem`
+  - `cert.pem`
+  - `key.pem`
 
 {{< /callout >}}
 
@@ -72,6 +73,7 @@ Specifying multiple connections, such as both the local socket (i.e. `/var/run/d
 {{< /callout >}}
 
 {{< callout type="info" >}}
+
 - This is required for connections to any Docker host.
 - The use of `tcp://` or `https://` schemes is required when using a TLS connection.
 - `tcp://` is internally converted to `https://` when TLS verification is enabled.
@@ -88,6 +90,7 @@ Environment Variable: DOCKER_API_VERSION
 ```
 
 {{< callout type="info" >}}
+
 - This provides the ability to manually specify the Docker API version.
 - The default version autonegotiation should be sufficient for normal use cases.
 
@@ -103,6 +106,7 @@ Replace `remote-host` with your actual Docker host address and `/path/to/certs` 
 {{< tabs >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
   --name watchtower \
@@ -127,6 +131,7 @@ If using `-e` flags to pass environment variables, then remember to place them b
 {{< /tab >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -178,30 +183,30 @@ Setting up TLS for Docker involves several key steps:
 
   1. **Certificate Generation:**
 
-    - Create a Certificate Authority (CA), server certificate, and client certificates using OpenSSL or similar tools.
+       - Create a Certificate Authority (CA), server certificate, and client certificates using OpenSSL or similar tools.
 
-{{< callout type="info" >}}
-Server certificates must include the Docker host's IP or DNS name in the Subject Alternative Name (SAN) field.
-{{< /callout >}}
+        {{< callout type="info" >}}
+        Server certificates must include the Docker host's IP or DNS name in the Subject Alternative Name (SAN) field.
+        {{< /callout >}}
 
   2. **Daemon Configuration:**
 
-    Start the Docker daemon with TLS options:
+        Start the Docker daemon with TLS options:
 
-    - `--tlsverify`: Enable TLS verification
-    - `--tlscacert`: Path to CA certificate
-    - `--tlscert`: Path to server certificate
-    - `--tlskey`: Path to server private key
+        - `--tlsverify`: Enable TLS verification
+        - `--tlscacert`: Path to CA certificate
+        - `--tlscert`: Path to server certificate
+        - `--tlskey`: Path to server private key
 
   3. **Client Setup:**
 
-    - Prepare client certificates (`cert.pem` and `key.pem`) for authentication.
+       - Prepare client certificates (`cert.pem` and `key.pem`) for authentication.
 
   4. **Environment Variables:**
 
-    - Set `DOCKER_HOST` to the secure endpoint (e.g., `tcp://host:2376`)
-    - Set `DOCKER_CERT_PATH` to the directory containing client certificates
-    - Set `DOCKER_TLS_VERIFY=1` to enable verification
+       - Set `DOCKER_HOST` to the secure endpoint (e.g., `tcp://host:2376`)
+       - Set `DOCKER_CERT_PATH` to the directory containing client certificates
+       - Set `DOCKER_TLS_VERIFY=1` to enable verification
 
 For detailed instructions, refer to the [Docker documentation on protecting the Docker daemon socket](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket).
 
@@ -217,9 +222,9 @@ Generate self-signed certificates for testing (replace with proper certificates 
     openssl genrsa -aes256 -out ca-key.pem 4096
     ```
 
-{{< callout type="warning" >}}
-Make sure to take note of the passphrase
-{{< /callout >}}
+    {{< callout type="warning" >}}
+    Make sure to take note of the passphrase
+    {{< /callout >}}
 
 2. Create a self-signed X.509 certificate for the Certificate Authority (valid for 365 days) using the private key and save it to `ca.pem`:
 
@@ -247,21 +252,21 @@ Make sure to take note of the passphrase
     echo "subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1" > extfile-server.cnf
     ```
 
-{{< callout type="info" >}}
-`IP:10.10.10.20` is an example IP. Replace with your host's actual IP.
-{{< /callout >}}
+    {{< callout type="info" >}}
+    `IP:10.10.10.20` is an example IP. Replace with your host's actual IP.
+    {{< /callout >}}
 
-{{< callout type="info" >}}
-`$HOST` typically resolves to the hostname. Change this as necessary (i.e. `localhost` for testing) 
-{{< /callout >}}
+    {{< callout type="info" >}}
+    `$HOST` typically resolves to the hostname. Change this as necessary (i.e. `localhost` for testing)
+    {{< /callout >}}
 
     ```bash
     echo "extendedKeyUsage = serverAuth" >> extfile-server.cnf
     ```
 
-{{< callout type="info" >}}
-This sets the Docker daemon key's extended usage attributes to be used only for server authentication.
-{{< /callout >}}
+    {{< callout type="info" >}}
+    This sets the Docker daemon key's extended usage attributes to be used only for server authentication.
+    {{< /callout >}}
 
     ```bash
     openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile-server.cnf
@@ -287,9 +292,9 @@ This sets the Docker daemon key's extended usage attributes to be used only for 
     echo "extendedKeyUsage = clientAuth" > extfile-client.cnf
     ```
 
-{{< callout type="info" >}}
-This makes the key suitable for client authentication.
-{{< /callout >}}
+    {{< callout type="info" >}}
+    This makes the key suitable for client authentication.
+    {{< /callout >}}
 
     ```bash
     openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
@@ -351,9 +356,9 @@ This makes the key suitable for client authentication.
     ls -la /etc/docker/certs/
     ```
 
-{{< callout type="info" >}}
-Output should show files with `-r--------` for keys and `-r--r--r--` for certs.
-{{< /callout >}}
+    {{< callout type="info" >}}
+    Output should show files with `-r--------` for keys and `-r--r--r--` for certs.
+    {{< /callout >}}
 
 10. (Optional) Remove the original files (in the original directory, not `/etc/docker/certs`):
 
@@ -362,6 +367,7 @@ Output should show files with `-r--------` for keys and `-r--r--r--` for certs.
     ```
 
 {{< callout type="info" >}}
+
 - The server files (`ca.pem`, `server-key.pem`, `server-cert.pem`) stay on the daemon host.
 - The client's files (`ca.pem`, `key.pem`, and `cert.pem`) can be moved the client's Docker directory (e.g. `~/.docker/`).
 
@@ -385,12 +391,13 @@ This assumes Docker is already installed on the host system.
     }
     ```
 
-{{< callout type="info" >}}
-- `"tls": true` enables TLS verification.
-- `"hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"]` adds TCP listening on port 2376 and retains the Unix socket for local access.
-- Alternatively, use dockerd flags in `/etc/systemd/system/docker.service.d/override.conf` for overrides without editing `daemon.json`.
+    {{< callout type="info" >}}
 
-{{< /callout >}}
+    - `"tls": true` enables TLS verification.
+    - `"hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"]` adds TCP listening on port 2376 and retains the Unix socket for local access.
+    - Alternatively, use dockerd flags in `/etc/systemd/system/docker.service.d/override.conf` for overrides without editing `daemon.json`.
+
+    {{< /callout >}}
 
 2. Restart the daemon:
 
@@ -409,6 +416,7 @@ This assumes Docker is already installed on the host system.
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -425,6 +433,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
   --name watchtower \
