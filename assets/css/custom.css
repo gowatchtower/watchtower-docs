@@ -442,3 +442,19 @@ body {
 .hextra-theme-toggle-options {
   display: none !important;
 }
+
+/* Mermaid's neo look paints a light gray drop shadow that reads as white on this theme. */
+pre.mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+pre.mermaid svg {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+pre.mermaid .node :is(rect, polygon, path, circle, ellipse) {
+  filter: none !important;
+}

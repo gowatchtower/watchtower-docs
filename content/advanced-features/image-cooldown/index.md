@@ -23,7 +23,7 @@ A compromised image published moments ago would not yet have a reliable age sign
 {{< /callout >}}
 
 {{< callout type="warning" >}}
-**The cooldown delay applies to **all** updates, including security patches. **
+**The cooldown delay applies to **all** updates, including security patches.**
 
 A critical CVE fix published less than the cooldown duration ago will not be applied until the cooldown expires. Balance your cooldown duration against your risk tolerance and patch SLAs.
 
@@ -38,6 +38,7 @@ Set the cooldown delay for all monitored containers using the [`cooldown-delay`]
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -51,6 +52,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --name watchtower \
@@ -63,6 +65,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Dockerfile" >}}
+
 ```dockerfile
 ...
 WATCHTOWER_COOLDOWN_DELAY=24h
@@ -81,6 +84,7 @@ When set, the label value takes precedence over the global configuration.
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     nginx:
@@ -93,6 +97,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
 --label=com.centurylinklabs.watchtower.cooldown-delay="48h" \
@@ -102,6 +107,7 @@ nginx
 {{< /tab >}}
 
 {{< tab name="Dockerfile" >}}
+
 ```dockerfile
 LABEL com.centurylinklabs.watchtower.cooldown-delay="48h"
 ```
@@ -155,6 +161,7 @@ Units can be combined:
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
   watchtower:
@@ -188,6 +195,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
   --name watchtower \
@@ -383,6 +391,7 @@ The output varies depending on the outcome:
 {{< tabs >}}
 
 {{< tab name="Image age exceeds cooldown" >}}
+
 ```
 nickfedor/watchtower:latest created more than 24 hours ago - eligible for update
 ```
@@ -390,6 +399,7 @@ nickfedor/watchtower:latest created more than 24 hours ago - eligible for update
 {{< /tab >}}
 
 {{< tab name="Image within cooldown" >}}
+
 ```
 nickfedor/watchtower:latest created less than 24 hours ago - eligible in 18 hours, 23 minutes
 ```
@@ -397,6 +407,7 @@ nickfedor/watchtower:latest created less than 24 hours ago - eligible in 18 hour
 {{< /tab >}}
 
 {{< tab name="Image age unavailable" >}}
+
 ```
 nickfedor/watchtower:latest creation time unavailable (cooldown: 24 hours) - deferring update for safety
 ```
