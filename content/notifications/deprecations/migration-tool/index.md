@@ -303,7 +303,7 @@ Select the tab that matches your legacy notification service.
 
 {{< tab name="Email (SMTP)" >}}
 
-1. Run the following Docker Compose configuration / Docker CLI command:
+**1.** Run the following Docker Compose configuration / Docker CLI command:
 
 {{< tabs >}}
 
@@ -365,7 +365,7 @@ docker run -d \
 
 {{< /tabs >}}
 
-1. With the container running, execute the `notify-upgrade` command:
+**2.** With the container running, execute the `notify-upgrade` command:
 
 ```bash
 docker exec watchtower /watchtower notify-upgrade
@@ -377,13 +377,13 @@ Then copy the resulting file out of the container:
 docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
 ```
 
-1. The following converted Shoutrrr URL should be produced:
+**3.** The following converted Shoutrrr URL should be produced:
 
 ```text
 smtp://user@example.com:secret@smtp.example.com:587/?fromaddress=sender@example.com&toaddresses=recipient@example.com&encryption=ExplicitTLS&usestarttls=yes
 ```
 
-1. Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
 
 {{< tabs >}}
 
@@ -444,7 +444,7 @@ docker run -d \
 
 {{< tab name="Gotify" >}}
 
-1. Run the following Docker Compose configuration / Docker CLI command:
+**1.** Run the following Docker Compose configuration / Docker CLI command:
 
 {{< tabs >}}
 
@@ -497,7 +497,7 @@ docker run -d \
 
 {{< /tabs >}}
 
-1. With the container running, execute the `notify-upgrade` command:
+**2.** With the container running, execute the `notify-upgrade` command:
 
 ```bash
 docker exec watchtower /watchtower notify-upgrade
@@ -509,13 +509,13 @@ Then copy the resulting file out of the container:
 docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
 ```
 
-1. The following converted Shoutrrr URL should be produced:
+**3.** The following converted Shoutrrr URL should be produced:
 
 ```text
 gotify://my.gotify.tld/SuperSecretToken?title=
 ```
 
-1. Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
 
 {{< tabs >}}
 
@@ -563,7 +563,7 @@ docker run -d \
 
 {{< tab name="Slack" >}}
 
-1. Run the following Docker Compose configuration / Docker CLI command:
+**1.** Run the following Docker Compose configuration / Docker CLI command:
 
 {{< tabs >}}
 
@@ -613,7 +613,7 @@ docker run -d \
 
 {{< /tabs >}}
 
-1. With the container running, execute the `notify-upgrade` command:
+**2.** With the container running, execute the `notify-upgrade` command:
 
 ```bash
 docker exec watchtower /watchtower notify-upgrade
@@ -625,13 +625,13 @@ Then copy the resulting file out of the container:
 docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
 ```
 
-1. The following converted Shoutrrr URL should be produced:
+**3.** The following converted Shoutrrr URL should be produced:
 
 ```text
 slack://hook:AAA-BBB-CCC@webhook?botname=watchtower&color=%23406170
 ```
 
-1. Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
 
 {{< tabs >}}
 
@@ -679,7 +679,7 @@ docker run -d \
 
 {{< tab name="Microsoft Teams" >}}
 
-1. Run the following Docker Compose configuration / Docker CLI command:
+**1.** Run the following Docker Compose configuration / Docker CLI command:
 
 {{< tabs >}}
 
@@ -726,7 +726,7 @@ docker run -d \
 
 {{< /tabs >}}
 
-1. With the container running, execute the `notify-upgrade` command:
+**2.** With the container running, execute the `notify-upgrade` command:
 
 ```bash
 docker exec watchtower /watchtower notify-upgrade
@@ -738,13 +738,13 @@ Then copy the resulting file out of the container:
 docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
 ```
 
-1. The following converted Shoutrrr URL should be produced:
+**3.** The following converted Shoutrrr URL should be produced:
 
 ```text
 teams://?host=https%3A%2F%2Fprod-00.westus.logic.azure.com%3A443%2Fworkflows%2Fabc123%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D2016-06-00%26sp%3D%2Ftriggers%2Fmanual%2Frun%26sv%3D1.0%26sig%3DXXXXXXXX&color=%23406170
 ```
 
-1. Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
 
 {{< tabs >}}
 
