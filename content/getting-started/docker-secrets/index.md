@@ -13,11 +13,13 @@ Upon successful validation, the contents of the file are read and used as the va
 
 ## Supported Configuration Options
 
-| Configuration Option                                                                      | Deprecated |
-|-------------------------------------------------------------------------------------------|------------|
+| Configuration Option                                                              | Deprecated |
+|-----------------------------------------------------------------------------------|------------|
 | [HTTP API Token](../../configuration/http-api/#http-api-token)                    | No         |
 | [HTTP API Events Token](../../configuration/http-api/#http-api-events-token)      | No         |
 | [Notification URL](../../configuration/notifications/#notification-url)           | No         |
+| [Git Auth Token](../../configuration/git-monitoring/#git-auth-token)              | No         |
+| [Git Password](../../configuration/git-monitoring/#git-password)                  | No         |
 | [Email Server Password](../../configuration/notifications/#email-server-password) | Yes        |
 | [Gotify Token](../../configuration/notifications/#gotify-token)                   | Yes        |
 | [Microsoft Teams Hook](../../configuration/notifications/#microsoft-teams-hook)   | Yes        |
@@ -28,11 +30,12 @@ Upon successful validation, the contents of the file are read and used as the va
 
 Deprecated notification configuration options will be removed with the release of Watchtower v2.
 
-Use the the [`NOTIFICATION URL`](../../configuration/notifications/#notification-url) with the appropriate Shoutrrr URL scheme instead.
+Use the [`NOTIFICATION URL`](../../configuration/notifications/#notification-url) with the appropriate Shoutrrr URL scheme instead.
 
 {{< /callout >}}
 
 {{< callout type="info" >}}
+
 - For the [Notification URL](../../configuration/notifications/#notification-url) option, when a value is a path to a file, each non-empty line in the file is treated as a separate notification URL.
 - This file-based support works with any mechanism that can make a file available inside the container at runtime.
 - You specify the path to the file inside the container (e.g. `/run/secrets/http_api_token`).
@@ -48,6 +51,7 @@ Provide the [HTTP API Token](../../configuration/http-api/#http-api-token) from 
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -72,6 +76,7 @@ secrets:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --name watchtower \
@@ -95,6 +100,7 @@ Provide the [HTTP API Events Token](../../configuration/http-api/#http-api-event
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -118,6 +124,7 @@ secrets:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --name watchtower \
@@ -141,6 +148,7 @@ Provide the [Notification URL](../../configuration/notifications/#notification-u
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
+
 ```yaml
 services:
     watchtower:
@@ -161,12 +169,105 @@ secrets:
 {{< /tab >}}
 
 {{< tab name="Docker CLI" >}}
+
 ```bash
 docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v $(pwd)/secrets/notification_url.txt:/run/secrets/notification_url:ro \
     -e WATCHTOWER_NOTIFICATION_URL=/run/secrets/notification_url \
+    --restart unless-stopped \
+    nickfedor/watchtower
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+### Git Auth Token
+
+Provide the [Git Auth Token](../../configuration/git-monitoring/#git-auth-token) from a file.
+
+{{< tabs >}}
+
+{{< tab name="Docker Compose" >}}
+
+```yaml
+services:
+    watchtower:
+        image: nickfedor/watchtower:latest
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        secrets:
+            - git_auth_token
+        environment:
+            - WATCHTOWER_GIT_ENABLE=true
+            - WATCHTOWER_GIT_AUTH_TOKEN=/run/secrets/git_auth_token
+        restart: unless-stopped
+
+secrets:
+    git_auth_token:
+        file: ./secrets/git_auth_token.txt
+```
+
+{{< /tab >}}
+
+{{< tab name="Docker CLI" >}}
+
+```bash
+docker run -d \
+    --name watchtower \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $(pwd)/secrets/git_auth_token.txt:/run/secrets/git_auth_token:ro \
+    -e WATCHTOWER_GIT_ENABLE=true \
+    -e WATCHTOWER_GIT_AUTH_TOKEN=/run/secrets/git_auth_token \
+    --restart unless-stopped \
+    nickfedor/watchtower
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+### Git Password
+
+Provide the [Git Password](../../configuration/git-monitoring/#git-password) from a file.
+
+{{< tabs >}}
+
+{{< tab name="Docker Compose" >}}
+
+```yaml
+services:
+    watchtower:
+        image: nickfedor/watchtower:latest
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        secrets:
+            - git_password
+        environment:
+            - WATCHTOWER_GIT_ENABLE=true
+            - WATCHTOWER_GIT_USERNAME=git
+            - WATCHTOWER_GIT_PASSWORD=/run/secrets/git_password
+        restart: unless-stopped
+
+secrets:
+    git_password:
+        file: ./secrets/git_password.txt
+```
+
+{{< /tab >}}
+
+{{< tab name="Docker CLI" >}}
+
+```bash
+docker run -d \
+    --name watchtower \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $(pwd)/secrets/git_password.txt:/run/secrets/git_password:ro \
+    -e WATCHTOWER_GIT_ENABLE=true \
+    -e WATCHTOWER_GIT_USERNAME=git \
+    -e WATCHTOWER_GIT_PASSWORD=/run/secrets/git_password \
     --restart unless-stopped \
     nickfedor/watchtower
 ```

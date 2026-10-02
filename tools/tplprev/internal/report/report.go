@@ -23,4 +23,14 @@ type ContainerReport interface {
 	State() string
 	IsMonitorOnly() bool
 	NewContainerID() ContainerID
+	GitRepo() string
+	GitRef() string
+	Changelog() string
+	Source() string
+	ImageURL() string
+	Documentation() string
+	CurrentImageVersion() string
+	LatestImageVersion() string
+	CurrentImageRevision() string
+	LatestImageRevision() string
 }

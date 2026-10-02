@@ -1,7 +1,12 @@
 ---
 title: Update Behavior
-weight: 7
+weight: 8
 ---
+These options apply after Watchtower has decided a container is stale.
+The default staleness signal is a registry digest change.
+[Git monitoring](../git-monitoring/) is an alternate signal that still ends in this same container update process (or Compose apply for a local path context).
+See [Advanced Features → Git Monitoring](../../advanced-features/git-monitoring/#interaction-with-other-update-options).
+
 ## Disable Container Restart
 
 Stops and removes the old containers and creates new ones with the updated image, but does not start the new containers.
@@ -186,7 +191,42 @@ Can be set per container via the `com.centurylinklabs.watchtower.no-pull` label.
 
 The HTTP API [`/v1/check`](../../http-api/endpoints/check/) endpoint also respects no-pull and inspects the local cache only.
 
+No-pull also skips [Git monitoring](../../advanced-features/git-monitoring/) rebuilds.
+`/v1/check` reports no update for a Git-watched container while no-pull applies to it.
+
 See [Label Precedence](../container-selection/#label-precedence).
+
+{{< /callout >}}
+
+## Changelog Links
+
+Adds a release-notes link to notifications, and resolves that link to the exact release being installed rather than the release index.
+
+```text
+            Argument: --enable-changelog
+Environment Variable: WATCHTOWER_ENABLE_CHANGELOG
+                Type: Boolean
+             Default: false
+```
+
+{{< callout type="warning" >}}
+**Extra registry requests**
+Resolving the exact release tag requires confirming which tag the maintainer actually published.
+Watchtower issues one or two extra manifest requests per updated container on a registry it has already contacted, which roughly doubles that session's manifest requests for the update.
+
+This is why the option is off by default.
+With it off, `.Changelog` still resolves to the unversioned release index and costs no requests.
+A Git-monitored container never needs the lookup, because its tag is already known.
+
+{{< /callout >}}
+
+{{< callout type="info" >}}
+Can be set per container via the `com.centurylinklabs.watchtower.enable-changelog` label.
+
+The `com.centurylinklabs.watchtower.changelog-url` label supplies a changelog URL template but does **not** enable this option.
+A template that references `{tag}` stays unresolved until the option is turned on for that container.
+
+See [Label Precedence](../container-selection/#label-precedence) and [Notification Templates](../../notifications/templates/).
 
 {{< /callout >}}
 

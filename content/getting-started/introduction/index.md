@@ -7,8 +7,11 @@ weight: 1
 Watchtower is an application that will monitor your running Docker containers and watch for changes to the images that those containers were originally started from.
 If Watchtower detects that an image has changed, it will automatically restart the container using the new image.
 
-With Watchtower you can update the container by pushing a new image to the registry that's repective to the container's image.
+With Watchtower you can update the container by pushing a new image to the registry that is respective to the container's image.
 Watchtower will pull the new image, gracefully shut down the existing container, and restart it with the same options that were used when it was deployed initially.
+
+Alternatively, [Git monitoring](../../advanced-features/git-monitoring/) uses a hosted Git branch or tag as the staleness signal.
+When that ref changes, Watchtower asks the Docker host to rebuild the image from a [Git URL context](https://docs.docker.com/build/concepts/context/#git-repositories) or a local Compose [project directory](https://docs.docker.com/reference/compose-file/build/#context), then uses the same container update process.
 
 ## How Image Updates Work
 

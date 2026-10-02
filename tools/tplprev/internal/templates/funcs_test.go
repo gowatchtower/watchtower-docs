@@ -164,6 +164,9 @@ type stubContainer struct {
 	latestID     report.ImageID
 	state        string
 	containerErr string
+	gitRepo      string
+	gitRef       string
+	changelog    string
 }
 
 func (s stubContainer) ID() report.ContainerID             { return "" }
@@ -175,6 +178,16 @@ func (s stubContainer) Error() string                      { return s.containerE
 func (s stubContainer) State() string                      { return s.state }
 func (s stubContainer) IsMonitorOnly() bool                { return false }
 func (s stubContainer) NewContainerID() report.ContainerID { return "" }
+func (s stubContainer) GitRepo() string                    { return s.gitRepo }
+func (s stubContainer) GitRef() string                     { return s.gitRef }
+func (s stubContainer) Changelog() string                  { return s.changelog }
+func (s stubContainer) Source() string                     { return "" }
+func (s stubContainer) ImageURL() string                   { return "" }
+func (s stubContainer) Documentation() string              { return "" }
+func (s stubContainer) CurrentImageVersion() string        { return "" }
+func (s stubContainer) LatestImageVersion() string         { return "" }
+func (s stubContainer) CurrentImageRevision() string       { return "" }
+func (s stubContainer) LatestImageRevision() string        { return "" }
 
 func TestFormatRFC1123(t *testing.T) {
 	t.Parallel()

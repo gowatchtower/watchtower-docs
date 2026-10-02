@@ -1,6 +1,6 @@
 ---
 title: Logging and Output
-weight: 9
+weight: 10
 ---
 ## Debug
 

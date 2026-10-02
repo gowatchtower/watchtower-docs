@@ -89,6 +89,10 @@ docker run --rm \
 
 - This command triggers an update attempt for "nginx" and "redis" containers, displays debug output, and removes the Watchtower container upon completion.
 
+By default, Watchtower decides that an image is stale by comparing registry digests.
+[Git monitoring](../git-monitoring/) is an optional alternate staleness signal: associate a container with a hosted repository, and Watchtower rebuilds from a Git URL context or a local Compose project directory when that ref changes.
+See [Advanced Features → Git Monitoring](../../advanced-features/git-monitoring/).
+
 {{< callout type="info" >}}
 Regex patterns are supported. See [Regex Pattern Matching](../../getting-started/container-selection/#regex-pattern-matching) for details.
 

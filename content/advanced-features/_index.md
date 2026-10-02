@@ -11,6 +11,7 @@ cascade:
 
 {{< cards >}}
   {{< card link="ephemeral-self-updates/" title="Ephemeral Self-Updates" icon="refresh" subtitle="Update Watchtower itself safely" >}}
+  {{< card link="git-monitoring/" title="Git Monitoring" icon="code" subtitle="Rebuild images from Git refs" >}}
   {{< card link="image-cooldown/" title="Image Cooldown" icon="pause" subtitle="Avoid update thrashing" >}}
   {{< card link="disk-usage-monitor/" title="Disk Usage Monitor" icon="database" subtitle="Cap Docker image storage usage" >}}
   {{< card link="copy-files/" title="Copy Files" icon="document-duplicate" subtitle="Copy labeled files across recreates" >}}

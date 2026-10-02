@@ -83,6 +83,23 @@ func marshalReports(reports []report.ContainerReport) []jsonMap {
 		if errorMessage != "" {
 			jsonReports[i]["error"] = errorMessage
 		}
+
+		for key, value := range map[string]string{
+			"gitRepo":              report.GitRepo(),
+			"gitRef":               report.GitRef(),
+			"changelog":            report.Changelog(),
+			"ociSource":            report.Source(),
+			"imageUrl":             report.ImageURL(),
+			"documentation":        report.Documentation(),
+			"currentImageVersion":  report.CurrentImageVersion(),
+			"latestImageVersion":   report.LatestImageVersion(),
+			"currentImageRevision": report.CurrentImageRevision(),
+			"latestImageRevision":  report.LatestImageRevision(),
+		} {
+			if value != "" {
+				jsonReports[i][key] = value
+			}
+		}
 	}
 
 	return jsonReports

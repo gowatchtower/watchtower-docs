@@ -107,6 +107,13 @@ var infoMessages = []string{
 	"Using notifications: gotify",
 	"Checking all containers (except explicitly disabled with label)",
 	"Update session completed",
+	"Found new Git revision",
+	"Built image from Git URL context",
+	"Built Compose project",
+	"Compose project directory is not readable. Leaving the running container untouched",
+	"Skipped container with an invalid git semver policy",
+	"Skipped container with an invalid git-host",
+	"Changelog",
 }
 
 var warningMessages = []string{
@@ -119,6 +126,8 @@ var warningMessages = []string{
 	"Failed to inspect container",
 	"Failed to list containers for image usage check, skipping removal",
 	"Docker image usage exceeds configured warning threshold",
+	"Git build failed. Leaving running container untouched",
+	"Compose apply failed. Docker Compose may have partially recreated services",
 }
 
 var errorMessages = []string{

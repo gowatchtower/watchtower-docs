@@ -1,6 +1,6 @@
 ---
 title: Image Cooldown
-weight: 6
+weight: 7
 ---
 ## Cooldown Delay
 

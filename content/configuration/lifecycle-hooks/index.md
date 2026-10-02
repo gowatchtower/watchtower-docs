@@ -1,6 +1,6 @@
 ---
 title: Lifecycle Hooks
-weight: 8
+weight: 9
 ---
 ## Enable Lifecycle Hooks
 

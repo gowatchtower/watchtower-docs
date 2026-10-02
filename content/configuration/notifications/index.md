@@ -1,6 +1,6 @@
 ---
 title: Notifications
-weight: 10
+weight: 11
 ---
 ## Deprecation Notice
 

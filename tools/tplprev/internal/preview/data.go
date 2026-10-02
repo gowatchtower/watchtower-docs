@@ -36,7 +36,35 @@ const (
 	previewDiskWarn         = int64(32_000_000_000)
 	previewDiskReclaimable  = int64(4_000_000_000)
 	previewDiskImageCount   = int64(12)
+	previewGitRepo          = "https://github.com/gowatchtower/app.git"
+	previewGitRef           = "v1.4.0"
+	previewChangelog        = "https://github.com/gowatchtower/app/releases/tag/v1.4.0"
+	previewCurrentVersion   = "1.3.9"
+	previewLatestVersion    = "1.4.0"
+	previewRevision         = "9f2c1ab4d7e5"
+	previewNextRevision     = "3d8b6e0f2c19"
+	previewImageURL         = "https://github.com/gowatchtower/app"
+	previewDocumentationURL = "https://github.com/gowatchtower/app#readme"
 )
+
+// gitMetadata describes the Git and OCI metadata attached to a preview container.
+//
+// A preview leaves every field empty most of the time so the default templates
+// render the same output as an ordinary registry update. Metadata is only
+// populated for containers the generator marks as Git-associated or OCI
+// annotated, which mirrors how Watchtower resolves these fields.
+type gitMetadata struct {
+	repo          string
+	ref           string
+	changelog     string
+	source        string
+	imageURL      string
+	documentation string
+	currentVer    string
+	latestVer     string
+	currentRev    string
+	latestRev     string
+}
 
 var (
 	errExecutionFailed = errors.New("execution failed")
@@ -92,6 +120,7 @@ func (p *PreviewData) AddFromState(state State) {
 		containerError: err,
 		state:          state,
 	}
+	applyGitMetadata(status, state, p.containerCount)
 
 	switch state {
 	case ScannedState:
@@ -111,6 +140,69 @@ func (p *PreviewData) AddFromState(state State) {
 	}
 
 	p.containerCount++
+}
+
+// applyGitMetadata populates the Git and OCI report fields on a preview container.
+//
+// Updated containers carry the full set so the default report template shows a
+// ref and a changelog. Fresh containers carry only the fields describing the
+// image already running, matching a registry update that found nothing new.
+// Every other state leaves the fields empty, as Watchtower resolves them only
+// for containers it actually reports on.
+//
+// Parameters:
+//   - status: Container report to populate.
+//   - state: State the container was added with.
+//   - index: Container index, used to vary the preview across several containers.
+func applyGitMetadata(status *containerStatus, state State, index int) {
+	var meta gitMetadata
+
+	//nolint:exhaustive // Only updated and fresh containers resolve Git and OCI metadata.
+	switch state {
+	case UpdatedState:
+		meta = gitMetadata{
+			repo:          previewGitRepo,
+			ref:           previewGitRef,
+			changelog:     previewChangelog,
+			source:        previewImageURL,
+			imageURL:      previewImageURL,
+			documentation: previewDocumentationURL,
+			currentVer:    previewCurrentVersion,
+			latestVer:     previewLatestVersion,
+			currentRev:    previewRevision,
+			latestRev:     previewNextRevision,
+		}
+	case FreshState:
+		meta = gitMetadata{
+			repo:          previewGitRepo,
+			source:        previewImageURL,
+			imageURL:      previewImageURL,
+			documentation: previewDocumentationURL,
+			currentVer:    previewCurrentVersion,
+			currentRev:    previewRevision,
+		}
+	default:
+		return
+	}
+
+	// Vary the second and later containers so a multi-container preview does not
+	// repeat identical metadata on every line.
+	if index > 0 {
+		suffix := strconv.FormatInt(int64(index), 10)
+		meta.repo = meta.repo + "/" + suffix
+		meta.changelog = meta.changelog + "-" + suffix
+	}
+
+	status.gitRepo = meta.repo
+	status.gitRef = meta.ref
+	status.changelog = meta.changelog
+	status.source = meta.source
+	status.imageURL = meta.imageURL
+	status.documentation = meta.documentation
+	status.currentVersion = meta.currentVer
+	status.latestVersion = meta.latestVer
+	status.currentRev = meta.currentRev
+	status.latestRev = meta.latestRev
 }
 
 // AddLogEntry adds a preview log entry with the specified level.
@@ -267,6 +359,42 @@ func (p *PreviewData) dataForMessage(msg, name, image string) map[string]any {
 		}
 	case "Failed to query Docker image disk usage":
 		return map[string]any{"error": "daemon disk usage unavailable"}
+	case "Changelog":
+		return map[string]any{"changelog": previewChangelog}
+	case "Found new Git revision":
+		return map[string]any{
+			"repo":         previewGitRepo,
+			"ref":          previewGitRef,
+			"revision":     previewRevision,
+			"short_commit": previewRevision[:12],
+			"changelog":    previewChangelog,
+		}
+	case "Built image from Git URL context":
+		return map[string]any{
+			"image":     organizationNames[p.containerCount%len(organizationNames)] + "/" + name + ":git-" + previewRevision[:12],
+			"image_id":  newID,
+			"repo":      previewGitRepo,
+			"commit":    previewRevision,
+			"changelog": previewChangelog,
+		}
+	case "Built Compose project":
+		return map[string]any{"project": "webstack", "service": name, "dir": "/srv/webstack"}
+	case "Git build failed. Leaving running container untouched":
+		return map[string]any{
+			"container": name,
+			"image":     image,
+			"repo":      previewGitRepo,
+			"commit":    previewRevision,
+			"error":     "docker build failed",
+		}
+	case "Compose apply failed. Docker Compose may have partially recreated services":
+		return map[string]any{"container": name, "project": "webstack", "error": "compose apply exited with status 1"}
+	case "Compose project directory is not readable. Leaving the running container untouched":
+		return map[string]any{"container": name, "dir": "/srv/webstack"}
+	case "Skipped container with an invalid git semver policy":
+		return map[string]any{"container": name, "repo": previewGitRepo}
+	case "Skipped container with an invalid git-host":
+		return map[string]any{"container": name, "repo": previewGitRepo}
 	case "Docker image usage budget enabled":
 		return map[string]any{
 			"disk_space_max":  previewDiskMax,
