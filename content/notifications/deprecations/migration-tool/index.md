@@ -4,7 +4,7 @@ weight: 2
 ---
 ## Overview
 
-Watchtower includes a `notify-upgrade` command to help convert legacy notification configurations to Shoutrrr URLs for use with the [`NOTIFICATION URL`](../../../configuration/notifications/#notification_url).
+Watchtower includes a `notify-upgrade` command to help convert legacy notification configurations to Shoutrrr URLs for use with the [`NOTIFICATION URL`](../../../configuration/notifications/#notification-url).
 
 It parses legacy Watchtower notification configurations and outputs Shoutrrr URLs to a temporary file inside the Watchtower container.
 

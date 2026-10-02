@@ -17,7 +17,7 @@ Environment Variable: WATCHTOWER_SCHEDULE
 
 {{< callout type="info" >}}
 - Cannot be used with the [`interval`](#interval) configuration option.
-- Requires a time zone set via `TZ` or a mounted `/etc/localtime` file. See [Time Zone](#time_zone).
+- Requires a time zone set via `TZ` or a mounted `/etc/localtime` file. See [Time Zone](#time-zone).
 
 {{< /callout >}}
 
@@ -80,7 +80,7 @@ Environment Variable: WATCHTOWER_UPDATE_ON_START
 ```
 
 {{< callout type="info" >}}
-If used with [`run-once`](#run_once), a warning is logged and [`run-once`](#run_once) takes precedence.
+If used with [`run-once`](#run-once), a warning is logged and [`run-once`](#run-once) takes precedence.
 
 {{< /callout >}}
 
@@ -96,7 +96,7 @@ Environment Variable: WATCHTOWER_HTTP_API_PERIODIC_POLLS
 ```
 
 {{< callout type="info" >}}
-- Requires the [`update`](../../http-api/endpoints/update/) endpoint to be enabled via the [`http-api-endpoints`](../http-api/#http_api_endpoints) configuration option.
-- The deprecated [`http-api-update`](../http-api/#http_api_update) configuration option still works until Watchtower v2. (See [Deprecated Configuration Options](../http-api/#deprecated_configuration_options)).
+- Requires the [`update`](../../http-api/endpoints/update/) endpoint to be enabled via the [`http-api-endpoints`](../http-api/#http-api-endpoints) configuration option.
+- The deprecated [`http-api-update`](../http-api/#http-api-update) configuration option still works until Watchtower v2. (See [Deprecated Configuration Options](../http-api/#deprecated-configuration-options)).
 
 {{< /callout >}}

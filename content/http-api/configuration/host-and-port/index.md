@@ -5,29 +5,29 @@ weight: 1
 ## Overview
 
 Watchtower defaults to listening on all interfaces on port 8080.
-This behavior can be changed by configuring the [HTTP API Host](../../../configuration/http-api/#http_api_host) and [HTTP API Port](../../../configuration/http-api/#http_api_port) configuration options
+This behavior can be changed by configuring the [HTTP API Host](../../../configuration/http-api/#http-api-host) and [HTTP API Port](../../../configuration/http-api/#http-api-port) configuration options
 
 ## Configuration Options
 
 ### HTTP API Host
 
-Use the [HTTP API Host](../../../configuration/http-api/#http_api_host) configuration option to bind to a specific host interface.
+Use the [HTTP API Host](../../../configuration/http-api/#http-api-host) configuration option to bind to a specific host interface.
 
 - This must be a valid IP address (IPv4 or IPv6).
-- If not specified, Watchtower listens on all interfaces on the port specified by [HTTP API Port](../../../configuration/http-api/#http_api_port).
+- If not specified, Watchtower listens on all interfaces on the port specified by [HTTP API Port](../../../configuration/http-api/#http-api-port).
 
 {{< callout type="warning" >}}
 **Default bind risk**
 
 When the host is unset, the HTTP API listens on all network interfaces (`0.0.0.0`).
 This exposes the API to every reachable network.
-Set [`http-api-host`](../../../configuration/http-api/#http_api_host) to a loopback or firewall-restricted interface unless the API is protected by an outer network policy (reverse proxy, VPN, etc.).
+Set [`http-api-host`](../../../configuration/http-api/#http-api-host) to a loopback or firewall-restricted interface unless the API is protected by an outer network policy (reverse proxy, VPN, etc.).
 
 {{< /callout >}}
 
 ### HTTP API Port
 
-The port can be changed using the [HTTP API Port](../../../configuration/http-api/#http_api_port) configuration option.
+The port can be changed using the [HTTP API Port](../../../configuration/http-api/#http-api-port) configuration option.
 
 If Watchtower is being run via a Docker container, then the `host:container` port mapping can be updated accordingly (e.g. `8080:8080` -> `9000:8080`).
 

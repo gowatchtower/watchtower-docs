@@ -14,7 +14,7 @@ weight: 1
 - [Microsoft Teams Notifications](../../notifications/deprecations/teams/)
 - [Slack Notifications](../../notifications/deprecations/slack/)
 
-Migration to the [`NOTIFICATION URL`](../notifications/#notification_url) with the appropriate Shoutrrr URL scheme is strongly recommended.
+Migration to the [`NOTIFICATION URL`](../notifications/#notification-url) with the appropriate Shoutrrr URL scheme is strongly recommended.
 
 Use Watchtower's CLI [`migration tool`](../../notifications/deprecations/migration-tool/) to help convert legacy email configurations to Shoutrrr URLs or use the [Shoutrrr Playground](https://shoutrrr.nickfedor.com/latest/playground/) to help convert configurations for other services to Shoutrrr URLs.
 
@@ -56,7 +56,7 @@ docker run -d \
 
 - In the above example, Watchtower monitors only the `nginx` and `redis` containers, ignoring others.
 
-To run a single update attempt and exit, use the [`run-once`](../scheduling/#run_once) configuration option.
+To run a single update attempt and exit, use the [`run-once`](../scheduling/#run-once) configuration option.
 
 {{< tabs >}}
 
@@ -90,7 +90,7 @@ docker run --rm \
 - This command triggers an update attempt for "nginx" and "redis" containers, displays debug output, and removes the Watchtower container upon completion.
 
 {{< callout type="info" >}}
-Regex patterns are supported. See [Regex Pattern Matching](../../getting-started/container-selection/#regex_pattern_matching) for details.
+Regex patterns are supported. See [Regex Pattern Matching](../../getting-started/container-selection/#regex-pattern-matching) for details.
 
 {{< /callout >}}
 

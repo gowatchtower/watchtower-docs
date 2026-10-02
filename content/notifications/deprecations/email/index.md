@@ -7,19 +7,19 @@ weight: 3
 
 The following legacy email notification options are deprecated and subject to removal with the release of Watchtower v2:
 
-- [`notification-email-from`](../../../configuration/notifications/#email_from)
-- [`notification-email-to`](../../../configuration/notifications/#email_to)
-- [`notification-email-server`](../../../configuration/notifications/#email_server)
-- [`notification-email-server-tls-skip-verify`](../../../configuration/notifications/#email_server_tls_skip_verify)
-- [`notification-email-server-user`](../../../configuration/notifications/#email_server_user)
-- [`notification-email-server-password`](../../../configuration/notifications/#email_server_password)
-- [`notification-email-subjecttag`](../../../configuration/notifications/#email_subject_tag)
-- [`notification-email-server-port`](../../../configuration/notifications/#email_server_port)
-- [`notification-email-delay`](../../../configuration/notifications/#email_delay)
+- [`notification-email-from`](../../../configuration/notifications/#email-from)
+- [`notification-email-to`](../../../configuration/notifications/#email-to)
+- [`notification-email-server`](../../../configuration/notifications/#email-server)
+- [`notification-email-server-tls-skip-verify`](../../../configuration/notifications/#email-server-tls-skip-verify)
+- [`notification-email-server-user`](../../../configuration/notifications/#email-server-user)
+- [`notification-email-server-password`](../../../configuration/notifications/#email-server-password)
+- [`notification-email-subjecttag`](../../../configuration/notifications/#email-subject-tag)
+- [`notification-email-server-port`](../../../configuration/notifications/#email-server-port)
+- [`notification-email-delay`](../../../configuration/notifications/#email-delay)
 
-Use the [`notification-url`](../../../configuration/notifications/#notification_url) configuration option with a `smtp://` Shoutrrr URL instead.
+Use the [`notification-url`](../../../configuration/notifications/#notification-url) configuration option with a `smtp://` Shoutrrr URL instead.
 
-Use the [legacy notifications migration tool](../../deprecations/migration-tool/#migration_walkthrough) to help with migrating to a Shoutrrr URL.
+Use the [legacy notifications migration tool](../../deprecations/migration-tool/#migration-walkthrough) to help with migrating to a Shoutrrr URL.
 
 {{< /callout >}}
 

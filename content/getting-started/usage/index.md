@@ -13,7 +13,7 @@ If you are using an ARM-based system, then remember to pull the appropriate `nic
 
 ### Docker Socket Requirement
 
-Since Watchtower needs to interact with the Docker API in order to monitor and update containers, you need to mount `/var/run/docker.sock` to the Watchtower container with the `-v` flag or specify a host with the `DOCKER_HOST` [variable](../../configuration/docker-connection/#docker_host).
+Since Watchtower needs to interact with the Docker API in order to monitor and update containers, you need to mount `/var/run/docker.sock` to the Watchtower container with the `-v` flag or specify a host with the `DOCKER_HOST` [variable](../../configuration/docker-connection/#docker-host).
 
 ### Docker Engine Dependency
 
@@ -26,7 +26,7 @@ docker version
 [Docker CLI Command Reference](https://docs.docker.com/reference/cli/docker/version/)
 
 Watchtower autonegotiates the API version by default.
-If the `DOCKER_API_VERSION` [variable](../../configuration/docker-connection/#docker_api_version) is explicitly set, then Watchtower validates the version and falls back to autonegotiation on failure.
+If the `DOCKER_API_VERSION` [variable](../../configuration/docker-connection/#docker-api-version) is explicitly set, then Watchtower validates the version and falls back to autonegotiation on failure.
 
 This version of Watchtower has been tested to support Docker v1.43 and higher.
 There is an increased probability of failures when using outdated versions of Docker.

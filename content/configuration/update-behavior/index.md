@@ -67,7 +67,7 @@ Environment Variable: WATCHTOWER_DISK_SPACE_MAX
 {{< callout type="info" >}}
 - Accepted sizes: bare bytes, decimal `B`/`KB`/`MB`/`GB`/`TB`/`PB`, or binary `KiB`/`MiB`/`GiB`/`TiB`/`PiB`.
 - This option cannot be a percentage.
-- Either this option or [`disk-space-warn`](#disk_space_warn) enables the check and updates the Prometheus image-usage gauges.
+- Either this option or [`disk-space-warn`](#disk-space-warn) enables the check and updates the Prometheus image-usage gauges.
 
 {{< /callout >}}
 
@@ -86,8 +86,8 @@ Environment Variable: WATCHTOWER_DISK_SPACE_WARN
 
 {{< callout type="info" >}}
 - Accepted sizes: bare bytes, decimal `B`/`KB`/`MB`/`GB`/`TB`/`PB`, or binary `KiB`/`MiB`/`GiB`/`TiB`/`PiB`.
-- This option may also be a percent of [`disk-space-max`](#disk_space_max) (for example `80%`).
-- A percent value requires [`disk-space-max`](#disk_space_max).
+- This option may also be a percent of [`disk-space-max`](#disk-space-max) (for example `80%`).
+- A percent value requires [`disk-space-max`](#disk-space-max).
 - When both are set, the warn amount must be less than the max.
 - Configuring a warning threshold without a maximum is valid and supported.
 
@@ -165,7 +165,7 @@ Images may still be pulled due to Docker API limitations for digest comparison.
 
 Can be set per container via the `com.centurylinklabs.watchtower.monitor-only` label.
 
-See [Label Precedence](../container-selection/#label_precedence).
+See [Label Precedence](../container-selection/#label-precedence).
 
 {{< /callout >}}
 
@@ -186,7 +186,7 @@ Can be set per container via the `com.centurylinklabs.watchtower.no-pull` label.
 
 The HTTP API [`/v1/check`](../../http-api/endpoints/check/) endpoint also respects no-pull and inspects the local cache only.
 
-See [Label Precedence](../container-selection/#label_precedence).
+See [Label Precedence](../container-selection/#label-precedence).
 
 {{< /callout >}}
 
@@ -207,7 +207,7 @@ This is an experimental feature.
 
 {{< callout type="info" >}}
 The ephemeral self-update mechanism is only active when Watchtower is running in normal daemon mode.
-When Watchtower is started with the [`run-once`](../scheduling/#run_once) configuration option, this flag is ignored because the process exits immediately after the initial update pass and there is no continuously running instance to replace.
+When Watchtower is started with the [`run-once`](../scheduling/#run-once) configuration option, this flag is ignored because the process exits immediately after the initial update pass and there is no continuously running instance to replace.
 See [Advanced Features - Ephemeral Self-Updates](../../advanced-features/ephemeral-self-updates/) for details on how this mechanism works.
 
 {{< /callout >}}

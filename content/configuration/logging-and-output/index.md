@@ -17,7 +17,7 @@ Environment Variable: WATCHTOWER_DEBUG
 Equivalent to `--log-level debug`.
 As an argument, it does not accept a value (e.g., `--debug true` is invalid).
 
-See [Maximum Log Level](#maximum_log_level).
+See [Maximum Log Level](#maximum-log-level).
 
 {{< /callout >}}
 
@@ -36,7 +36,7 @@ Environment Variable: WATCHTOWER_TRACE
 Equivalent to `--log-level trace`.
 As an argument, does not accept a value (e.g., `--trace true` is invalid).
 
-See [Maximum Log Level](#maximum_log_level).
+See [Maximum Log Level](#maximum-log-level).
 
 {{< /callout >}}
 

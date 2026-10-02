@@ -5,7 +5,7 @@ weight: 5
 ## Overview
 
 The `/v1/events` endpoint streams Watchtower operational events via Server-Sent Events (SSE).
-Include `events` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints) to enable this endpoint.
+Include `events` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints) to enable this endpoint.
 
 {{< callout type="warning" >}}
 **Not usable via Swagger UI Try it out**
@@ -18,7 +18,7 @@ Use `curl -N` or browser `EventSource` as shown below (see also [Swagger UI](../
 
 ## Authentication
 
-The events endpoint requires authentication via the [HTTP API Events Token](../../../configuration/http-api/#http_api_events_token) configuration option.
+The events endpoint requires authentication via the [HTTP API Events Token](../../../configuration/http-api/#http-api-events-token) configuration option.
 
 This token can be provided in two formats:
 

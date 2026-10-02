@@ -6,7 +6,7 @@ weight: 11
 
 The `/swagger/` endpoint serves an interactive, browser-based Swagger UI that renders the Watchtower HTTP API specification.
 
-To enable the Swagger UI, include `swagger` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints) (for example `WATCHTOWER_HTTP_API_ENDPOINTS=swagger` or `all`).
+To enable the Swagger UI, include `swagger` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints) (for example `WATCHTOWER_HTTP_API_ENDPOINTS=swagger` or `all`).
 
 ## Endpoint
 
@@ -21,7 +21,7 @@ Accessing `/swagger/index.html` returns the main documentation page and sub-path
 
 The Swagger UI page does not require authentication to access.
 
-Calling protected APIs via **Try it out** still requires the [`http-api-token`](../../../configuration/http-api/#http_api_token) (or events token for `/v1/events`) through Swagger UI’s **Authorize** control. That is the same protection as any other client.
+Calling protected APIs via **Try it out** still requires the [`http-api-token`](../../../configuration/http-api/#http-api-token) (or events token for `/v1/events`) through Swagger UI’s **Authorize** control. That is the same protection as any other client.
 
 The same guidance that applies to the rest of the HTTP API applies here as well:
 
@@ -29,7 +29,7 @@ The same guidance that applies to the rest of the HTTP API applies here as well:
 - Always use TLS.
 - Only enable the endpoints you actually need.
 
-If you place the API behind a reverse proxy (Traefik, Caddy, Nginx, etc.), configure [trusted proxies](../../../configuration/http-api/#http_api_trusted_proxies) and [CORS origins](../../../configuration/http-api/#http_api_cors_origins) accordingly.
+If you place the API behind a reverse proxy (Traefik, Caddy, Nginx, etc.), configure [trusted proxies](../../../configuration/http-api/#http-api-trusted-proxies) and [CORS origins](../../../configuration/http-api/#http-api-cors-origins) accordingly.
 
 ## OpenAPI Specification
 
@@ -211,7 +211,7 @@ For example, the `/v1/update` endpoint accepts the following documented query pa
 
 Swagger UI's **Try it out** button issues a real HTTP request from your browser directly to the Watchtower server.
 Because Swagger UI is served from the same origin, no CORS preflight is required when both are accessed from the same host and port (the default setup).
-When the UI is served from a different origin, ensure the [`http-api-cors-origins`](../../../configuration/http-api/#http_api_cors_origins) configuration option allows the browser origin.
+When the UI is served from a different origin, ensure the [`http-api-cors-origins`](../../../configuration/http-api/#http-api-cors-origins) configuration option allows the browser origin.
 
 JSON endpoints (`/v1/config`, `/v1/containers`, `/v1/check`, etc.) work well with Try it out.
 The events SSE stream does not (see the warning above).
@@ -220,13 +220,13 @@ The events SSE stream does not (see the warning above).
 
 When Watchtower runs behind a TLS-terminating reverse proxy (Traefik, Caddy, Nginx, etc.), Swagger UI's **Try it out** generates request URLs from the OpenAPI spec `schemes` field.
 
-The spec `schemes` value is derived from `c.Protocol()`. Fiber v3 only trusts `X-Forwarded-Proto` from a client when that client IP is listed in [`http-api-trusted-proxies`](../../../configuration/http-api/#http_api_trusted_proxies).
+The spec `schemes` value is derived from `c.Protocol()`. Fiber v3 only trusts `X-Forwarded-Proto` from a client when that client IP is listed in [`http-api-trusted-proxies`](../../../configuration/http-api/#http-api-trusted-proxies).
 If the proxy IP is not trusted, `c.Protocol()` reports `http` even though the external connection uses HTTPS, and Swagger UI will generate `http://` URLs.
 
 To ensure correct scheme detection:
 
-1. Set [`http-api-trusted-proxies`](../../../configuration/http-api/#http_api_trusted_proxies) to include the proxy IP or CIDR range.
-2. Ensure [`http-api-proxy-header`](../../../configuration/http-api/#http_api_proxy_header) matches the header your proxy uses (default: `X-Forwarded-For`).
+1. Set [`http-api-trusted-proxies`](../../../configuration/http-api/#http-api-trusted-proxies) to include the proxy IP or CIDR range.
+2. Ensure [`http-api-proxy-header`](../../../configuration/http-api/#http-api-proxy-header) matches the header your proxy uses (default: `X-Forwarded-For`).
 
 This is the same trusted-proxies configuration used for client IP detection and rate limiting, so it is not specific to Swagger.
 
@@ -238,7 +238,7 @@ Common issues and their resolutions:
 
 | HTTP Status | Cause                                                                 | Resolution                                                                                                                          |
 |:-----------:|:----------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------|
-|    `404`    | The endpoint may not be enabled                                       | Include `swagger` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints). |
+|    `404`    | The endpoint may not be enabled                                       | Include `swagger` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints). |
 |    `404`    | Requested a path outside `/swagger/*`, e.g. `/swagger` (no wildcard). | Navigate to `/swagger/index.html`.                                                                                                  |
 |    `405`    | HTTP method other than `GET` used against `/swagger/*`.               | Use `GET` only. `POST`, `PUT`, and `DELETE` are not supported on this path.                                                         |
 

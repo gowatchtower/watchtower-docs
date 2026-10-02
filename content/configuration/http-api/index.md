@@ -9,7 +9,7 @@ weight: 11
 
 Endpoint-specific configuration options will be removed with the release of Watchtower v2.
 
-Use the [`HTTP API Endpoints`](#http_api_endpoints) configuration option instead.
+Use the [`HTTP API Endpoints`](#http-api-endpoints) configuration option instead.
 
 {{< /callout >}}
 
@@ -25,7 +25,7 @@ Environment Variable: WATCHTOWER_HTTP_API_HOST
 ```
 
 {{< callout type="info" >}}
-See the [HTTP API Host documentation](../../http-api/configuration/host-and-port/#http_api_host) for details
+See the [HTTP API Host documentation](../../http-api/configuration/host-and-port/#http-api-host) for details
 {{< /callout >}}
 
 ## HTTP API Port
@@ -40,7 +40,7 @@ Environment Variable: WATCHTOWER_HTTP_API_PORT
 ```
 
 {{< callout type="info" >}}
-See the [HTTP API Port documentation](../../http-api/configuration/host-and-port/#http_api_port) for details
+See the [HTTP API Port documentation](../../http-api/configuration/host-and-port/#http-api-port) for details
 {{< /callout >}}
 
 ## HTTP API Token
@@ -70,7 +70,7 @@ Environment Variable: WATCHTOWER_HTTP_API_EVENTS_TOKEN
              Default: None
 ```
 
-This is a separate token from the [`http-api-token`](#http_api_token) in order to reduce credential exposure, because events tokens may be exposed in URL query parameters.
+This is a separate token from the [`http-api-token`](#http-api-token) in order to reduce credential exposure, because events tokens may be exposed in URL query parameters.
 
 The token can be provided via the `Authorization` header (for programmatic clients) or as the `access_token` query parameter (for browser `EventSource` which cannot set custom headers).
 
@@ -84,7 +84,7 @@ Prefer header-based auth when possible.
 {{< /callout >}}
 
 {{< callout type="warning" >}}
-**This is **required** when the `events` endpoint is enabled via [`http-api-endpoints`](#http_api_endpoints).**
+**This is **required** when the `events` endpoint is enabled via [`http-api-endpoints`](#http-api-endpoints).**
 
 {{< /callout >}}
 
@@ -113,19 +113,19 @@ Valid names (case-insensitive):
 | Name                                                         | Routes                                                                                                | Auth                                              |
 |--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|---------------------------------------------------|
 | [`health`](../../http-api/endpoints/health/)         | `/livez`, `/readyz`, `/startupz`                                                                      | None                                              |
-| [`update`](../../http-api/endpoints/update/)         | `POST /v1/update`                                                                                     | [`http-api-token`](#http_api_token)               |
-| [`metrics`](../../http-api/endpoints/metrics/)       | `GET /v1/metrics`, [`GET /v1/status`](../../http-api/endpoints/status/)                       | [`http-api-token`](#http_api_token)               |
-| [`containers`](../../http-api/endpoints/containers/) | `GET /v1/containers`, [`/v1/containers/details`](../../http-api/endpoints/container-details/) | [`http-api-token`](#http_api_token)               |
-| [`check`](../../http-api/endpoints/check/)           | `POST /v1/check`                                                                                      | [`http-api-token`](#http_api_token)               |
-| [`history`](../../http-api/endpoints/history/)       | `GET /v1/history`                                                                                     | [`http-api-token`](#http_api_token)               |
-| [`images`](../../http-api/endpoints/images/)         | `GET /v1/images`                                                                                      | [`http-api-token`](#http_api_token)               |
-| [`config`](../../http-api/endpoints/config/)         | `GET /v1/config`                                                                                      | [`http-api-token`](#http_api_token)               |
-| [`events`](../../http-api/endpoints/events/)         | `GET /v1/events`                                                                                      | [`http-api-events-token`](#http_api_events_token) |
+| [`update`](../../http-api/endpoints/update/)         | `POST /v1/update`                                                                                     | [`http-api-token`](#http-api-token)               |
+| [`metrics`](../../http-api/endpoints/metrics/)       | `GET /v1/metrics`, [`GET /v1/status`](../../http-api/endpoints/status/)                       | [`http-api-token`](#http-api-token)               |
+| [`containers`](../../http-api/endpoints/containers/) | `GET /v1/containers`, [`/v1/containers/details`](../../http-api/endpoints/container-details/) | [`http-api-token`](#http-api-token)               |
+| [`check`](../../http-api/endpoints/check/)           | `POST /v1/check`                                                                                      | [`http-api-token`](#http-api-token)               |
+| [`history`](../../http-api/endpoints/history/)       | `GET /v1/history`                                                                                     | [`http-api-token`](#http-api-token)               |
+| [`images`](../../http-api/endpoints/images/)         | `GET /v1/images`                                                                                      | [`http-api-token`](#http-api-token)               |
+| [`config`](../../http-api/endpoints/config/)         | `GET /v1/config`                                                                                      | [`http-api-token`](#http-api-token)               |
+| [`events`](../../http-api/endpoints/events/)         | `GET /v1/events`                                                                                      | [`http-api-events-token`](#http-api-events-token) |
 | [`swagger`](../../http-api/endpoints/swagger/)       | `GET /swagger/*`                                                                                      | None                                              |
 
 {{< callout type="warning" >}}
-- Protected `/v1/*` endpoints require configuring a [`http-api-token`](#http_api_token).
-- Enabling `events` requires configuring a [`http-api-events-token`](#http_api_events_token).
+- Protected `/v1/*` endpoints require configuring a [`http-api-token`](#http-api-token).
+- Enabling `events` requires configuring a [`http-api-events-token`](#http-api-events-token).
 - The `all` value enables every endpoint and **MUST** be the only value.
 - Watchtower will exit on startup if an incorrect name is used or combined with `all`.
 
@@ -202,7 +202,7 @@ Environment Variable: WATCHTOWER_HTTP_API_TLS_CERT
 ```
 
 {{< callout type="warning" >}}
-When both the [`http-api-tls-cert`](#http_api_tls_certificate) and [`http-api-tls-key`](#http_api_tls_key) are provided, the server uses HTTPS.
+When both the [`http-api-tls-cert`](#http-api-tls-certificate) and [`http-api-tls-key`](#http-api-tls-key) are provided, the server uses HTTPS.
 
 {{< /callout >}}
 
@@ -218,7 +218,7 @@ Environment Variable: WATCHTOWER_HTTP_API_TLS_KEY
 ```
 
 {{< callout type="warning" >}}
-When both the [`http-api-tls-cert`](#http_api_tls_certificate) and [`http-api-tls-key`](#http_api_tls_key) are provided, the server uses HTTPS.
+When both the [`http-api-tls-cert`](#http-api-tls-certificate) and [`http-api-tls-key`](#http-api-tls-key) are provided, the server uses HTTPS.
 
 {{< /callout >}}
 
@@ -255,7 +255,7 @@ Environment Variable: WATCHTOWER_HTTP_API_PROXY_HEADER
 ```
 
 {{< callout type="info" >}}
-Only used when [`http-api-trusted-proxies`](#http_api_trusted_proxies) is set.
+Only used when [`http-api-trusted-proxies`](#http-api-trusted-proxies) is set.
 
 {{< /callout >}}
 
@@ -300,7 +300,7 @@ Environment Variable: WATCHTOWER_HTTP_API_CONTAINERS
 ```
 
 {{< callout type="warning" >}}
-Add `containers` to the  [`http-api-endpoints`](#http_api_endpoints) configuration instead.
+Add `containers` to the  [`http-api-endpoints`](#http-api-endpoints) configuration instead.
 
 For example: `WATCHTOWER_HTTP_API_ENDPOINTS=containers`
 
@@ -318,7 +318,7 @@ Environment Variable: WATCHTOWER_HTTP_API_METRICS
 ```
 
 {{< callout type="warning" >}}
-Add `metrics` to the  [`http-api-endpoints`](#http_api_endpoints) configuration instead.
+Add `metrics` to the  [`http-api-endpoints`](#http-api-endpoints) configuration instead.
 
 For example: `WATCHTOWER_HTTP_API_ENDPOINTS=metrics`
 
@@ -336,7 +336,7 @@ Environment Variable: WATCHTOWER_HTTP_API_UPDATE
 ```
 
 {{< callout type="warning" >}}
-Add `update` to the  [`http-api-endpoints`](#http_api_endpoints) configuration instead.
+Add `update` to the  [`http-api-endpoints`](#http-api-endpoints) configuration instead.
 
 For example: `WATCHTOWER_HTTP_API_ENDPOINTS=update`
 

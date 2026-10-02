@@ -6,16 +6,16 @@ weight: 9
 
 The `/v1/metrics` endpoint provides Prometheus-compatible metrics.
 
-To use this feature, set an [API token](../../../configuration/http-api/#http_api_token), include `metrics` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints), and map container port `8080`.
+To use this feature, set an [API token](../../../configuration/http-api/#http-api-token), include `metrics` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints), and map container port `8080`.
 
 {{< callout type="info" >}}
-Enable multiple endpoints in one allowlist (for example `metrics,update`) via [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints).
+Enable multiple endpoints in one allowlist (for example `metrics,update`) via [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints).
 
 {{< /callout >}}
 
 {{< callout type="warning" >}}
 Enabling the metrics API with port mappings will automatically disable Watchtower's self-update functionality to prevent port conflicts during container recreation.
-See [Updating Watchtower](../../../getting-started/updating-watchtower/#port_configuration_limitation) for more details.
+See [Updating Watchtower](../../../getting-started/updating-watchtower/#port-configuration-limitation) for more details.
 
 {{< /callout >}}
 
@@ -41,7 +41,7 @@ Requests with other HTTP methods will receive a `405 Method Not Allowed` respons
 | `watchtower_disk_space_max_bytes`            | Gauge   | Configured Docker image-usage maximum in bytes (0 if unset)                        |
 | `watchtower_disk_space_warn_bytes`           | Gauge   | Configured Docker image-usage warning threshold in bytes (0 if unset)              |
 
-The four image-usage gauges are updated when [`disk-space-max`](../../../configuration/update-behavior/#disk_space_max) or [`disk-space-warn`](../../../configuration/update-behavior/#disk_space_warn) are set.
+The four image-usage gauges are updated when [`disk-space-max`](../../../configuration/update-behavior/#disk-space-max) or [`disk-space-warn`](../../../configuration/update-behavior/#disk-space-warn) are set.
 See [Disk Usage Monitor](../../../advanced-features/disk-usage-monitor/#metrics).
 
 ## Example Prometheus `scrape_config`

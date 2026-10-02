@@ -8,14 +8,14 @@ Watchtower's HTTP API uses token-based authentication to protect sensitive endpo
 
 Two separate tokens are available:
 
-- **[HTTP API Token](../../../configuration/http-api/#http_api_token)**: Used for most authenticated endpoints.
-- **[HTTP API Events Token](../../../configuration/http-api/#http_api_events_token)**: Used exclusively for the [`/v1/events`](../../endpoints/events/) endpoint.
+- **[HTTP API Token](../../../configuration/http-api/#http-api-token)**: Used for most authenticated endpoints.
+- **[HTTP API Events Token](../../../configuration/http-api/#http-api-events-token)**: Used exclusively for the [`/v1/events`](../../endpoints/events/) endpoint.
 
 Authentication is enforced at the route level after other middleware (rate limiting, CORS, etc.).
 
 ## HTTP API Token
 
-Use the [HTTP API Token](../../../configuration/http-api/#http_api_token) configuration option to set the primary authentication token.
+Use the [HTTP API Token](../../../configuration/http-api/#http-api-token) configuration option to set the primary authentication token.
 
 This token is required when any of the following endpoints are enabled:
 
@@ -54,7 +54,7 @@ The header `Authorization: Bearer` is the recommended method.
 {{< callout type="warning" >}}
 **Cookie auth and CSRF**
 
-When the [`http-api-cors-origins`](../../../configuration/http-api/#http_api_cors_origins) is configured and credentials are allowed (for example, `Access-Control-Allow-Credentials: true`), the cookie fallback is vulnerable to cross-site request forgery (CSRF).
+When the [`http-api-cors-origins`](../../../configuration/http-api/#http-api-cors-origins) is configured and credentials are allowed (for example, `Access-Control-Allow-Credentials: true`), the cookie fallback is vulnerable to cross-site request forgery (CSRF).
 A browser on an attacker-controlled origin can issue authenticated POST requests to the API without the user's knowledge.
 Prefer header-based `Authorization: Bearer` auth.
 
@@ -62,7 +62,7 @@ Prefer header-based `Authorization: Bearer` auth.
 
 ## HTTP API Events Token
 
-The [`/v1/events`](../../endpoints/events/) endpoint uses a separate token set via the [HTTP API Events Token](../../../configuration/http-api/#http_api_events_token) configuration option.
+The [`/v1/events`](../../endpoints/events/) endpoint uses a separate token set via the [HTTP API Events Token](../../../configuration/http-api/#http-api-events-token) configuration option.
 
 This token is **required** when the [`/v1/events`](../../endpoints/events/) endpoint is enabled.
 
@@ -214,4 +214,4 @@ The following endpoints do not require authentication when enabled:
 - [HTTP API Host and Port](../host-and-port/)
 - [Events Endpoint](../../endpoints/events/)
 - [Docker Secrets](../../../getting-started/docker-secrets/)
-- [HTTP API Overview](../../overview/#security_considerations)
+- [HTTP API Overview](../../overview/#security-considerations)

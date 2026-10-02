@@ -6,7 +6,7 @@ weight: 3
 
 The `/v1/containers/details` endpoint returns detailed information about each watched container, including running state, image identity, and configuration flags.
 
-Include `containers` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints) to enable this endpoint (container details are enabled alongside the containers list).
+Include `containers` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints) to enable this endpoint (container details are enabled alongside the containers list).
 
 ## Parameters
 

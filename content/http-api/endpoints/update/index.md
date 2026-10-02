@@ -4,13 +4,13 @@ weight: 12
 ---
 ## Overview
 
-Include `update` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints) to enable this mode.
+Include `update` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints) to enable this mode.
 
 ## Configuration
 
 | Setting | Flag | Environment Variable | Default |
 |:--------|:-----|:---------------------|:--------|
-| Update API timeout | [`--http-api-update-timeout`](../../../configuration/http-api/#http_api_update_timeout) | `WATCHTOWER_HTTP_API_UPDATE_TIMEOUT` | `10m` |
+| Update API timeout | [`--http-api-update-timeout`](../../../configuration/http-api/#http-api-update-timeout) | `WATCHTOWER_HTTP_API_UPDATE_TIMEOUT` | `10m` |
 
 ## Parameters
 
@@ -252,7 +252,7 @@ Watchtower enforces two independent mechanisms that can each return HTTP 429 (To
 
 - Every incoming request is checked against a per-IP rate limiter using a **sliding window** algorithm **before** authentication is evaluated.
 - Default limit: 60 requests per minute.
-- Configurable via the [HTTP API Rate Limit](../../../configuration/http-api/#http_api_rate_limit) configuration option.
+- Configurable via the [HTTP API Rate Limit](../../../configuration/http-api/#http-api-rate-limit) configuration option.
 - Rate-limited requests receive HTTP 429 with no body.
 - Rate limit state is tracked per client IP address.
 
@@ -281,7 +281,7 @@ Watchtower enforces two independent mechanisms that can each return HTTP 429 (To
 
 By default, enabling the HTTP API prevents periodic updates (i.e. [scheduled](../../../configuration/scheduling/#schedule) or [interval](../../../configuration/scheduling/#interval) polling).
 
-Use the [HTTP API Periodic Polls](../../../configuration/scheduling/#http_api_periodic_polls) configuration option to enable periodic updates while using the HTTP API.
+Use the [HTTP API Periodic Polls](../../../configuration/scheduling/#http-api-periodic-polls) configuration option to enable periodic updates while using the HTTP API.
 
 ## Example
 
@@ -307,12 +307,12 @@ services:
 ```
 
 {{< callout type="info" >}}
-Enable multiple endpoints in one allowlist (for example `update,metrics`) via [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints).
+Enable multiple endpoints in one allowlist (for example `update,metrics`) via [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints).
 
 {{< /callout >}}
 
 {{< callout type="warning" >}}
-Enabling the HTTP API with port mappings will automatically disable Watchtower's self-update functionality to prevent port conflicts during container recreation. See [Updating Watchtower](../../../getting-started/updating-watchtower/#port_configuration_limitation) for more details.
+Enabling the HTTP API with port mappings will automatically disable Watchtower's self-update functionality to prevent port conflicts during container recreation. See [Updating Watchtower](../../../getting-started/updating-watchtower/#port-configuration-limitation) for more details.
 
 {{< /callout >}}
 

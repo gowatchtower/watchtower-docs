@@ -10,7 +10,7 @@ Files that exist only in the container's writable layer are not typically migrat
 As an example, [Docker Compose configs](https://docs.docker.com/reference/compose-file/configs/) that are added to services using the `content:` or `environment:` option are written into that writable layer after a container is created.
 The Docker Engine API does not record those paths on inspect, so Watchtower cannot discover them automatically.
 
-In order to work around this limitation, add the [`com.centurylinklabs.watchtower.copy-file`](../../getting-started/container-selection/#container_labels) label to the monitored container and use the in-container path of each file that should be copied onto the replacement container.
+In order to work around this limitation, add the [`com.centurylinklabs.watchtower.copy-file`](../../getting-started/container-selection/#container-labels) label to the monitored container and use the in-container path of each file that should be copied onto the replacement container.
 
 ## Label
 
