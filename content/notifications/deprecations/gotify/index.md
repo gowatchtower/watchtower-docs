@@ -7,11 +7,11 @@ weight: 4
 
 The following legacy Gotify notification options are deprecated and subject to removal with the release of Watchtower v2:
 
-- [`notification-gotify-url`](../../../configuration/notifications/#gotify_url)
-- [`notification-gotify-token`](../../../configuration/notifications/#gotify_token)
-- [`notification-gotify-tls-skip-verify`](../../../configuration/notifications/#gotify_tls_skip_verify)
+- [`notification-gotify-url`](../../../configuration/notifications/#gotify-url)
+- [`notification-gotify-token`](../../../configuration/notifications/#gotify-token)
+- [`notification-gotify-tls-skip-verify`](../../../configuration/notifications/#gotify-tls-skip-verify)
 
-Use the [`notification-url`](../../../configuration/notifications/#notification_url) configuration option with a `gotify://` Shoutrrr URL instead.
+Use the [`notification-url`](../../../configuration/notifications/#notification-url) configuration option with a `gotify://` Shoutrrr URL instead.
 
 {{< /callout >}}
 

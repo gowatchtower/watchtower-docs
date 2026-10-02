@@ -15,25 +15,25 @@ Upon successful validation, the contents of the file are read and used as the va
 
 | Configuration Option                                                                      | Deprecated |
 |-------------------------------------------------------------------------------------------|------------|
-| [HTTP API Token](../../configuration/http-api/#http_api_token)                    | No         |
-| [HTTP API Events Token](../../configuration/http-api/#http_api_events_token)      | No         |
-| [Notification URL](../../configuration/notifications/#notification_url)           | No         |
-| [Email Server Password](../../configuration/notifications/#email_server_password) | Yes        |
-| [Gotify Token](../../configuration/notifications/#gotify_token)                   | Yes        |
-| [Microsoft Teams Hook](../../configuration/notifications/#microsoft_teams_hook)   | Yes        |
-| [Slack Hook URL](../../configuration/notifications/#slack_hook_url)               | Yes        |
+| [HTTP API Token](../../configuration/http-api/#http-api-token)                    | No         |
+| [HTTP API Events Token](../../configuration/http-api/#http-api-events-token)      | No         |
+| [Notification URL](../../configuration/notifications/#notification-url)           | No         |
+| [Email Server Password](../../configuration/notifications/#email-server-password) | Yes        |
+| [Gotify Token](../../configuration/notifications/#gotify-token)                   | Yes        |
+| [Microsoft Teams Hook](../../configuration/notifications/#microsoft-teams-hook)   | Yes        |
+| [Slack Hook URL](../../configuration/notifications/#slack-hook-url)               | Yes        |
 
 {{< callout type="warning" >}}
 **Watchtower v2 Legacy Notification Deprecation**
 
 Deprecated notification configuration options will be removed with the release of Watchtower v2.
 
-Use the the [`NOTIFICATION URL`](../../configuration/notifications/#notification_url) with the appropriate Shoutrrr URL scheme instead.
+Use the the [`NOTIFICATION URL`](../../configuration/notifications/#notification-url) with the appropriate Shoutrrr URL scheme instead.
 
 {{< /callout >}}
 
 {{< callout type="info" >}}
-- For the [Notification URL](../../configuration/notifications/#notification_url) option, when a value is a path to a file, each non-empty line in the file is treated as a separate notification URL.
+- For the [Notification URL](../../configuration/notifications/#notification-url) option, when a value is a path to a file, each non-empty line in the file is treated as a separate notification URL.
 - This file-based support works with any mechanism that can make a file available inside the container at runtime.
 - You specify the path to the file inside the container (e.g. `/run/secrets/http_api_token`).
 
@@ -43,7 +43,7 @@ Use the the [`NOTIFICATION URL`](../../configuration/notifications/#notification
 
 ### HTTP API Token
 
-Provide the [HTTP API Token](../../configuration/http-api/#http_api_token) from a file.
+Provide the [HTTP API Token](../../configuration/http-api/#http-api-token) from a file.
 
 {{< tabs >}}
 
@@ -90,7 +90,7 @@ docker run -d \
 
 ### HTTP API Events Token
 
-Provide the [HTTP API Events Token](../../configuration/http-api/#http_api_events_token) from a file.
+Provide the [HTTP API Events Token](../../configuration/http-api/#http-api-events-token) from a file.
 
 {{< tabs >}}
 
@@ -136,7 +136,7 @@ docker run -d \
 
 ### Notification URL
 
-Provide the [Notification URL](../../configuration/notifications/#notification_url) value(s) from a file. The file may contain one or more Shoutrrr URLs (one per line).
+Provide the [Notification URL](../../configuration/notifications/#notification-url) value(s) from a file. The file may contain one or more Shoutrrr URLs (one per line).
 
 {{< tabs >}}
 

@@ -8,7 +8,7 @@ Watchtower uses [Shoutrrr](https://github.com/nicholas-fedor/shoutrrr) to send n
 
 ### Enabling Notifications
 
-To send notifications, use the [`NOTIFICATION URL`](../../configuration/notifications/#notification_url) configuration option to specify the Shoutrrr service URL.
+To send notifications, use the [`NOTIFICATION URL`](../../configuration/notifications/#notification-url) configuration option to specify the Shoutrrr service URL.
 
 The Shoutrrr URL follows the format:
 
@@ -18,7 +18,7 @@ The Shoutrrr URL follows the format:
 
 The format is the same for all services, but the parameters, path, and credentials vary between them.
 
-The [`NOTIFICATION URL`](../../configuration/notifications/#notification_url) configuration option can also reference a file, in which case the contents of the file are used.
+The [`NOTIFICATION URL`](../../configuration/notifications/#notification-url) configuration option can also reference a file, in which case the contents of the file are used.
 
 ### Using Multiple Notification Services
 
@@ -57,7 +57,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Single-line" >}}
-Comma or space-separated lists can also be provided to the [`WATCHTOWER_NOTIFICATION_URL`](../../configuration/notifications/#notification_url) environment variable.
+Comma or space-separated lists can also be provided to the [`WATCHTOWER_NOTIFICATION_URL`](../../configuration/notifications/#notification-url) environment variable.
 
 ```yaml
 services:
@@ -73,7 +73,7 @@ services:
 {{< /tab >}}
 
 {{< tab name="Multi-line" >}}
-Comma or space-separated lists can also be provided to the [`WATCHTOWER_NOTIFICATION_URL`](../../configuration/notifications/#notification_url) environment variable.
+Comma or space-separated lists can also be provided to the [`WATCHTOWER_NOTIFICATION_URL`](../../configuration/notifications/#notification-url) environment variable.
 
 ```yaml
 services:
@@ -113,7 +113,7 @@ environment:
 {{< tabs >}}
 
 {{< tab name="Environment Variable" >}}
-When using the Docker CLI, the [`--notification-url`](../../configuration/notifications/#notification_url) environment variable can accept a comma or space-separated list.
+When using the Docker CLI, the [`--notification-url`](../../configuration/notifications/#notification-url) environment variable can accept a comma or space-separated list.
 
 ```bash
 docker run -d \
@@ -126,7 +126,7 @@ docker run -d \
 {{< /tab >}}
 
 {{< tab name="Flags" >}}
-When using the Docker CLI, the [`--notification-url`](../../configuration/notifications/#notification_url) CLI flag can be used multiple times.
+When using the Docker CLI, the [`--notification-url`](../../configuration/notifications/#notification-url) CLI flag can be used multiple times.
 
 ```bash
 docker run -d \
@@ -170,7 +170,7 @@ If you only see one service listed (e.g., `Using notifications: telegram`), your
 
 Watchtower will log and send a notification every time it is started.
 
-This behavior can be disabled with the [`DISABLE STARTUP MESSAGE`](../../configuration/notifications/#disable_startup_message) configuration option.
+This behavior can be disabled with the [`DISABLE STARTUP MESSAGE`](../../configuration/notifications/#disable-startup-message) configuration option.
 
 ## Notification Templates
 
@@ -178,11 +178,11 @@ Watchtower allows you to customize the format and content of notification messag
 
 ### Inline Templates
 
-Use the [`notification-template`](../../configuration/notifications/#notification_template) configuration option to specify a template directly as a string.
+Use the [`notification-template`](../../configuration/notifications/#notification-template) configuration option to specify a template directly as a string.
 
 ### File-Based Templates
 
-For more complex templates or better maintainability, use the [`notification-template-file`](../../configuration/notifications/#notification_template_file) configuration option to specify a path to a template file.
+For more complex templates or better maintainability, use the [`notification-template-file`](../../configuration/notifications/#notification-template-file) configuration option to specify a path to a template file.
 
 {{< callout type="info" >}}
 When both inline and file-based templates are specified, the file-based template takes precedence.

@@ -5,13 +5,13 @@ weight: 3
 ## Overview
 
 By default, Watchtower does not monitor how much disk space container images occupy before pulling new layers.
-If [`image cleanup`](../../configuration/update-behavior/#cleanup_old_images) is not enabled, unused layers tend to accumulate, and each later session can still pull a newer image.
+If [`image cleanup`](../../configuration/update-behavior/#cleanup-old-images) is not enabled, unused layers tend to accumulate, and each later session can still pull a newer image.
 This can contribute to storage exhaustion over time.
 
 Two optional settings address that problem:
 
-- [`disk-space-max`](../../configuration/update-behavior/#disk_space_max) stops the update session when current image usage already meets or exceeds a configured ceiling.
-- [`disk-space-warn`](../../configuration/update-behavior/#disk_space_warn) emits a warning when usage reaches a threshold, then continues.
+- [`disk-space-max`](../../configuration/update-behavior/#disk-space-max) stops the update session when current image usage already meets or exceeds a configured ceiling.
+- [`disk-space-warn`](../../configuration/update-behavior/#disk-space-warn) emits a warning when usage reaches a threshold, then continues.
 
 Either option enables the monitor.
 A warning without a maximum is valid and is useful when you only want visibility.
@@ -30,7 +30,7 @@ Set the thresholds as the amount of **image** storage you are willing to let Doc
 
 ## Configuration
 
-The [`disk-space-max`](../../configuration/update-behavior/#disk_space_max) and [`disk-space-warn`](../../configuration/update-behavior/#disk_space_warn) configuration options are set via the Watchtower container using either environment variables or CLI flags.
+The [`disk-space-max`](../../configuration/update-behavior/#disk-space-max) and [`disk-space-warn`](../../configuration/update-behavior/#disk-space-warn) configuration options are set via the Watchtower container using either environment variables or CLI flags.
 No extra host bind mount is required, as the check uses the Docker API.
 
 {{< tabs >}}
@@ -77,7 +77,7 @@ services:
 
 {{< /tabs >}}
 
-See [`disk-space-max`](../../configuration/update-behavior/#disk_space_max) and [`disk-space-warn`](../../configuration/update-behavior/#disk_space_warn) for accepted units, percentage rules, and defaults.
+See [`disk-space-max`](../../configuration/update-behavior/#disk-space-max) and [`disk-space-warn`](../../configuration/update-behavior/#disk-space-warn) for accepted units, percentage rules, and defaults.
 
 ## Behavior
 
@@ -94,7 +94,7 @@ Shared image layers are counted once.
 | Usage at or above max                          | Aborted       | Error                  |
 | Image usage cannot be queried                  | Aborted       | Error                  |
 
-An aborted session does not list containers, does not pull, and does not run [`cleanup`](../../configuration/update-behavior/#cleanup_old_images).
+An aborted session does not list containers, does not pull, and does not run [`cleanup`](../../configuration/update-behavior/#cleanup-old-images).
 If the daemon cannot report image usage, Watchtower treats pulling more images as unsafe and fails closed.
 
 The check runs once per session, not before every pull.
@@ -103,7 +103,7 @@ An out-of-space failure during a pull is reported as a normal container update f
 
 ## Metrics
 
-When the [`metrics`](../../http-api/endpoints/metrics/) endpoint is enabled through [`http-api-endpoints`](../../configuration/http-api/#http_api_endpoints), each check updates:
+When the [`metrics`](../../http-api/endpoints/metrics/) endpoint is enabled through [`http-api-endpoints`](../../configuration/http-api/#http-api-endpoints), each check updates:
 
 | Gauge                                        | Meaning                                       |
 |----------------------------------------------|-----------------------------------------------|
@@ -124,14 +124,14 @@ See [Templates](../../notifications/templates/).
 
 ## Interactions
 
-- [`cleanup`](../../configuration/update-behavior/#cleanup_old_images) runs only after a successful session, so a blocked session does not free image space.
-- [`remove-volumes`](../../configuration/update-behavior/#remove_anonymous_volumes) is unrelated.
+- [`cleanup`](../../configuration/update-behavior/#cleanup-old-images) runs only after a successful session, so a blocked session does not free image space.
+- [`remove-volumes`](../../configuration/update-behavior/#remove-anonymous-volumes) is unrelated.
   It deletes anonymous volumes when a container is recreated.
-- [`no-pull`](../../configuration/update-behavior/#disable_image_pulling) does not disable the monitor.
+- [`no-pull`](../../configuration/update-behavior/#disable-image-pulling) does not disable the monitor.
   The check still measures existing image usage.
 - HTTP [`update`](../../http-api/endpoints/update/) uses the same session-start gate as a scheduled run.
 - HTTP [`check`](../../http-api/endpoints/check/) compares digests only and does not apply the monitor.
-- [`rolling-restart`](../../configuration/update-behavior/#rolling_restart) is not re-checked between containers.
+- [`rolling-restart`](../../configuration/update-behavior/#rolling-restart) is not re-checked between containers.
   If the session starts, rolling restart proceeds under that session's budget.
 
 ## Limitations
@@ -141,4 +141,4 @@ See [Templates](../../notifications/templates/).
 - The gate cannot reserve space for an incoming pull.
 - Reclaimable figures from some compatible runtimes can be overstated when images share layers.
 - There is no automatic prune.
-  Use [`cleanup`](../../configuration/update-behavior/#cleanup_old_images) after successful updates, or remove unused images yourself.
+  Use [`cleanup`](../../configuration/update-behavior/#cleanup-old-images) after successful updates, or remove unused images yourself.

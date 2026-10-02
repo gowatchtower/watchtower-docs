@@ -8,15 +8,15 @@ The `v1/check` endpoint enables checking monitored containers for available imag
 
 It does **not** download image layers and does **not** check against the configured [image cooldown](../../../advanced-features/image-cooldown/), as the cooldown functionality remains an apply-time gate for scheduled updates and `/v1/update`.
 
-When [no-pull](../../../configuration/update-behavior/#disable_image_pulling) is enabled globally or via the container label, the check inspects the local image cache only and does not contact the registry.
+When [no-pull](../../../configuration/update-behavior/#disable-image-pulling) is enabled globally or via the container label, the check inspects the local image cache only and does not contact the registry.
 
-Include `check` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints) to enable this endpoint.
+Include `check` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints) to enable this endpoint.
 
 ## Configuration
 
 | Setting | Flag | Environment Variable | Default |
 |:--------|:-----|:---------------------|:--------|
-| Check API timeout | [`--http-api-check-timeout`](../../../configuration/http-api/#http_api_check_timeout) | `WATCHTOWER_HTTP_API_CHECK_TIMEOUT` | `5m` |
+| Check API timeout | [`--http-api-check-timeout`](../../../configuration/http-api/#http-api-check-timeout) | `WATCHTOWER_HTTP_API_CHECK_TIMEOUT` | `5m` |
 
 ## Parameters
 

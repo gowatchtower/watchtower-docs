@@ -7,11 +7,11 @@ weight: 5
 
 The following legacy Slack notification options are deprecated and subject to removal with the release of Watchtower v2:
 
-- [`notification-slack-hook-url`](../../../configuration/notifications/#slack_hook_url)
-- [`notification-slack-identifier`](../../../configuration/notifications/#slack_identifier)
-- [`notification-slack-channel`](../../../configuration/notifications/#slack_channel)
+- [`notification-slack-hook-url`](../../../configuration/notifications/#slack-hook-url)
+- [`notification-slack-identifier`](../../../configuration/notifications/#slack-identifier)
+- [`notification-slack-channel`](../../../configuration/notifications/#slack-channel)
 
-Use the [`notification-url`](../../../configuration/notifications/#notification_url) configuration option with a `slack://` Shoutrrr URL instead.
+Use the [`notification-url`](../../../configuration/notifications/#notification-url) configuration option with a `slack://` Shoutrrr URL instead.
 
 {{< /callout >}}
 

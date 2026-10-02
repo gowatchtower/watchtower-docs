@@ -6,7 +6,7 @@ weight: 4
 
 The `/v1/containers` endpoint lists monitored containers along with their current image ID.
 
-Include `containers` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints) to enable this read-only endpoint.
+Include `containers` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints) to enable this read-only endpoint.
 
 ## Parameters
 
@@ -52,6 +52,6 @@ The `/v1/containers` endpoint returns a JSON array of watched containers:
 - `digest`: Registry manifest digest the image was pulled from (from the image's `RepoDigests`), directly comparable to a registry's `Docker-Content-Digest`. Empty for locally-built images with no registry reference.
 
 {{< callout type="info" >}}
-Combine endpoints in one allowlist (for example `containers,update,metrics`) via [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints).
+Combine endpoints in one allowlist (for example `containers,update,metrics`) via [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints).
 
 {{< /callout >}}

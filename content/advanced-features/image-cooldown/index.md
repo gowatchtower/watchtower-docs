@@ -33,7 +33,7 @@ A critical CVE fix published less than the cooldown duration ago will not be app
 
 ### Global Configuration
 
-Set the cooldown delay for all monitored containers using the [`cooldown-delay`](../../configuration/image-cooldown/#cooldown_delay) configuration option.
+Set the cooldown delay for all monitored containers using the [`cooldown-delay`](../../configuration/image-cooldown/#cooldown-delay) configuration option.
 
 {{< tabs >}}
 
@@ -129,7 +129,7 @@ If a container's cooldown label cannot be parsed as a valid duration, Watchtower
 {{< callout type="warning" >}}
 **No-Pull Precedence**
 
-When the [`no-pull`](../../configuration/update-behavior/#disable_image_pulling) configuration option  is enabled globally (or the `com.centurylinklabs.watchtower.no-pull` label is set on a container), Watchtower does not fetch new images from the registry.
+When the [`no-pull`](../../configuration/update-behavior/#disable-image-pulling) configuration option  is enabled globally (or the `com.centurylinklabs.watchtower.no-pull` label is set on a container), Watchtower does not fetch new images from the registry.
 Because no new images are pulled, the cooldown check is skipped entirely.
 This takes precedence over any cooldown configuration — including per-container labels.
 If you rely on cooldown as a supply-chain defense, ensure that no-pull mode is not inadvertently enabled.
@@ -374,7 +374,7 @@ Unauthenticated GHCR checks reuse one anonymous token across public images and r
 
 ### Monitor-Only Containers
 
-Cooldown is not evaluated for containers running in [`monitor-only`](../../configuration/update-behavior/#monitor_only) mode.
+Cooldown is not evaluated for containers running in [`monitor-only`](../../configuration/update-behavior/#monitor-only) mode.
 Since monitor-only containers are never updated, the cooldown check is skipped to avoid unnecessary registry API calls.
 
 ### Rolling Restarts

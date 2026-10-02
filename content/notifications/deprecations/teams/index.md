@@ -7,9 +7,9 @@ weight: 6
 
 The following legacy Teams notification option is deprecated and subject to removal with the release of Watchtower v2:
 
-- [`notification-msteams-hook`](../../../configuration/notifications/#microsoft_teams_hook)
+- [`notification-msteams-hook`](../../../configuration/notifications/#microsoft-teams-hook)
 
-Use the [`notification-url`](../../../configuration/notifications/#notification_url) configuration option with a `teams://` Shoutrrr URL instead.
+Use the [`notification-url`](../../../configuration/notifications/#notification-url) configuration option with a `teams://` Shoutrrr URL instead.
 
 {{< /callout >}}
 

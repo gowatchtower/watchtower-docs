@@ -28,7 +28,7 @@ Environment Variable: WATCHTOWER_NOTIFICATION_TEMPLATE_FILE
              Default: (empty)
 ```
 
-When both the [`notification-template`](#notification_template) and [`notification-template-file`](#notification_template_file) configuration options are specified, the file-based template takes precedence over the inline template.
+When both the [`notification-template`](#notification-template) and [`notification-template-file`](#notification-template-file) configuration options are specified, the file-based template takes precedence over the inline template.
 
 #### Examples
 
@@ -77,11 +77,11 @@ Environment Variable: WATCHTOWER_NOTIFICATION_REPORT
              Default: false
 ```
 
-The template is a [Go template](https://golang.org/pkg/text/template/) that processes either a list of log entries (`Message`, `Data`, `Level`, `Time`) captured from [zerolog](https://pkg.go.dev/github.com/rs/zerolog) events or a `notifications.Data` struct, depending on the [`notification-report`](#notification_report) configuration option.
+The template is a [Go template](https://golang.org/pkg/text/template/) that processes either a list of log entries (`Message`, `Data`, `Level`, `Time`) captured from [zerolog](https://pkg.go.dev/github.com/rs/zerolog) events or a `notifications.Data` struct, depending on the [`notification-report`](#notification-report) configuration option.
 
 ### Named Templates
 
-Pass one of these names to [`notification-template`](#notification_template) instead of an inline template string:
+Pass one of these names to [`notification-template`](#notification-template) instead of an inline template string:
 
 | Name                          | Purpose                                   |
 |-------------------------------|-------------------------------------------|
@@ -97,7 +97,7 @@ Available template functions: `ToUpper`, `ToLower`, `ToJSON`, `ToPorcelainJSON`,
 
 ## Simple Templates
 
-Simple templates are used when the [`notification-report`](#notification_report) configuration option is not set, formatting individual log entries as they occur.
+Simple templates are used when the [`notification-report`](#notification-report) configuration option is not set, formatting individual log entries as they occur.
 
 ```go
 {{- range $i, $e := . -}}
@@ -186,7 +186,7 @@ Found new image: repo/image:latest (abcdef123456)
 
 ## Report Templates
 
-When the [`notification-report`](#notification_report) configuration option is set, the template processes a `notifications.Data` struct containing a session report and log entries.
+When the [`notification-report`](#notification-report) configuration option is set, the template processes a `notifications.Data` struct containing a session report and log entries.
 
 ```go
 {{- if .Report -}}

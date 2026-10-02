@@ -9,7 +9,7 @@ weight: 10
 
 Deprecated configuration options will be removed with the release of Watchtower v2.
 
-Use the the [`NOTIFICATION URL`](#notification_url) with the appropriate Shoutrrr URL scheme instead.
+Use the the [`NOTIFICATION URL`](#notification-url) with the appropriate Shoutrrr URL scheme instead.
 
 {{< /callout >}}
 
@@ -36,7 +36,7 @@ To send notifications to multiple services simultaneously, you can:
 - Use comma-separated URLs: `--notification-url="discord://xxx,telegram://yyy"`
 - Specify the flag multiple times: `--notification-url=discord://xxx --notification-url=telegram://yyy`
 
-See [Configuring Multiple Notification URLs](../../notifications/introduction/#using_multiple_notification_services) for detailed examples.
+See [Configuring Multiple Notification URLs](../../notifications/introduction/#using-multiple-notification-services) for detailed examples.
 
 {{< /callout >}}
 
@@ -90,7 +90,7 @@ Specifies the path to a file containing the Shoutrrr text/template for notificat
 ```
 
 {{< callout type="info" >}}
-If both the [`notification-template`](#notification_template) and [`notification-template-file`](#notification_template_file) configuration options are specified, then the file-based template takes precedence over the inline template.
+If both the [`notification-template`](#notification-template) and [`notification-template-file`](#notification-template-file) configuration options are specified, then the file-based template takes precedence over the inline template.
 
 {{< /callout >}}
 

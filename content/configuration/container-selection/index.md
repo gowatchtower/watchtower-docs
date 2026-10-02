@@ -71,7 +71,7 @@ Environment Variable: WATCHTOWER_DISABLE_CONTAINERS
 ```
 
 {{< callout type="info" >}}
-Regex patterns are supported. See [Regex Pattern Matching](../../getting-started/container-selection/#regex_pattern_matching) for details.
+Regex patterns are supported. See [Regex Pattern Matching](../../getting-started/container-selection/#regex-pattern-matching) for details.
 
 {{< /callout >}}
 
@@ -133,7 +133,7 @@ Environment Variable: WATCHTOWER_MONITOR_IMAGE_NAMES
 {{< callout type="info" >}}
 Image name patterns include the tag (for example `nginx:latest`).
 Regex patterns are supported and anchored to the **full** image name.
-See [Regex Pattern Matching](../../getting-started/container-selection/#regex_pattern_matching)
+See [Regex Pattern Matching](../../getting-started/container-selection/#regex-pattern-matching)
 for details.
 
 {{< /callout >}}
@@ -152,7 +152,7 @@ Environment Variable: WATCHTOWER_SKIP_IMAGE_NAMES
 {{< callout type="info" >}}
 Image name patterns include the tag (for example `nginx:latest`).
 Regex patterns are supported and anchored to the **full** image name.
-See [Regex Pattern Matching](../../getting-started/container-selection/#regex_pattern_matching)
+See [Regex Pattern Matching](../../getting-started/container-selection/#regex-pattern-matching)
 for details.
 
 {{< /callout >}}
@@ -212,7 +212,7 @@ For more information on Watchtower's handling of linked containers, please refer
 
 {{< callout type="warning" >}}
 Rolling restarts are not supported when any container has linked dependencies (including Docker Compose `depends_on`, Watchtower `depends-on` labels, Docker links, or network mode dependencies).
-When [`rolling-restart`](../../configuration/update-behavior/#rolling_restart) is enabled, the [`use-compose-depends-on`](../../configuration/container-selection/#use_docker_compose_depends-on) configuration option controls whether Docker Compose `depends_on` labels are included in the dependency validation check.
+When [`rolling-restart`](../../configuration/update-behavior/#rolling-restart) is enabled, the [`use-compose-depends-on`](../../configuration/container-selection/#use-docker-compose-depends-on) configuration option controls whether Docker Compose `depends_on` labels are included in the dependency validation check.
 
 {{< /callout >}}
 
@@ -220,7 +220,7 @@ When [`rolling-restart`](../../configuration/update-behavior/#rolling_restart) i
 
 Copies named files from the old container into the replacement container during an update.
 
-This is a per-container label, not a Watchtower process option. Set [`com.centurylinklabs.watchtower.copy-file`](../../getting-started/container-selection/#container_labels) to a comma-separated list of absolute paths inside the container.
+This is a per-container label, not a Watchtower process option. Set [`com.centurylinklabs.watchtower.copy-file`](../../getting-started/container-selection/#container-labels) to a comma-separated list of absolute paths inside the container.
 
 Use this for [Docker Compose configs](https://docs.docker.com/reference/compose-file/configs/) that use `content:` or `environment:`. Compose `file:` configs are bind-mounts and are already preserved.
 

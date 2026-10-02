@@ -12,7 +12,7 @@ Enabling TLS ensures that all API requests, including authenticated ones, are pr
 {{< callout type="warning" >}}
 **Using the HTTP API without TLS encryption is insecure and not recommended!**
 
-See the [HTTP API overview](../../overview/#security_considerations) for important security guidance.
+See the [HTTP API overview](../../overview/#security-considerations) for important security guidance.
 
 {{< /callout >}}
 
@@ -20,8 +20,8 @@ See the [HTTP API overview](../../overview/#security_considerations) for importa
 
 TLS is enabled by providing both of the following configuration options:
 
-- [HTTP API TLS Certificate](../../../configuration/http-api/#http_api_tls_certificate): Path (inside the container) to the TLS certificate file (PEM format).
-- [HTTP API TLS Key](../../../configuration/http-api/#http_api_tls_key): Path (inside the container) to the TLS private key file (PEM format).
+- [HTTP API TLS Certificate](../../../configuration/http-api/#http-api-tls-certificate): Path (inside the container) to the TLS certificate file (PEM format).
+- [HTTP API TLS Key](../../../configuration/http-api/#http-api-tls-key): Path (inside the container) to the TLS private key file (PEM format).
 
 Both options must be set together.
 The server will use HTTPS when both are provided.
@@ -144,7 +144,7 @@ curl -k -H "Authorization: Bearer your-secure-token" https://localhost:8080/v1/m
 
 ## Important Considerations
 
-- The listening [HTTP API Port](../../../configuration/http-api/#http_api_port) remains the same; only the protocol changes to HTTPS.
+- The listening [HTTP API Port](../../../configuration/http-api/#http-api-port) remains the same; only the protocol changes to HTTPS.
 - All endpoints (including unauthenticated health probes) are served over HTTPS when TLS is enabled.
 - [Authentication](../authentication/) is still required for protected endpoints.
 - Ensure certificate files are mounted read-only (`:ro`) where possible.

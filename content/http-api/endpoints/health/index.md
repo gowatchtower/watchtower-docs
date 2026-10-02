@@ -4,7 +4,7 @@ weight: 6
 ---
 ## Overview
 
-Watchtower provides three health probe endpoints. Include `health` in [`http-api-endpoints`](../../../configuration/http-api/#http_api_endpoints) to enable them.
+Watchtower provides three health probe endpoints. Include `health` in [`http-api-endpoints`](../../../configuration/http-api/#http-api-endpoints) to enable them.
 
 ## Endpoints
 

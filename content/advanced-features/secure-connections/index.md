@@ -453,7 +453,7 @@ docker run -d \
 
 ### Insecure Scheme with TLS Verification
 
-When [TLS verification](#tls_verification) is enabled and the [Docker host URL](#docker_host_url) uses `http://`,  Watchtower logs the following warning:
+When [TLS verification](#tls-verification) is enabled and the [Docker host URL](#docker-host-url) uses `http://`,  Watchtower logs the following warning:
 
 {{< callout type="warning" >}}
 TLS verification is enabled but DOCKER_HOST uses insecure scheme 'http://'. Consider using 'https://' or disable TLS verification.
@@ -466,7 +466,7 @@ Possible Solutions:
 
 ### Local Socket with TLS Verification
 
-When [TLS verification](#tls_verification) is enabled and the [Docker host URL](#docker_host_url) is not configured or uses `unix://`,  Watchtower logs the following warning:
+When [TLS verification](#tls-verification) is enabled and the [Docker host URL](#docker-host-url) is not configured or uses `unix://`,  Watchtower logs the following warning:
 
 {{< callout type="warning" >}}
 TLS verification is enabled but DOCKER_HOST uses local socket 'unix://'. TLS is not applicable for local sockets; consider disabling TLS verification.
@@ -474,8 +474,8 @@ TLS verification is enabled but DOCKER_HOST uses local socket 'unix://'. TLS is 
 
 Possible Solutions:
 
-- If the [Docker host URL](#docker_host_url) is not configured, then the default `unix:///var/run/docker.sock` is used.
-- If using a local socket (i.e. `unix://`), then disable [TLS verification](#tls_verification).
+- If the [Docker host URL](#docker-host-url) is not configured, then the default `unix:///var/run/docker.sock` is used.
+- If using a local socket (i.e. `unix://`), then disable [TLS verification](#tls-verification).
 
 ### Missing TLS Certificates
 
@@ -483,7 +483,7 @@ In order for Watchtower's Docker client to connect to the Docker daemon via TLS,
 
 If the certificates are available via the host filesystem of the Watchtower container's Docker host, then this can be accomplished using [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/). Other options, such as building a custom Watchtower image with the certificates, are outside the scope of this documentation.
 
-Refer to the documentation for the [TLS Certificate Path](#tls_certificate_path) and the [examples](#examples).
+Refer to the documentation for the [TLS Certificate Path](#tls-certificate-path) and the [examples](#examples).
 
 ### Other Common Mistakes
 
@@ -515,7 +515,7 @@ Docker socket proxies provide a security layer between applications and the Dock
 
 While this documentation focuses on TLS-based connections, socket proxies represent another approach for securing Docker daemon access in environments where full socket exposure is undesirable.
 
-Refer to the documentation for the [Docker Host URL](#docker_host_url) to connect Watchtower to a Docker socket proxy.
+Refer to the documentation for the [Docker Host URL](#docker-host-url) to connect Watchtower to a Docker socket proxy.
 
 The following projects are examples of Docker socket proxies:
 

@@ -3,7 +3,7 @@ title: Running Multiple Instances
 weight: 8
 ---
 By default, Watchtower will clean up other instances within the same scope and won't allow multiple instances running on the same Docker host or swarm.
-It is possible to override this behavior by defining a [scope](../../configuration/container-selection/#scope_filter) to each running instance.
+It is possible to override this behavior by defining a [scope](../../configuration/container-selection/#scope-filter) to each running instance.
 
 {{< callout type="info" >}}
 - Multiple instances can't run with the same scope.
