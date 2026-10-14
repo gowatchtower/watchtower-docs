@@ -18,6 +18,7 @@ Environment Variable: WATCHTOWER_SCHEDULE
 {{< callout type="info" >}}
 - Cannot be used with the [`interval`](#interval) configuration option.
 - Requires a time zone set via `TZ` or a mounted `/etc/localtime` file. See [Time Zone](#time-zone).
+- Shared registry buckets, such as GHCR's for `lscr.io/linuxserver/*` images, are empty for the first minute or two of every hour. Pick a minute away from `:00`, for example `0 17 3 * * *`. See [GitHub Container Registry](../../advanced-features/image-cooldown/#github-container-registry-ghcrio).
 
 {{< /callout >}}
 

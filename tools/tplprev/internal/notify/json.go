@@ -84,21 +84,44 @@ func marshalReports(reports []report.ContainerReport) []jsonMap {
 			jsonReports[i]["error"] = errorMessage
 		}
 
-		for key, value := range map[string]string{
-			"gitRepo":              report.GitRepo(),
-			"gitRef":               report.GitRef(),
-			"changelog":            report.Changelog(),
-			"ociSource":            report.Source(),
-			"imageUrl":             report.ImageURL(),
-			"documentation":        report.Documentation(),
-			"currentImageVersion":  report.CurrentImageVersion(),
-			"latestImageVersion":   report.LatestImageVersion(),
-			"currentImageRevision": report.CurrentImageRevision(),
-			"latestImageRevision":  report.LatestImageRevision(),
-		} {
-			if value != "" {
-				jsonReports[i][key] = value
-			}
+		if gitRepo := report.GitRepo(); gitRepo != "" {
+			jsonReports[i]["gitRepo"] = gitRepo
+		}
+
+		if gitRef := report.GitRef(); gitRef != "" {
+			jsonReports[i]["gitRef"] = gitRef
+		}
+
+		if changelog := report.Changelog(); changelog != "" {
+			jsonReports[i]["changelog"] = changelog
+		}
+
+		if source := report.Source(); source != "" {
+			jsonReports[i]["ociSource"] = source
+		}
+
+		if imageURL := report.ImageURL(); imageURL != "" {
+			jsonReports[i]["imageUrl"] = imageURL
+		}
+
+		if documentation := report.Documentation(); documentation != "" {
+			jsonReports[i]["documentation"] = documentation
+		}
+
+		if currentRevision := report.CurrentImageRevision(); currentRevision != "" {
+			jsonReports[i]["currentImageRevision"] = currentRevision
+		}
+
+		if latestRevision := report.LatestImageRevision(); latestRevision != "" {
+			jsonReports[i]["latestImageRevision"] = latestRevision
+		}
+
+		if currentVersion := report.CurrentImageVersion(); currentVersion != "" {
+			jsonReports[i]["currentImageVersion"] = currentVersion
+		}
+
+		if latestVersion := report.LatestImageVersion(); latestVersion != "" {
+			jsonReports[i]["latestImageVersion"] = latestVersion
 		}
 	}
 

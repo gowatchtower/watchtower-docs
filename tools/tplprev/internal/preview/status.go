@@ -6,25 +6,25 @@ var _ report.ContainerReport = (*containerStatus)(nil)
 
 //nolint:errname // containerStatus is not an error type. It contains an error field.
 type containerStatus struct {
-	containerID    report.ContainerID
-	oldImage       report.ImageID
-	newImage       report.ImageID
-	containerName  string
-	imageName      string
-	containerError error
-	state          State
-	monitorOnly    bool
-	newContainerID report.ContainerID
-	gitRepo        string
-	gitRef         string
-	changelog      string
-	source         string
-	imageURL       string
-	documentation  string
-	currentVersion string
-	latestVersion  string
-	currentRev     string
-	latestRev      string
+	containerID          report.ContainerID
+	oldImage             report.ImageID
+	newImage             report.ImageID
+	containerName        string
+	imageName            string
+	containerError       error
+	state                State
+	monitorOnly          bool
+	newContainerID       report.ContainerID
+	gitRepo              string
+	gitRef               string
+	changelog            string
+	source               string
+	imageURL             string
+	documentation        string
+	currentImageVersion  string
+	latestImageVersion   string
+	currentImageRevision string
+	latestImageRevision  string
 }
 
 func (u *containerStatus) ID() report.ContainerID {
@@ -92,17 +92,17 @@ func (u *containerStatus) Documentation() string {
 }
 
 func (u *containerStatus) CurrentImageVersion() string {
-	return u.currentVersion
+	return u.currentImageVersion
 }
 
 func (u *containerStatus) LatestImageVersion() string {
-	return u.latestVersion
+	return u.latestImageVersion
 }
 
 func (u *containerStatus) CurrentImageRevision() string {
-	return u.currentRev
+	return u.currentImageRevision
 }
 
 func (u *containerStatus) LatestImageRevision() string {
-	return u.latestRev
+	return u.latestImageRevision
 }

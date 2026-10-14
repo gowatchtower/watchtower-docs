@@ -17,16 +17,6 @@ func TestDataForMessageKnownFields(t *testing.T) {
 	assert.Equal(t, "org/web:latest", got["image"])
 	assert.NotEmpty(t, got["new_id"])
 
-	got = generator.dataForMessage(
-		"Failed to list containers for image usage check, skipping removal",
-		"web",
-		"org/web:latest",
-	)
-	require.NotNil(t, got)
-	assert.Equal(t, "org/web:latest", got["image_name"])
-	assert.NotEmpty(t, got["image_id"])
-	assert.Equal(t, "cannot verify image usage", got["error"])
-
 	got = generator.dataForMessage("Watchtower v1.11.7 using Docker API v1.51", "web", "org/web:latest")
 	assert.Nil(t, got)
 

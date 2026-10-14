@@ -206,6 +206,11 @@ Watchtower can filter containers based on their container name using [Go regex p
 Pass container names as positional arguments to Watchtower.
 When provided, only containers matching at least one name are monitored.
 
+{{< callout type="warning" >}}
+- Dependencies on containers that are not named are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
+
+{{< /callout >}}
+
 {{< tabs >}}
 
 {{< tab name="Docker Compose" >}}
