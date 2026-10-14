@@ -83,33 +83,22 @@ type porcelainReport struct {
 }
 
 // toPorcelainJSON marshals a report.Report to an indented JSON string for templates.
-//
-// Nil reports produce a valid document with an empty containers array. Values
-// that are not a report.Report produce an error string instead of JSON.
-//
-// Parameters:
-//   - value: Source report or nil.
-//
-// Returns:
-//   - string: Indented porcelain JSON, or an error message if marshaling fails.
-func toPorcelainJSON(value any) string {
-	if value == nil {
-		return `{
-  "containers": []
-}`
+// If marshaling fails, it returns an error message as the string.
+func toPorcelainJSON(v any) string {
+	if v == nil {
+		return "{\n  \"containers\": []\n}"
 	}
 
-	sourceReport, ok := value.(report.Report)
+	sourceReport, ok := v.(report.Report)
 	if !ok {
 		return "failed to marshal porcelain JSON: input is not a report.Report"
 	}
 
-	allContainers := sourceReport.All()
-	output := porcelainReport{
-		Containers: make([]porcelainContainer, 0, len(allContainers)),
+	report := porcelainReport{
+		Containers: make([]porcelainContainer, 0, len(sourceReport.All())),
 	}
 
-	for _, containerReport := range allContainers {
+	for _, containerReport := range sourceReport.All() {
 		container := porcelainContainer{
 			Name:            containerReport.Name(),
 			Image:           containerReport.ImageName(),
@@ -122,10 +111,10 @@ func toPorcelainJSON(value any) string {
 			container.Error = err
 		}
 
-		output.Containers = append(output.Containers, container)
+		report.Containers = append(report.Containers, container)
 	}
 
-	bytes, err := json.MarshalIndent(output, "", "  ")
+	bytes, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {
 		return fmt.Sprintf("failed to marshal porcelain JSON: %v", err)
 	}

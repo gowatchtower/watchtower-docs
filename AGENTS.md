@@ -47,7 +47,7 @@ Cloudflare Pages (`main`):
 
 ## Theme and layouts
 
-Theme is `github.com/imfing/hextra` v0.12.3 via Hugo Modules. `themes/` is unused — do not add files there.
+Theme is `github.com/imfing/hextra` v0.13.0 via Hugo Modules. `themes/` is unused — do not add files there.
 
 Hugo 0.146+ layout paths use underscore prefixes. Overrides belong here, not under `themes/`:
 

@@ -182,14 +182,18 @@ body {
 }
 
 /* Search */
-.hextra-search-input {
-  background-color: var(--wt-bg-soft) !important;
+.hextra-search-dialog {
+  background-color: var(--wt-bg-elevated) !important;
+  border-color: var(--wt-border) !important;
   color: var(--wt-fg) !important;
 }
 
-.hextra-search-results {
-  background-color: var(--wt-bg-elevated) !important;
+.hextra-search-input-wrapper {
   border-color: var(--wt-border) !important;
+}
+
+.hextra-search-input {
+  color: var(--wt-fg) !important;
 }
 
 /* TOC sticky bottom (Edit this page / Scroll to top)

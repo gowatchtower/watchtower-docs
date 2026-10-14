@@ -59,6 +59,11 @@ When `--label-enable` is set, only containers with `true` are monitored, ignorin
 
 {{< /callout >}}
 
+{{< callout type="warning" >}}
+- Dependencies on excluded containers are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
+
+{{< /callout >}}
+
 ## Disable Specific Containers
 
 Excludes containers by container name from monitoring, even if they have the enable label set to `true`.
@@ -72,6 +77,11 @@ Environment Variable: WATCHTOWER_DISABLE_CONTAINERS
 
 {{< callout type="info" >}}
 Regex patterns are supported. See [Regex Pattern Matching](../../getting-started/container-selection/#regex-pattern-matching) for details.
+
+{{< /callout >}}
+
+{{< callout type="warning" >}}
+- Dependencies on excluded containers are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
 
 {{< /callout >}}
 
@@ -98,6 +108,11 @@ A non-empty value requires an exact match.
 
 {{< /callout >}}
 
+{{< callout type="warning" >}}
+- Dependencies on excluded containers are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
+
+{{< /callout >}}
+
 ## Disable Containers by Label
 
 Excludes containers that have any of the specified label key-value pairs from monitoring.
@@ -116,6 +131,11 @@ Values containing commas are not supported. Use individual `key=value` pairs sep
 
 {{< callout type="info" >}}
 A label entry with an empty value (`key=`) performs a presence check: the label must exist on the container with any value. A non-empty value requires an exact match.
+
+{{< /callout >}}
+
+{{< callout type="warning" >}}
+- Dependencies on excluded containers are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
 
 {{< /callout >}}
 
@@ -138,6 +158,11 @@ for details.
 
 {{< /callout >}}
 
+{{< callout type="warning" >}}
+- Dependencies on excluded containers are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
+
+{{< /callout >}}
+
 ## Skip Specific Images
 
 Excludes containers by image name pattern from monitoring, even if they have the enable label set to `true`.
@@ -154,6 +179,11 @@ Image name patterns include the tag (for example `nginx:latest`).
 Regex patterns are supported and anchored to the **full** image name.
 See [Regex Pattern Matching](../../getting-started/container-selection/#regex-pattern-matching)
 for details.
+
+{{< /callout >}}
+
+{{< callout type="warning" >}}
+- Dependencies on excluded containers are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
 
 {{< /callout >}}
 
@@ -176,6 +206,11 @@ For self-updates, ensure all Watchtower containers share the same `com.centuryli
 Mismatched labels may prevent detection, leaving resources running.
 
 See [Running Multiple Instances](../../advanced-features/running-multiple-instances/).
+
+{{< /callout >}}
+
+{{< callout type="warning" >}}
+- Dependencies on excluded containers are ignored. See [Dependencies on Unmonitored Containers](../../advanced-features/linked-containers/#dependencies-on-unmonitored-containers).
 
 {{< /callout >}}
 

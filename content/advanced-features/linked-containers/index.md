@@ -39,9 +39,16 @@ LABEL com.centurylinklabs.watchtower.depends-on="database,redis"
 This label accepts a comma-separated list of container names that must be available before this container starts.
 This supports referencing containers from other Docker Compose projects or stacks, enabling cross-project dependency management.
 
+An entry may also name a Docker Compose service, such as `db` or `my-database`, or a project-qualified service, such as `myproject-db`.
+A service name resolves to every replica of that service.
+
+A service name used in more than one Compose project, such as `db`, resolves to the service in the labeled container's own project when that project has one.
+Otherwise it resolves to the service in every project that has it, so the container restarts when any of them is updated.
+When the service in its own project is unmonitored, the entry is left alone instead (see [Dependencies on Unmonitored Containers](#dependencies-on-unmonitored-containers)).
+Use the container name or a project-qualified service name, such as `myproject-db`, to depend on only one of them.
+
 {{< callout type="warning" >}}
-Use unique, non-ambiguous source container names both in the Docker Compose configuration and when specifying dependencies in the `com.centurylinklabs.watchtower.depends-on` label to ensure correct dependency resolution and behavior across Docker Compose projects/stacks.
-Ambiguous names can lead to warnings and skipped updates to prevent non-deterministic behavior.
+An entry that names no container is ignored and logged as a warning.
 
 {{< /callout >}}
 
@@ -99,12 +106,12 @@ docker run --network container:database nginx
 Watchtower uses topological sorting to determine the correct update order. This algorithm:
 
 - Builds a dependency graph from all detected relationships
-- Detects cycles (failing with a circular dependency error)
+- Detects cycles and sets aside every container in one
 - Produces a linear ordering where dependencies precede dependents
 
 {{< callout type="warning" >}}
-Circular dependencies between containers will cause the update process to fail with an error.
-Ensure your dependency graph is acyclic.
+Containers in a circular dependency are skipped and reported as skipped, while the rest of the update continues.
+Ensure your dependency graph is acyclic so those containers are updated.
 
 {{< /callout >}}
 
@@ -122,6 +129,24 @@ This ensures that:
 
 - Dependent services are stopped before their dependencies change
 - Dependencies are fully restarted before dependents attempt to connect
+
+### Restarting Dependent Containers
+
+When a container is updated, Watchtower also restarts the containers that depend on it, directly or through other restarted containers, without updating their images.
+Dependents are found with the same dependency graph that orders the update, so the containers restarted and the update order always agree.
+
+- A Watchtower container restarts when a container it depends on restarts, such as a VPN container it shares a network with.
+- A container that names a Watchtower container exactly, by container name or ID, restarts when that Watchtower container is updated. The name without its replica number (such as `infra-watchtower` for `infra-watchtower-1`) also works when exactly one Watchtower container has it, so it names nothing when the service runs several replicas.
+- Containers in a circular dependency are neither updated nor restarted.
+
+### Dependencies on Unmonitored Containers
+
+A container that Watchtower does not monitor is left alone, including when a monitored container depends on it.
+Containers are excluded from monitoring by the [container selection](../../configuration/container-selection/) options, such as the enable label, the disable lists, image filters, and scopes.
+
+- A dependency on an unmonitored container is ignored when ordering updates and restarting dependents.
+- A dependency that names an unmonitored container exactly never resolves to a different, monitored container with a similar name.
+- A service name whose service in the container's own Compose project is unmonitored never resolves to the same service in another project.
 
 ## Configuration
 
@@ -395,14 +420,30 @@ The `sidecar` container is treated as dependent on `main-app`, ensuring proper u
 
 ### Common Issues
 
-#### Updates Failing Due to Circular Dependencies
+Watchtower reports each of the following dependency problems once per container.
+The first scan that finds a problem logs and notifies it as a warning.
+Later scans log it at debug level.
+Every scan still skips a container that depends on itself or sits in a circular dependency, and lists it as skipped in the session report.
+A depends-on entry that names no container is only ignored, and its container is still checked and updated.
+A recreated container or a restart of Watchtower reports the problem again.
 
-{{< callout type="error" >}}
-If you see "circular reference detected" errors, check your dependency declarations for cycles.
+#### Containers Skipped Due to Circular Dependencies
+
+{{< callout type="warning" >}}
+If you see "Skipping container update (circular dependency)" warnings, check your dependency declarations for cycles.
 
 {{< /callout >}}
 
 **Solution**: Review and remove circular dependencies. For example, if A depends on B and B depends on A, remove one of the dependencies or restructure your services.
+
+#### Ignored Depends-On Entries
+
+{{< callout type="warning" >}}
+If you see "Ignoring depends-on entry that names no container" warnings, the named `com.centurylinklabs.watchtower.depends-on` entry matched no container.
+
+{{< /callout >}}
+
+**Solution**: Use the exact container name, a Compose service name, or a project-qualified service name such as `myproject-db`.
 
 #### Containers Not Updating in Expected Order
 

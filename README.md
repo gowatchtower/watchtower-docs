@@ -39,7 +39,7 @@ Output is written to `public/`.
 
 Hugo Modules require Go on the build image.
 Cloudflare Pages provides Go by default for Hugo projects.
-If module fetch fails, set `GO_VERSION` (e.g. `1.26.x`) in the project environment variables.
+If module fetch fails, set `GO_VERSION` (e.g. `1.27.x`) in the project environment variables.
 
 Custom domain: `gowatchtower.org` (configure in Cloudflare Pages → Custom domains).
 
