@@ -43,7 +43,7 @@ Cloudflare Pages (`main`):
 
 - Build: `hugo mod get && hugo --gc --minify`
 - Output: `public`
-- `HUGO_VERSION=0.164.0` (Extended). Go is needed for module fetch; set `GO_VERSION` if fetch fails.
+- `HUGO_VERSION=0.167.0` (Extended). Go is needed for module fetch; set `GO_VERSION` if fetch fails.
 
 ## Versioning
 
@@ -53,7 +53,7 @@ Versioned docs use mike's layout: each version in its own directory (`nightly/`,
 - `scripts/publish-version.sh --tree DIR --version V --base-url URL [--alias latest] [--replaces OLD]` builds this checkout into `DIR/V/` and updates `DIR/versions.json`. With `--alias`, it moves the alias to V and builds a second full copy into `DIR/<alias>/`. With `--replaces`, it removes OLD's directory and entry and moves OLD's aliases to V. It replaces `mike deploy`.
 - `scripts/build-preview.sh` (`task preview:build`, then `task preview:serve` on <http://localhost:1314/>) assembles the legacy tree plus this checkout as `nightly` into `public/`. `nightly` replaces the legacy rolling `dev` build.
 
-The experimental `feat/hugh` branch is built by its own Cloudflare Pages project. That project uses production branch `feat/hugh`, build command `./scripts/build-preview.sh`, output `public`, and `HUGO_VERSION=0.164.0`.
+The experimental `feat/hugh` branch is built by its own Cloudflare Pages project. That project uses production branch `feat/hugh`, build command `./scripts/build-preview.sh`, output `public`, and `HUGO_VERSION=0.167.0`.
 
 ## Theme and layouts
 

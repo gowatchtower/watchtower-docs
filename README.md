@@ -35,7 +35,7 @@ Output is written to `public/`.
 | Production branch      | `main`                                                   |
 | Build command          | `hugo mod get && hugo --gc --minify`                     |
 | Build output directory | `public`                                                 |
-| Environment variable   | `HUGO_VERSION` = `0.164.0` (or current Extended release) |
+| Environment variable   | `HUGO_VERSION` = `0.167.0` (or current Extended release) |
 
 Hugo Modules require Go on the build image.
 Cloudflare Pages provides Go by default for Hugo projects.
@@ -71,7 +71,7 @@ The experimental `feat/hugh` branch is built by its own Cloudflare Pages project
 | Production branch      | `feat/hugh`                  |
 | Build command          | `./scripts/build-preview.sh` |
 | Build output directory | `public`                     |
-| Environment variable   | `HUGO_VERSION` = `0.164.0`   |
+| Environment variable   | `HUGO_VERSION` = `0.167.0`   |
 
 ## Content layout
 
