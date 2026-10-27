@@ -462,3 +462,13 @@ pre.mermaid svg {
 pre.mermaid .node :is(rect, polygon, path, circle, ellipse) {
   filter: none !important;
 }
+
+/* Version selector: alias badges such as "latest" beside a version title. */
+.wt-version-alias {
+  margin-inline-start: 0.5rem;
+  padding: 0 0.375rem;
+  border-radius: 0.25rem;
+  background-color: var(--wt-bg-elevated);
+  color: var(--wt-fg-muted);
+  font-size: 0.75rem;
+}

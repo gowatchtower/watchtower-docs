@@ -43,6 +43,36 @@ If module fetch fails, set `GO_VERSION` (e.g. `1.27.x`) in the project environme
 
 Custom domain: `gowatchtower.org` (configure in Cloudflare Pages → Custom domains).
 
+## Versioned docs
+
+Versioned docs follow mike's layout, so legacy MkDocs builds and Hugo builds share one site.
+Each version lives in its own directory (`nightly/`, `v1.24.0/`, `latest/`).
+A `versions.json` at the site root lists them, and the version selectors on both kinds of page read it.
+
+`scripts/publish-version.sh` builds this checkout as one version and records it in `versions.json`:
+
+```bash
+./scripts/publish-version.sh --tree public --version v1.24.0 --base-url https://watchtower.nickfedor.com --alias latest
+```
+
+To preview the legacy versions together with this checkout as `nightly`, which replaces the legacy rolling `dev` build:
+
+```bash
+task preview:build
+task preview:serve
+```
+
+Open <http://localhost:1314/>
+
+The experimental `feat/hugh` branch is built by its own Cloudflare Pages project:
+
+| Setting                | Value                        |
+|------------------------|------------------------------|
+| Production branch      | `feat/hugh`                  |
+| Build command          | `./scripts/build-preview.sh` |
+| Build output directory | `public`                     |
+| Environment variable   | `HUGO_VERSION` = `0.164.0`   |
+
 ## Content layout
 
 Documentation lives under `content/` with URL paths matching the legacy MkDocs site (no `/docs/` prefix):

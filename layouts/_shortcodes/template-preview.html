@@ -1,2 +1,6 @@
+{{- /* Asset URLs go through relURL so the preview works when the site is served from a subpath such as /nightly/. */ -}}
+<link rel="stylesheet" href="{{ "template-preview/styles.css" | relURL }}">
+<script src="{{ "wasm_exec.js" | relURL }}"></script>
+<script src="{{ "template-preview/script.js" | relURL }}" data-wasm-url="{{ "tplprev.wasm" | relURL }}"></script>
 {{- $html := readFile "static/template-preview/form.html" -}}
 {{- $html | safeHTML -}}

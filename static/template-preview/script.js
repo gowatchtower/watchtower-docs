@@ -9,6 +9,8 @@
   // This variable determines which tab's content is displayed in the preview area
   let debounce; // Variable to store the debounce timeout ID, used to throttle frequent updates
   // Debouncing prevents excessive calls to updatePreview during rapid input changes
+  const wasmURL = document.currentScript.dataset.wasmUrl; // URL of tplprev.wasm, set by the template-preview shortcode
+  // The shortcode resolves it against the site's base URL, so the preview works when the site is served from a subpath
 
   // Helper Functions Section
   // Collection of utility functions to simplify DOM queries and improve code reusability
@@ -281,7 +283,7 @@
   // Executes when the script loads to set up the WASM environment
   const go = new Go(); // Create Go runtime instance
   WebAssembly.instantiateStreaming(
-    fetch("/tplprev.wasm"),
+    fetch(wasmURL),
     go.importObject
   )
     .then((result) => {

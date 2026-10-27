@@ -45,6 +45,16 @@ Cloudflare Pages (`main`):
 - Output: `public`
 - `HUGO_VERSION=0.164.0` (Extended). Go is needed for module fetch; set `GO_VERSION` if fetch fails.
 
+## Versioning
+
+Versioned docs use mike's layout: each version in its own directory (`nightly/`, `v1.24.0/`, `latest/`) beside a `versions.json` of `{version, title, aliases}` entries. Legacy MkDocs builds from the `gh-pages` branch of `nicholas-fedor/watchtower` sit in the same tree unchanged. Their Material selector and this site's selector both read `../versions.json` and link to `../<version>/`, so each lists every version.
+
+- `params.versioning.version` names the version a build is published as. It is empty by default, which hides the selector, and is set through `HUGO_PARAMS_VERSIONING_VERSION`.
+- `scripts/publish-version.sh --tree DIR --version V --base-url URL [--alias latest] [--replaces OLD]` builds this checkout into `DIR/V/` and updates `DIR/versions.json`. With `--alias`, it moves the alias to V and builds a second full copy into `DIR/<alias>/`. With `--replaces`, it removes OLD's directory and entry and moves OLD's aliases to V. It replaces `mike deploy`.
+- `scripts/build-preview.sh` (`task preview:build`, then `task preview:serve` on <http://localhost:1314/>) assembles the legacy tree plus this checkout as `nightly` into `public/`. `nightly` replaces the legacy rolling `dev` build.
+
+The experimental `feat/hugh` branch is built by its own Cloudflare Pages project. That project uses production branch `feat/hugh`, build command `./scripts/build-preview.sh`, output `public`, and `HUGO_VERSION=0.164.0`.
+
 ## Theme and layouts
 
 Theme is `github.com/imfing/hextra` v0.13.0 via Hugo Modules. `themes/` is unused — do not add files there.
@@ -52,9 +62,11 @@ Theme is `github.com/imfing/hextra` v0.13.0 via Hugo Modules. `themes/` is unuse
 Hugo 0.146+ layout paths use underscore prefixes. Overrides belong here, not under `themes/`:
 
 - `layouts/_shortcodes/` — site shortcodes
-- `layouts/_partials/` — Hextra overrides (`custom/head-end.html`, `components/page-context-menu.html`)
+- `layouts/_partials/` — Hextra overrides (`custom/head-end.html`, `components/page-context-menu.html`, `navbar-title.html`)
 - `layouts/hextra-home.html` — homepage layout (`content/_index.md` sets `layout: hextra-home`)
 - `assets/css/custom.css` — Hextra auto-loads this; site is **dark-only** (`params.theme.displayToggle: false`). Do not add a light theme or toggle.
+
+`navbar-title.html` copies Hextra's partial and adds the version selector (`assets/js/version-selector.js`). The selector reuses Hextra's `hextra-language-switcher` and `hextra-language-options` classes, so the theme's `lang.js` drives the menu. Recheck both after a Hextra upgrade.
 
 `markup.goldmark.renderer.unsafe: true` is required for raw HTML on the homepage.
 
@@ -70,6 +82,8 @@ Legacy MkDocs URL paths: **no `/docs/` prefix**. Pages are bundles:
 New top-level sections need all three: `content/<section>/_index.md`, a `menu.main` entry in `hugo.yaml`, and a card on `content/_index.md`.
 
 Prefer Hextra shortcodes with `{{< >}}`: `tabs`/`tab`, `callout`, `cards`/`card`. Nested tabs are used (see `content/quickstart/`).
+
+Versioned builds are served from a subpath such as `/nightly/`, so links and asset URLs must not start with `/`. Use relative links in content and shortcode parameters (`link="quickstart/"`), and `relURL` without a leading slash in templates. Hugo's `relURL` leaves a path that starts with `/` relative to the host root.
 
 ## Product references
 

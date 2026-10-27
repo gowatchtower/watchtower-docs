@@ -1,0 +1,53 @@
+{{- /* Hextra's navbar title with a version selector beside it. The selector reuses Hextra's language-switcher classes, so the theme's lang.js opens, positions, and closes the menu. */ -}}
+{{- $logoPath := .Site.Params.navbar.logo.path | default "images/logo.svg" -}}
+{{- $logoLink := .Site.Params.navbar.logo.link | default .Site.Home.RelPermalink -}}
+{{- $logoWidth := .Site.Params.navbar.logo.width | default "20" -}}
+{{- $logoHeight := .Site.Params.navbar.logo.height | default "20" -}}
+{{- $logoDarkPath := .Site.Params.navbar.logo.dark | default $logoPath -}}
+
+<div class="hx:flex hx:items-center hx:ltr:mr-auto hx:rtl:ml-auto">
+  <a class="hx:flex hx:items-center hx:hover:opacity-75" href="{{ $logoLink }}">
+    {{- $displayTitle := (.Site.Params.navbar.displayTitle | default true) }}
+    {{- if (.Site.Params.navbar.displayLogo | default true) }}
+      <img class="hx:mr-2 hx:block hx:dark:hidden" src="{{ $logoPath | relURL }}" alt="{{ cond $displayTitle `Logo` .Site.Title }}" height="{{ $logoHeight }}" width="{{ $logoWidth }}" />
+      <img class="hx:mr-2 hx:hidden hx:dark:block" src="{{ $logoDarkPath | relURL }}" alt="{{ cond $displayTitle `Dark Logo` .Site.Title }}" height="{{ $logoHeight }}" width="{{ $logoWidth }}" />
+    {{- end }}
+    {{- if $displayTitle }}
+      <span class="hx:mr-2 hx:font-extrabold hx:inline hx:select-none">{{- .Site.Title -}}</span>
+    {{- end }}
+  </a>
+
+  {{- with .Site.Params.versioning.version }}
+    {{- $changeVersion := (T "changeVersion") | default "Change version" -}}
+    {{- $script := resources.Get "js/version-selector.js" | minify | fingerprint -}}
+    <div class="wt-version-selector hx:flex" data-version="{{ . }}" data-base="{{ site.Home.RelPermalink }}">
+      <button
+        title="{{ $changeVersion }}"
+        data-state="closed"
+        data-location="top"
+        class="hextra-language-switcher hx:cursor-pointer hx:rounded-md hx:text-left hx:font-medium hx:h-7 hx:px-2 hx:text-xs hx:text-gray-600 hx:transition-colors hx:dark:text-gray-400 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-primary-100/5 hx:dark:hover:text-gray-50"
+        type="button"
+        aria-label="{{ $changeVersion }}"
+        aria-expanded="false"
+        aria-haspopup="menu"
+      >
+        <div class="hx:flex hx:items-center hx:gap-1">
+          <span class="wt-version-label">{{ . }}</span>
+          {{- partial "utils/icon.html" (dict "name" "chevron-down" "attributes" "height=12") -}}
+        </div>
+      </button>
+      <ul
+        class="hextra-language-options hx:hidden hx:z-20 hx:max-h-64 hx:overflow-auto hx:rounded-lg hx:border hx:border-gray-200 hx:bg-white hx:p-1 hx:text-sm hx:shadow-lg hx:dark:border-neutral-700 hx:dark:bg-neutral-900"
+        style="position: fixed; inset: auto auto 0px 0px; margin: 0px; min-width: 100px;"
+        role="menu"
+        aria-label="{{ $changeVersion }}"
+      ></ul>
+      <template class="wt-version-check">
+        <span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3">
+          {{- partial "utils/icon" (dict "name" "check" "attributes" "height=1em width=1em") -}}
+        </span>
+      </template>
+      <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+    </div>
+  {{- end }}
+</div>
