@@ -21,7 +21,7 @@ Sets the host interface for binding the HTTP API.
             Argument: --http-api-host
 Environment Variable: WATCHTOWER_HTTP_API_HOST
                 Type: String
-             Default: empty (binds to all interfaces)
+             Default: empty (binds to all IPv4 interfaces)
 ```
 
 {{< callout type="info" >}}

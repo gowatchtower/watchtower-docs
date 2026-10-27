@@ -62,7 +62,7 @@ docker run -d \
   -e WATCHTOWER_NOTIFICATIONS=slack \
   -e WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL="https://hooks.slack.com/services/xxx/yyyyyyyyyyyyyyy" \
   -e WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=watchtower-server-1 \
-  -e WATCHTOWER_NOTIFICATION_SLACK_CHANNEL=#my-custom-channel \
+  -e WATCHTOWER_NOTIFICATION_SLACK_CHANNEL=C0123456789 \
   nickfedor/watchtower
 ```
 
@@ -77,7 +77,7 @@ docker run -d \
   --notifications slack \
   --notification-slack-hook-url "https://hooks.slack.com/services/xxx/yyyyyyyyyyyyyyy" \
   --notification-slack-identifier watchtower-server-1 \
-  --notification-slack-channel "#my-custom-channel"
+  --notification-slack-channel "C0123456789"
 ```
 
 {{< /tab >}}
@@ -91,7 +91,7 @@ services:
       WATCHTOWER_NOTIFICATIONS: slack
       WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL: "https://hooks.slack.com/services/xxx/yyyyyyyyyyyyyyy"
       WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER: watchtower-server-1
-      WATCHTOWER_NOTIFICATION_SLACK_CHANNEL: "#my-custom-channel"
+      WATCHTOWER_NOTIFICATION_SLACK_CHANNEL: "C0123456789"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 ```
