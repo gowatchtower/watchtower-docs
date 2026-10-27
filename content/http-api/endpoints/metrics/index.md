@@ -36,6 +36,7 @@ Requests with other HTTP methods will receive a `405 Method Not Allowed` respons
 | `watchtower_containers_skipped`              | Gauge   | Number of containers skipped during the last scan                                  |
 | `watchtower_scans_total`                     | Counter | Number of scans since watchtower started                                           |
 | `watchtower_scans_skipped_total`             | Counter | Number of skipped scans since watchtower started                                   |
+| `watchtower_scans_failed_total`              | Counter | Number of scans that ended in an error since watchtower started                    |
 | `watchtower_docker_images_bytes`             | Gauge   | Docker image storage usage in bytes from the last disk-space check                 |
 | `watchtower_docker_images_reclaimable_bytes` | Gauge   | Reclaimable Docker image storage in bytes from the last disk-space check           |
 | `watchtower_disk_space_max_bytes`            | Gauge   | Configured Docker image-usage maximum in bytes (0 if unset)                        |
