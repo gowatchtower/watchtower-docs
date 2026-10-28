@@ -8,7 +8,7 @@ Root `go.mod` / `go.sum` exist only for Hugo Modules (theme pin). Do not add a r
 
 ## Commands
 
-Hugo Extended **v0.146+** required (developed on **0.164**). Fetch the theme before any build or server:
+Hugo Extended **v0.146+** required (developed on **0.167**). Fetch the theme before any build or server:
 
 ```bash
 hugo mod get
@@ -53,7 +53,7 @@ Versioned docs use mike's layout: each version in its own directory (`nightly/`,
 - `scripts/publish-version.sh --tree DIR --version V --base-url URL [--alias latest] [--replaces OLD]` builds this checkout into `DIR/V/` and updates `DIR/versions.json`. With `--alias`, it moves the alias to V and builds a second full copy into `DIR/<alias>/`. With `--replaces`, it removes OLD's directory and entry and moves OLD's aliases to V. It replaces `mike deploy`.
 - `scripts/build-preview.sh` (`task preview:build`, then `task preview:serve` on <http://localhost:1314/>) assembles the legacy tree plus this checkout as `nightly` into `public/`. `nightly` replaces the legacy rolling `dev` build.
 
-The experimental `feat/hugh` branch is built by its own Cloudflare Pages project. That project uses production branch `feat/hugh`, build command `./scripts/build-preview.sh`, output `public`, and `HUGO_VERSION=0.167.0`.
+The experimental `feat/hugh` branch deploys as a Preview branch of the same Cloudflare Pages project, at <https://feat-hugh.watchtower-docs.pages.dev/>. The project's build command picks the build by branch, so `main` keeps the command above: `if [ "$CF_PAGES_BRANCH" = "feat/hugh" ]; then ./scripts/build-preview.sh; else hugo mod get && hugo --gc --minify; fi`. Cloudflare keeps separate Production and Preview variables, so `HUGO_VERSION` is set in both.
 
 ## Theme and layouts
 
