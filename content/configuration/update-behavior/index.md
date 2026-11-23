@@ -19,10 +19,8 @@ Environment Variable: WATCHTOWER_NO_RESTART
              Default: false
 ```
 
-{{< callout type="warning" >}}
-Combining `--no-restart` with `--cleanup` during Watchtower self-update may leave a renamed Watchtower container running without starting a new one, preventing cleanup of the old image.
-
-Use cautiously for self-updating Watchtower instances and consider external lifecycle management (e.g., Docker Compose) to restart containers manually.
+{{< callout type="info" >}}
+This option does not apply to Watchtower's own container. A self-update always starts the new Watchtower container. The new instance then removes the old container. With the cleanup configuration option, it also removes the old image.
 
 {{< /callout >}}
 
@@ -116,8 +114,6 @@ Environment Variable: WATCHTOWER_CLEANUP
 
 {{< callout type="info" >}}
 During Watchtower self-updates, cleanup is deferred to the new container to prevent premature image deletion.
-
-Ensure `--no-restart` is not used with `--cleanup` to avoid incomplete updates.
 
 {{< /callout >}}
 

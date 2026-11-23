@@ -79,7 +79,7 @@ A single mirror used for Docker Hub:
 ```json
 {
     "registry-mirrors": [
-        "https://docker-mirror.company.com"
+        "https://docker-mirror.example.com"
     ]
 }
 ```
@@ -92,8 +92,8 @@ If the first is unreachable, the next is used:
 ```json
 {
     "registry-mirrors": [
-        "https://primary-mirror.company.com",
-        "https://backup-mirror.company.com"
+        "https://primary-mirror.example.com",
+        "https://backup-mirror.example.com"
     ]
 }
 ```
@@ -105,10 +105,10 @@ When using internal mirrors that may use self-signed certificates:
 ```json
 {
     "registry-mirrors": [
-        "https://harbor.internal.company.com"
+        "https://harbor.example.com"
     ],
     "insecure-registries": [
-        "harbor.internal.company.com"
+        "harbor.example.com"
     ]
 }
 ```
@@ -122,9 +122,9 @@ When using internal mirrors that may use self-signed certificates:
 
     ```bash
     docker run -d --name watchtower \
-    -e WATCHTOWER_DEBUG=true \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    nickfedor/watchtower
+      -e WATCHTOWER_DEBUG=true \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      nickfedor/watchtower
     ```
 
     Look for log output containing `Resolved registry mirror configuration`.
@@ -143,7 +143,7 @@ For mirrors using self-signed or internal CA certificates, add them to the `inse
 
 ```json
 {
-  "insecure-registries": ["internal-mirror.company.com"]
+  "insecure-registries": ["internal-mirror.example.com"]
 }
 ```
 

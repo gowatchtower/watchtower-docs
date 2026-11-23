@@ -65,7 +65,7 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
         environment:
             - WATCHTOWER_HTTP_API_ENDPOINTS=check
-            - WATCHTOWER_HTTP_API_TOKEN=your-secure-token
+            - WATCHTOWER_HTTP_API_TOKEN=API_TOKEN
         ports:
             - 8080:8080
         restart: unless-stopped
@@ -79,7 +79,7 @@ services:
 docker run -d \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=check \
-    -e WATCHTOWER_HTTP_API_TOKEN=your-secure-token \
+    -e WATCHTOWER_HTTP_API_TOKEN=API_TOKEN \
     -p 8080:8080 \
     --restart unless-stopped \
     nickfedor/watchtower
@@ -104,7 +104,7 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
         environment:
             - WATCHTOWER_HTTP_API_ENDPOINTS=update
-            - WATCHTOWER_HTTP_API_TOKEN=your-secure-token
+            - WATCHTOWER_HTTP_API_TOKEN=API_TOKEN
         ports:
             - 8080:8080
         restart: unless-stopped
@@ -118,7 +118,7 @@ services:
 docker run -d \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=update \
-    -e WATCHTOWER_HTTP_API_TOKEN=your-secure-token \
+    -e WATCHTOWER_HTTP_API_TOKEN=API_TOKEN \
     -p 8080:8080 \
     --restart unless-stopped \
     nickfedor/watchtower
@@ -143,7 +143,7 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
         environment:
             - WATCHTOWER_HTTP_API_ENDPOINTS=swagger
-            - WATCHTOWER_HTTP_API_TOKEN=your-secure-token
+            - WATCHTOWER_HTTP_API_TOKEN=API_TOKEN
         ports:
             - 8080:8080
         restart: unless-stopped
@@ -158,7 +158,7 @@ docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=swagger \
-    -e WATCHTOWER_HTTP_API_TOKEN=your-secure-token \
+    -e WATCHTOWER_HTTP_API_TOKEN=API_TOKEN \
     -p 8080:8080 \
     --restart unless-stopped \
     nickfedor/watchtower
@@ -171,6 +171,8 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace *`API_TOKEN`* with the token that clients must send to the HTTP API.
 
 ## Security considerations
 

@@ -17,6 +17,10 @@ var Templates = map[string]string{
       {{- range .Restarted}}
 - {{.Name}} ({{.ImageName}}): {{.State}}
       {{- end -}}
+      {{- /* List stale containers (newer image not applied) */ -}}
+      {{- range .Stale}}
+- {{.Name}} ({{.ImageName}}): {{.State}}
+      {{- end -}}
       {{- /* List fresh containers (no update needed) */ -}}
       {{- range .Fresh}}
 - {{.Name}} ({{.ImageName}}): {{.State}}
@@ -114,7 +118,7 @@ var Templates = map[string]string{
     Skipped {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}}: invalid git semver policy
 {{- else if eq $msg "Skipped container with an invalid git-host" -}}
     Skipped {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}}: invalid git-host
-{{- else if eq $msg "Registry rate limit retries exhausted. Container failed for this cycle" -}}
+{{- else if or (eq $msg "Registry rate limit retries exhausted. Container failed for this cycle") (eq $msg "Could not update container") -}}
     Update failed for {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}} ({{with (index $e.Data "image")}}{{.}}{{else}}unknown{{end}}){{with (index $e.Data "error")}}: {{.}}{{end}}
 {{- else if eq $msg "Ignoring depends-on entry that names no container" -}}
     Ignored depends-on {{with (index $e.Data "depends_on")}}{{.}}{{else}}entry{{end}} for {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}}: no container has that name
@@ -132,9 +136,19 @@ var Templates = map[string]string{
     Invalid post-update timeout{{with (index $e.Data "value")}} "{{.}}"{{end}} for {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}}. Using the default of 1 minute
 {{- else if eq $msg "Could not update container. Its configuration cannot be recreated" -}}
     Could not update {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}}{{with (index $e.Data "error")}}: {{.}}{{end}}
+{{- else if eq $msg "Recovered orphaned Watchtower container" -}}
+    Recovered orphaned Watchtower container: {{with (index $e.Data "container")}}{{.}}{{else}}unknown{{end}} ({{with (index $e.Data "id")}}{{.}}{{else}}unknown{{end}})
+{{- else if eq $msg "Could not start orphaned Watchtower container" -}}
+    Could not start orphaned Watchtower container: {{with (index $e.Data "container")}}{{.}}{{else}}unknown{{end}} ({{with (index $e.Data "id")}}{{.}}{{else}}unknown{{end}}){{with (index $e.Data "error")}}: {{.}}{{end}}
+{{- else if eq $msg "Starting Watchtower ephemeral self-update" -}}
+    Starting Watchtower ephemeral self-update
+{{- else if eq $msg "Failed to clean up ephemeral orchestrator after start failure" -}}
+    Could not remove ephemeral orchestrator {{with (index $e.Data "orchestrator_id")}}{{.}}{{else}}unknown{{end}} after it failed to start{{with (index $e.Data "error")}}: {{.}}{{end}}
 {{- else if eq $msg "Could not check container for updates" -}}
     Could not check {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}} for updates{{with (index $e.Data "error")}}: {{.}}{{end}}
-{{- else if or (eq $msg "Could not identify Watchtower's own container. Self-updates are disabled and old instances will not be removed") (eq $msg "Could not inspect Watchtower's own container. Self-updates are disabled") (eq $msg "Could not inspect Watchtower's own container to read its scope label. Exiting rather than running without a scope") (eq $msg "Could not disable Watchtower's restart policy. The runtime may start it again") (eq $msg "Update panicked") (eq $msg "Update execution failed") -}}
+{{- else if eq $msg "Could not pull image" -}}
+    {{with (index $e.Data "engine")}}{{.}}{{else}}The container engine{{end}} could not pull {{with (index $e.Data "image")}}{{.}}{{else}}the image{{end}} for {{with (index $e.Data "container")}}{{.}}{{else}}a container{{end}}{{with (index $e.Data "error")}}: {{.}}{{end}}
+{{- else if or (eq $msg "Could not identify Watchtower's own container. Self-updates are disabled and old instances will not be removed") (eq $msg "Could not inspect Watchtower's own container. Self-updates are disabled") (eq $msg "Could not inspect Watchtower's own container to read its scope label. Exiting rather than running without a scope") (eq $msg "Could not disable Watchtower's restart policy. The runtime may start it again") (eq $msg "Failed to build run configuration") (eq $msg "Rolling restart compatibility validation failed") (eq $msg "API setup failed") (eq $msg "Could not schedule updates") (eq $msg "Update panicked") (eq $msg "Update execution failed") -}}
     {{$msg}}{{with (index $e.Data "error")}}: {{.}}{{end}}
 {{- else if $e.Data -}}
     {{- /* For messages with data, show message and key=value pairs */ -}}

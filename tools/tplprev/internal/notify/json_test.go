@@ -3,9 +3,7 @@ package notify
 import (
 	"encoding/json"
 	"maps"
-	"os"
 	"slices"
-	"strings"
 	"testing"
 	"time"
 
@@ -13,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gowatchtower/tplprev/internal/report"
+	"github.com/gowatchtower/tplprev/internal/testutil/contract"
 )
 
 type stubReport struct {
@@ -41,6 +40,7 @@ func (r stubReport) Stale() []report.ContainerReport     { return nil }
 func (r stubReport) Fresh() []report.ContainerReport     { return nil }
 func (r stubReport) Restarted() []report.ContainerReport { return nil }
 func (r stubReport) All() []report.ContainerReport       { return r.scanned }
+func (r stubReport) Focus() report.ContainerReport       { return nil }
 
 func (c stubContainerError) ID() report.ContainerID             { return c.id }
 func (c stubContainerError) Name() string                       { return c.name }
@@ -65,6 +65,11 @@ func (c stubContainerError) LatestImageVersion() string { return c.metaValue("La
 func (c stubContainerError) CurrentImageRevision() string { return c.metaValue("CurrentImageRevision") }
 
 func (c stubContainerError) LatestImageRevision() string { return c.metaValue("LatestImageRevision") }
+
+func (c stubContainerError) CooldownAge() string           { return "" }
+func (c stubContainerError) CooldownDelay() string         { return "" }
+func (c stubContainerError) CooldownRemaining() string     { return "" }
+func (c stubContainerError) CooldownEligibleAt() time.Time { return time.Time{} }
 
 // metaValue returns the name of the metadata accessor when meta is set, so a
 // value written under the wrong JSON key is detected, and "" otherwise.
@@ -163,17 +168,7 @@ func TestDataMarshalJSONNilReport(t *testing.T) {
 func TestDataMarshalJSONContainerKeysMatchWatchtower(t *testing.T) {
 	t.Parallel()
 
-	contents, err := os.ReadFile("testdata/container-json-keys.txt")
-	require.NoError(t, err)
-
-	var want []string
-
-	for line := range strings.Lines(string(contents)) {
-		line = strings.TrimSpace(line)
-		if line != "" && !strings.HasPrefix(line, "#") {
-			want = append(want, line)
-		}
-	}
+	want := contract.Lines(t, "testdata/container-json-keys.txt")
 
 	full := stubContainerError{
 		id:    "sha256:c79110000000aaaa",

@@ -69,7 +69,7 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
         environment:
             - WATCHTOWER_HTTP_API_ENDPOINTS=swagger
-            - WATCHTOWER_HTTP_API_TOKEN=your-secure-token
+            - WATCHTOWER_HTTP_API_TOKEN=API_TOKEN
         ports:
             - "8080:8080"
         restart: unless-stopped
@@ -83,7 +83,7 @@ docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=swagger \
-    -e WATCHTOWER_HTTP_API_TOKEN=your-secure-token \
+    -e WATCHTOWER_HTTP_API_TOKEN=API_TOKEN \
     -p 8080:8080 \
     --restart unless-stopped \
     nickfedor/watchtower
@@ -96,8 +96,13 @@ docker run -d \
 Then open the Swagger UI in a web browser:
 
 ```url
-http://<host>:8080/swagger/index.html
+http://HOST:8080/swagger/index.html
 ```
+
+Replace the following:
+
+- *`API_TOKEN`*: the token that clients must send to the HTTP API
+- *`HOST`*: the host name or IP address of the Docker host
 
 {{< /tab >}}
 
@@ -114,7 +119,7 @@ services:
             - /opt/watchtower/certs:/certs:ro
         environment:
             - WATCHTOWER_HTTP_API_ENDPOINTS=swagger
-            - WATCHTOWER_HTTP_API_TOKEN=your-secure-token
+            - WATCHTOWER_HTTP_API_TOKEN=API_TOKEN
             - WATCHTOWER_HTTP_API_TLS_CERT=/certs/watchtower.crt
             - WATCHTOWER_HTTP_API_TLS_KEY=/certs/watchtower.key
         ports:
@@ -131,7 +136,7 @@ docker run -d \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /opt/watchtower/certs:/certs:ro \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=swagger \
-    -e WATCHTOWER_HTTP_API_TOKEN=your-secure-token \
+    -e WATCHTOWER_HTTP_API_TOKEN=API_TOKEN \
     -e WATCHTOWER_HTTP_API_TLS_CERT=/certs/watchtower.crt \
     -e WATCHTOWER_HTTP_API_TLS_KEY=/certs/watchtower.key \
     -p 8080:8080 \
@@ -146,8 +151,13 @@ docker run -d \
 Then open the Swagger UI in a web browser:
 
 ```url
-https://<host>:8080/swagger/index.html
+https://HOST:8080/swagger/index.html
 ```
+
+Replace the following:
+
+- *`API_TOKEN`*: the token that clients must send to the HTTP API
+- *`HOST`*: the host name of the Docker host, as named in the certificate
 
 {{< /tab >}}
 
@@ -157,7 +167,7 @@ https://<host>:8080/swagger/index.html
 
 ### Try it out (call protected APIs from the UI)
 
-1. Open `http://<host>:<port>/swagger/index.html` (or `https://` when TLS is enabled).
+1. Open `http://HOST:PORT/swagger/index.html` (or `https://` when TLS is enabled), where *`HOST`* and *`PORT`* are the address and port of the HTTP API.
 2. Click **Authorize** at the top-right of Swagger UI.
 3. Under **BearerAuth**, paste the HTTP API token **only** (do not type the word `Bearer`. Swagger UI places the value in the `Authorization` header).
 4. For `/v1/events`, under **EventsToken**, paste the events token only (auth works in Try it out, but the stream itself will not — see below).
@@ -166,7 +176,7 @@ https://<host>:8080/swagger/index.html
 
 Authorization for Try it out is persisted across page reloads when using Swagger UI’s persist-authorization setting.
 
-Programmatic clients should still use `Authorization: Bearer <token>` (or the events token header/query form); see [Authentication](../../configuration/authentication/).
+Programmatic clients should still use `Authorization: Bearer API_TOKEN` (or the events token header/query form); see [Authentication](../../configuration/authentication/).
 
 {{< callout type="warning" >}}
 **Events SSE is not supported in Swagger UI**

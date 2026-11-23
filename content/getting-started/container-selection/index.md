@@ -12,16 +12,17 @@ A container is monitored only if it passes every filter in the chain. The filter
 
 | #  | Filter                                                       | Description                                                                                                                                           |
 |----|--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1  | Old Watchtower container exclusion                           | Watchtower containers renamed with a `watchtower-old-` prefix during self-updates are always excluded.                                                |
-| 2  | [Disabled label check](#enabledisable-labels)                | Containers with the Docker label `com.centurylinklabs.watchtower.enable=false` are excluded.                                                          |
-| 3  | [Scope filter](#monitoring-scopes)                           | Only containers matching the configured scope are included (default: `"none"`).                                                                       |
-| 4  | [Enable label filter](#enabledisable-labels)                 | If [label enable](../../configuration/container-selection/#enable-label-filter) is set, only containers with the enable label present are included.   |
-| 5  | [Disabled containers by label](#disable-containers-by-label) | Containers matching any [disabled label pair](../../configuration/container-selection/#disable-containers-by-label) are excluded.                     |
-| 6  | [Enabled containers by label](#enable-containers-by-label)   | If set, only containers matching at least one [enabled label pair](../../configuration/container-selection/#enable-containers-by-label) are included. |
-| 7  | [Image skip patterns](#exclude-specific-images)              | Containers whose image matches a [skip pattern](../../configuration/container-selection/#skip-specific-images) are excluded.                          |
-| 8  | [Monitored image name patterns](#monitor-specific-images)    | If set, only containers whose image matches a [monitored pattern](../../configuration/container-selection/#monitor-specific-images) are included.     |
-| 9  | [Disabled container names](#exclude-specific-containers)     | Containers whose name matches a [disable pattern](../../configuration/container-selection/#disable-specific-containers) are excluded.                 |
-| 10 | [Container name arguments](#container-name-filtering)        | If positional name arguments are provided, only containers matching at least one are included.                                                        |
+| 1  | Engine job run exclusion                                     | Containers that Docker Engine runs for a [Compose job](https://docs.docker.com/compose/how-tos/jobs/) carry the `com.docker.job.id` label and are always excluded, since the engine manages them. |
+| 2  | Old Watchtower container exclusion                           | Watchtower containers renamed with a `watchtower-old-` prefix during self-updates are always excluded.                                                |
+| 3  | [Disabled label check](#enabledisable-labels)                | Containers with the Docker label `com.centurylinklabs.watchtower.enable=false` are excluded.                                                          |
+| 4  | [Scope filter](#monitoring-scopes)                           | Only containers matching the configured scope are included (default: `"none"`).                                                                       |
+| 5  | [Enable label filter](#enabledisable-labels)                 | If [label enable](../../configuration/container-selection/#enable-label-filter) is set, only containers with the enable label present are included.   |
+| 6  | [Disabled containers by label](#disable-containers-by-label) | Containers matching any [disabled label pair](../../configuration/container-selection/#disable-containers-by-label) are excluded.                     |
+| 7  | [Enabled containers by label](#enable-containers-by-label)   | If set, only containers matching at least one [enabled label pair](../../configuration/container-selection/#enable-containers-by-label) are included. |
+| 8  | [Image skip patterns](#exclude-specific-images)              | Containers whose image matches a [skip pattern](../../configuration/container-selection/#skip-specific-images) are excluded.                          |
+| 9  | [Monitored image name patterns](#monitor-specific-images)    | If set, only containers whose image matches a [monitored pattern](../../configuration/container-selection/#monitor-specific-images) are included.     |
+| 10 | [Disabled container names](#exclude-specific-containers)     | Containers whose name matches a [disable pattern](../../configuration/container-selection/#disable-specific-containers) are excluded.                 |
+| 11 | [Container name arguments](#container-name-filtering)        | If positional name arguments are provided, only containers matching at least one are included.                                                        |
 
 {{< callout type="info" >}}
 
@@ -93,6 +94,7 @@ When [label enable](../../configuration/container-selection/#enable-label-filter
 ```yaml
 services:
     someimage:
+        image: someimage
         labels:
             - "com.centurylinklabs.watchtower.enable=true"
 ```
@@ -127,6 +129,7 @@ To exclude a container, set the label to `false`:
 ```yaml
 services:
     someimage:
+        image: someimage
         labels:
             - "com.centurylinklabs.watchtower.enable=false"
 ```
@@ -165,6 +168,7 @@ Set the `com.centurylinklabs.watchtower.monitor-only` label to `true` on the con
 ```yaml
 services:
     someimage:
+        image: someimage
         labels:
             - "com.centurylinklabs.watchtower.monitor-only=true"
 ```

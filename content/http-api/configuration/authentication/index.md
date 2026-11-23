@@ -29,13 +29,15 @@ This token is required when any of the following endpoints are enabled:
 - [`/v1/status`](../../endpoints/status/)
 - [`/v1/update`](../../endpoints/update/)
 
-Clients send the token in the `Authorization` header, usually as `Authorization: Bearer <token>`:
+Clients send the token in the `Authorization` header, usually as `Authorization: Bearer API_TOKEN`:
 
 ```bash
-curl -H "Authorization: Bearer your-secure-token" http://localhost:8080/v1/metrics
+curl -H "Authorization: Bearer API_TOKEN" http://localhost:8080/v1/metrics
 ```
 
-The header may also carry the token on its own, as `Authorization: <token>`. Swagger UI sends the token this way when you authorize with it.
+Replace *`API_TOKEN`* with your HTTP API token.
+
+The header may also carry the token on its own, as `Authorization: API_TOKEN`. Swagger UI sends the token this way when you authorize with it.
 
 Invalid or missing tokens result in `401 Unauthorized`.
 Failed authentication attempts are logged with the client IP address.
@@ -44,7 +46,7 @@ A cookie-based fallback is also supported for clients that cannot set custom hea
 The token may be provided in a cookie named `access_token`:
 
 ```http
-Cookie: access_token=your-secure-token
+Cookie: access_token=API_TOKEN
 ```
 
 {{< callout type="info" >}}
@@ -77,19 +79,21 @@ The events token can be supplied in three ways:
 Example using the header:
 
 ```bash
-curl -N -H "Authorization: Bearer your-events-token" http://localhost:8080/v1/events
+curl -N -H "Authorization: Bearer EVENTS_TOKEN" http://localhost:8080/v1/events
 ```
+
+Replace *`EVENTS_TOKEN`* with your events token.
 
 Example using the query parameter:
 
 ```bash
-curl -N "http://localhost:8080/v1/events?access_token=your-events-token"
+curl -N -G --data-urlencode "access_token=EVENTS_TOKEN" "http://localhost:8080/v1/events"
 ```
 
 In JavaScript (for browsers):
 
 ```javascript
-const eventSource = new EventSource('http://localhost:8080/v1/events?access_token=your-events-token');
+const eventSource = new EventSource('http://localhost:8080/v1/events?access_token=' + encodeURIComponent('EVENTS_TOKEN'));
 ```
 
 {{< callout type="warning" >}}
@@ -109,7 +113,7 @@ Tokens can be provided to Watchtower using Docker Secrets, environment variables
 {{< tabs >}}
 
 {{< tab name="Docker Secrets" >}}
-Use Compose secrets to mount the token file inside the container and point the environment variable at the mounted path (commonly `/run/secrets/<name>`).
+Use Compose secrets to mount the token file inside the container and point the environment variable at the mounted path (commonly `/run/secrets/SECRET_NAME`, where *`SECRET_NAME`* is the name of the Compose secret).
 
 ```yaml
 services:
@@ -142,7 +146,7 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
         environment:
-            - WATCHTOWER_HTTP_API_TOKEN=your-secure-token
+            - WATCHTOWER_HTTP_API_TOKEN=API_TOKEN
             # Enable an endpoint that requires authentication
             - WATCHTOWER_HTTP_API_ENDPOINTS=metrics
         ports:
@@ -164,7 +168,7 @@ services:
 docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -e WATCHTOWER_HTTP_API_TOKEN=your-secure-token \
+    -e WATCHTOWER_HTTP_API_TOKEN=API_TOKEN \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=metrics \
     -p 8080:8080 \
     --restart unless-stopped \
@@ -181,7 +185,7 @@ docker run -d \
     -p 8080:8080 \
     --restart unless-stopped \
     nickfedor/watchtower \
-    --http-api-token=your-secure-token \
+    --http-api-token=API_TOKEN \
     --http-api-endpoints=metrics
 ```
 
@@ -192,6 +196,8 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace *`API_TOKEN`* with your HTTP API token.
 
 ## Unauthenticated Endpoints
 
