@@ -7,6 +7,8 @@ By default, Watchtower stops and removes the other Watchtower instances it finds
 - Manages only the containers in its scope
 - Removes only the other instances in its scope
 
+A container outside its scope that joins the network of a container it recreates is recreated with it, since it would lose its network otherwise (see [Containers Sharing a Recreated Container's Network](../linked-containers/#containers-sharing-a-recreated-containers-network)).
+
 {{< callout type="info" >}}
 Two instances can't share a scope. When an instance starts, it removes the other instances in its scope.
 
@@ -74,7 +76,7 @@ An unscoped instance:
 - Removes only other unscoped instances
 
 {{< callout type="info" >}}
-Unscoped and scoped instances can run on the same host, since each leaves the other's containers alone.
+Unscoped and scoped instances can run on the same host, since each leaves the other's containers alone apart from the containers that join the network of one it recreates.
 
 {{< /callout >}}
 
