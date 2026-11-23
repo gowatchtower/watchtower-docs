@@ -31,7 +31,7 @@ tasks:
         msg: Hugo Extended v0.146+ must be installed
 
   build:
-    desc: Build the production site into public/
+    desc: Build the site without versions into public/
     cmds:
       - task: setup
       - "{{.HUGO}} --gc --minify"
@@ -40,14 +40,12 @@ tasks:
         msg: Hugo Extended v0.146+ must be installed
 
   preview:build:
-    desc: Assemble the multi-version preview (legacy MkDocs versions, each docs tag, and this checkout as nightly) into public/
+    desc: Assemble a local preview of the published site, with this checkout as nightly, into public/
     cmds:
       - ./scripts/build-preview.sh
     preconditions:
       - sh: command -v hugo
         msg: Hugo Extended v0.146+ must be installed
-      - sh: command -v python3
-        msg: Python 3 must be installed
 
   preview:serve:
     desc: Serve the assembled preview (http://localhost:1314/)
