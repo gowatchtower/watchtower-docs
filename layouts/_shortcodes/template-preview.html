@@ -1,2 +1,5 @@
+{{- /* Asset URLs go through relURL so the preview works when the site is served from a subpath such as /nightly/. script.js loads wasm_exec.js itself, after Hextra's deferred FlexSearch script, because wasm_exec.js defines a global process that breaks FlexSearch. */ -}}
+<link rel="stylesheet" href="{{ "template-preview/styles.css" | relURL }}">
+<script src="{{ "template-preview/script.js" | relURL }}" data-wasm-exec-url="{{ "wasm_exec.js" | relURL }}" data-wasm-url="{{ "tplprev.wasm" | relURL }}"></script>
 {{- $html := readFile "static/template-preview/form.html" -}}
 {{- $html | safeHTML -}}

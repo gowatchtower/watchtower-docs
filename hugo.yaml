@@ -66,7 +66,6 @@ params:
     logo:
       path: images/logo.png
       dark: images/logo.png
-      link: /
       width: 36
       height: 36
 
@@ -97,6 +96,11 @@ params:
       enable: true
 
   externalLinkDecoration: true
+
+  # Version this build is published as (for example nightly or v1.24.0). Empty renders no version selector.
+  # Set at build time with HUGO_PARAMS_VERSIONING_VERSION by scripts/publish-version.sh.
+  versioning:
+    version: ""
 
   displayUpdatedDate: true
   dateFormat: January 2, 2006

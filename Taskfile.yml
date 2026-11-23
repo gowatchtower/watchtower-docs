@@ -39,6 +39,24 @@ tasks:
       - sh: command -v hugo
         msg: Hugo Extended v0.146+ must be installed
 
+  preview:build:
+    desc: Assemble the multi-version preview (legacy MkDocs versions, each docs tag, and this checkout as nightly) into public/
+    cmds:
+      - ./scripts/build-preview.sh
+    preconditions:
+      - sh: command -v hugo
+        msg: Hugo Extended v0.146+ must be installed
+      - sh: command -v python3
+        msg: Python 3 must be installed
+
+  preview:serve:
+    desc: Serve the assembled preview (http://localhost:1314/)
+    cmds:
+      - python3 -m http.server 1314 --directory public
+    preconditions:
+      - sh: test -f public/versions.json
+        msg: Run task preview:build first
+
   check:
     desc: Verify the site build and tplprev module
     cmds:

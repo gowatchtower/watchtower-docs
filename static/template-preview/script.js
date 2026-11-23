@@ -9,6 +9,9 @@
   // This variable determines which tab's content is displayed in the preview area
   let debounce; // Variable to store the debounce timeout ID, used to throttle frequent updates
   // Debouncing prevents excessive calls to updatePreview during rapid input changes
+  const wasmURL = document.currentScript.dataset.wasmUrl; // URL of tplprev.wasm, set by the template-preview shortcode
+  const wasmExecURL = document.currentScript.dataset.wasmExecUrl; // URL of Go's wasm_exec.js runtime, set by the shortcode
+  // The shortcode resolves both against the site's base URL, so the preview works when the site is served from a subpath
 
   // Helper Functions Section
   // Collection of utility functions to simplify DOM queries and improve code reusability
@@ -277,31 +280,47 @@
   };
 
   // WASM Loading Section
-  // Function to load and initialize the WebAssembly module
-  // Executes when the script loads to set up the WASM environment
-  const go = new Go(); // Create Go runtime instance
-  WebAssembly.instantiateStreaming(
-    fetch("/tplprev.wasm"),
-    go.importObject
-  )
-    .then((result) => {
-      go.run(result.instance); // Run the WebAssembly module
-      const loadingElement = document.querySelector("#tplprev .loading"); // Get loading indicator
-      if (loadingElement) loadingElement.style.display = "none"; // Hide loading when done
-      wasmLoaded = true; // Mark WASM as loaded
-      window.wasmLoaded = wasmLoaded; // Expose to global scope
-      setTimeout(() => requestAnimationFrame(updatePreview), 500); // Initial update after load
-    })
-    .catch((err) => {
-      console.error("WASM loading failed:", err); // Log any loading errors
-      const resultElement = getResult(); // Get result div
-      if (resultElement) {
-        resultElement.innerHTML =
-          '<div class="error">Failed to load WebAssembly module. Please refresh the page.</div>';
-      } else {
-        console.error("#result element not found during WASM error handling");
-      }
-    });
+  // Function to report a failure to load the Go runtime or the WebAssembly module
+  const showWasmError = (err) => {
+    console.error("WASM loading failed:", err); // Log any loading errors
+    const resultElement = getResult(); // Get result div
+    if (resultElement) {
+      resultElement.innerHTML =
+        '<div class="error">Failed to load WebAssembly module. Please refresh the page.</div>';
+    } else {
+      console.error("#result element not found during WASM error handling");
+    }
+  };
+
+  // Function to load Go's wasm_exec.js runtime, then load and initialize the WebAssembly module
+  // wasm_exec.js defines a global `process`, which makes the FlexSearch bundle register itself on `process`
+  // instead of `window` and breaks site search, so it must load after Hextra's deferred FlexSearch script
+  const loadWasm = () => {
+    const runtime = document.createElement("script"); // Script element for the Go runtime
+    runtime.src = wasmExecURL;
+    runtime.onerror = () => showWasmError(new Error(`could not load ${wasmExecURL}`));
+    runtime.onload = () => {
+      const go = new Go(); // Create Go runtime instance
+      WebAssembly.instantiateStreaming(fetch(wasmURL), go.importObject)
+        .then((result) => {
+          go.run(result.instance); // Run the WebAssembly module
+          const loadingElement = document.querySelector("#tplprev .loading"); // Get loading indicator
+          if (loadingElement) loadingElement.style.display = "none"; // Hide loading when done
+          wasmLoaded = true; // Mark WASM as loaded
+          window.wasmLoaded = wasmLoaded; // Expose to global scope
+          setTimeout(() => requestAnimationFrame(updatePreview), 500); // Initial update after load
+        })
+        .catch(showWasmError);
+    };
+    document.head.append(runtime);
+  };
+
+  // Deferred scripts, including FlexSearch, run before DOMContentLoaded, so the runtime loads after it
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadWasm);
+  } else {
+    loadWasm();
+  }
 
   // Guard Clause Section
   // Check if WASM is already loaded to prevent duplicate initialization
