@@ -18,6 +18,7 @@ on:
       - i18n/**
       - layouts/**
       - static/**
+      - tools/tplprev/**
       - .github/actions/**
       - hugo.yaml
       - go.mod
@@ -63,6 +64,9 @@ jobs:
         with:
           hugo-version: "0.170.1"
           extended: true
+
+      - name: Build Template Preview
+        uses: ./.github/actions/build-tplprev # zizmor: ignore[self-repository]
 
       - name: Build Site
         id: build

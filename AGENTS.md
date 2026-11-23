@@ -8,10 +8,11 @@ Root `go.mod` / `go.sum` exist only for Hugo Modules (theme pin). Do not add a r
 
 ## Commands
 
-Hugo Extended **v0.146+** required (developed on **0.170**). Fetch the theme before any build or server:
+Hugo Extended **v0.146+** required (developed on **0.170**). Fetch the theme and build the template preview before any build or server:
 
 ```bash
 hugo mod get
+./scripts/build-tplprev.sh  # writes static/tplprev.wasm and static/wasm_exec.js
 hugo server                 # http://localhost:1313/
 hugo --gc --minify          # writes public/
 ```
@@ -27,8 +28,8 @@ golangci-lint run --timeout 60s ./...   # from tools/tplprev
 
 GitHub Actions (`.github/workflows/`, with the site's composite actions in `.github/actions/`):
 
-- `hugo.yaml` builds the site on pull requests, and publishes `nightly` and tagged versions to the `cf-pages` branch
-- `test.yaml` — tplprev tests, vet, and WASM build
+- `hugo.yaml` builds the template preview and the site on pull requests, and publishes `nightly` and tagged versions to the `cf-pages` branch
+- `test.yaml` runs the tplprev tests and vet
 - `lint-go.yaml` — golangci-lint on `tools/tplprev`
 - `lint-gh.yaml` — actionlint
 - `security.yaml` — gosec + govulncheck on tplprev
@@ -51,7 +52,7 @@ Versioned docs use mike's layout. Each version has its own directory, such as `n
 - Each `v*` tag marks the commit that documents that Watchtower release, such as `v1.23.2`. Tag the commit that finishes a release's sync. Pushing the tag publishes it.
 - `.github/actions/build-versioned-docs` builds the checkout as one version into a worktree of the site branch. It also rewrites `versions.json`. The newest release listed holds the `latest` alias, and is built a second time into `latest/`.
 - `.github/actions/publish-versioned-docs` commits that worktree and pushes it to the site branch. The workflow runs it only for a push or manual run on `main` or a `v*` tag.
-- Keep both actions free of Watchtower specifics, so other Hugo sites can use them. Pass those as inputs.
+- Keep both versioned-docs actions free of Watchtower specifics, so other Hugo sites can use them. Pass those as inputs.
 - `scripts/build-preview.sh` (`task preview:build`, then `task preview:serve` on <http://localhost:1314/>) copies `cf-pages` from origin into `public/` and builds this checkout over its `nightly` version. `scripts/` holds local tools only. CI logic belongs in the actions.
 
 ## Theme and layouts
@@ -96,13 +97,13 @@ Do not point readers at `containrrr/watchtower` (archived).
 
 ## Template preview
 
-`{{< template-preview >}}` inlines `static/template-preview/form.html`. Rebuild WASM after changing `tools/tplprev/`:
+`{{< template-preview >}}` inlines `static/template-preview/form.html`. `static/tplprev.wasm` and `static/wasm_exec.js` are build outputs and are not committed. The `build-tplprev` action compiles them from `tools/tplprev/` in `hugo.yaml` before each site build, so every published version carries a preview built from its own source.
+
+For local work, build them once, and again after changing `tools/tplprev/`. The Taskfile's `serve`, `build`, and `preview:build` tasks do this first.
 
 ```bash
 ./scripts/build-tplprev.sh
 ```
-
-Commit the updated `static/tplprev.wasm` and `static/wasm_exec.js`. The publish job does not compile WASM.
 
 ## Outputs
 

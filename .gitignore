@@ -2,5 +2,7 @@ public/
 resources/
 .hugo_build.lock
 _vendor/
+static/tplprev.wasm
+static/wasm_exec.js
 .task/
 *.lock
