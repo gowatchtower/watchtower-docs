@@ -37,7 +37,7 @@ Must be used with `REPO_USER`.
 
 Can be a password or a personal access token for registries requiring 2FA (e.g., Docker Hub).
 
-Use Docker secrets (e.g., `WATCHTOWER_PASS=/run/secrets/repo_pass`) or environment files to avoid exposing sensitive data in command lines.
+`REPO_PASS` holds the password itself and cannot point to a file, so a Docker secret path is sent as the password. To keep the password out of command lines, set it in an environment file, or mount a Docker `config.json` and set [`DOCKER_CONFIG`](#docker_config).
 
 {{< /callout >}}
 
@@ -89,12 +89,12 @@ Sets the minimum TLS version for registry connections, overriding the default (T
 ```text
             Argument: --registry-tls-min-version
 Environment Variable: WATCHTOWER_REGISTRY_TLS_MIN_VERSION
-     Possible Values: TLS1.0, TLS1.1, TLS1.2, TLS1.3
+     Possible Values: TLS1.2, TLS1.3
              Default: TLS1.2
 ```
 
-{{< callout type="warning" >}}
-Using older versions of TLS not recommended for security reasons.
+{{< callout type="info" >}}
+Older versions such as TLS1.0 and TLS1.1 are not accepted. Any other value logs a warning, and Watchtower uses TLS 1.2.
 
 {{< /callout >}}
 

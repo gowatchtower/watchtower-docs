@@ -32,7 +32,7 @@ This is useful for overriding the operating system hostname.
 
 ## Delay
 
-Delay before sending notifications expressed in seconds.
+Delay before sending notifications expressed in seconds. Watchtower exits at startup if the value is negative.
 
 ```text
             Argument: --notifications-delay
@@ -83,6 +83,12 @@ Environment Variable: WATCHTOWER_NOTIFICATION_LOG_STDOUT
                 Type: Boolean
              Default: false
 ```
+
+{{< callout type="info" >}}
+Only the `logger://` output goes to stdout.
+Shoutrrr's own messages, such as a warning that a service sends without TLS, go to Watchtower's log at their level.
+
+{{< /callout >}}
 
 ## Split by Container
 

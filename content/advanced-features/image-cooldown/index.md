@@ -123,7 +123,7 @@ LABEL com.centurylinklabs.watchtower.cooldown-delay="0"
 ```
 
 {{< callout type="info" >}}
-If a container's cooldown label cannot be parsed as a valid duration, Watchtower falls back to the global cooldown value and logs a warning.
+If a container's cooldown label cannot be parsed as a valid duration, Watchtower falls back to the global cooldown value. It logs a warning the first time it reads the label for that container, and logs later reads at debug level.
 {{< /callout >}}
 
 {{< callout type="warning" >}}
