@@ -1,0 +1,170 @@
+# Logging and Output
+## Debug
+
+Enables debug mode with verbose logging.
+
+```text
+            Argument: --debug, -d
+Environment Variable: WATCHTOWER_DEBUG
+                Type: Boolean
+             Default: false
+```
+
+{{< callout type="info" >}}
+Equivalent to `--log-level debug`.
+As an argument, it does not accept a value (e.g., `--debug true` is invalid).
+
+See [Maximum Log Level](#maximum-log-level).
+
+{{< /callout >}}
+
+## Trace
+
+Enables trace mode with highly verbose logging, including sensitive information like credentials.
+
+```text
+            Argument: --trace
+Environment Variable: WATCHTOWER_TRACE
+                Type: Boolean
+             Default: false
+```
+
+{{< callout type="info" >}}
+Equivalent to `--log-level trace`.
+As an argument, does not accept a value (e.g., `--trace true` is invalid).
+
+See [Maximum Log Level](#maximum-log-level).
+
+{{< /callout >}}
+
+{{< callout type="warning" >}}
+Use with caution due to credential exposure.
+
+{{< /callout >}}
+
+## Maximum Log Level
+
+Sets the maximum log level output to STDERR, visible in `docker logs` when running Watchtower in a container.
+
+```text
+            Argument: --log-level
+Environment Variable: WATCHTOWER_LOG_LEVEL
+     Possible Values: panic, fatal, error, warn, info, debug, trace
+             Default: info
+```
+
+## Logging Format
+
+Specifies the format for console log output.
+
+```text
+            Argument: --log-format, -l
+Environment Variable: WATCHTOWER_LOG_FORMAT
+     Possible Values: Auto, LogFmt, Pretty, JSON
+             Default: Auto
+```
+
+### Escaped Characters
+
+Log lines can carry text from outside Watchtower, such as an error message from a registry. To keep that text from changing how a terminal shows a log line, every format escapes these characters in messages, field names and field values:
+
+- Control characters, such as the escape character that starts terminal sequences
+- Unicode format characters, such as bidirectional overrides and zero-width spaces
+- Line and paragraph separators
+
+These escapes apply only to text that holds one of these characters.
+
+| Format         | Messages, field names and text values | Lists and other values             | Example                           |
+|:---------------|:--------------------------------------|:-----------------------------------|:----------------------------------|
+| JSON           | JSON escapes                          | JSON escapes                       | `"error":"manifest abc\u202edef"` |
+| LogFmt, Pretty | Quoted, with Go string escapes        | Written as JSON, with JSON escapes | `error="manifest abc\u202edef"`   |
+
+In the example, `\u202e` stands for a right-to-left override in the registry's error text.
+
+{{< callout type="info" >}}
+The escapes protect the raw log line. JSON escapes decode to the original characters, so a log viewer that decodes JSON values and shows them as text must guard against those characters itself.
+
+{{< /callout >}}
+
+## Disable ANSI Colors
+
+Disables ANSI color escape codes in log output for plain text logs.
+
+```text
+            Argument: --no-color
+Environment Variable: NO_COLOR
+                Type: Boolean
+             Default: false
+```
+
+## Programmatic Output (Porcelain)
+
+Outputs session results in a machine-readable format.
+
+```text
+            Argument: --porcelain, -P
+Environment Variable: WATCHTOWER_PORCELAIN
+     Possible Values: v1, json
+             Default: None
+```
+
+{{< callout type="info" >}}
+Equivalent to:
+```text
+--notification-url logger://
+--notification-log-stdout
+--notification-report
+```
+
+{{< /callout >}}
+
+Porcelain only fills in the notification-template, notification-report, and notification-log-stdout configuration options you have not set. A value you set yourself, with a flag or an environment variable, is kept.
+
+For `v1`, the template is `porcelain.v1.summary-no-log`, producing one container per line.
+
+For `json`, the template is `porcelain.json`, producing a JSON document:
+
+```json
+{
+  "containers": [
+    {
+      "name": "nginx",
+      "image": "nginx:latest",
+      "image_id": "abc123",
+      "latest_image_id": "def456",
+      "state": "Updated",
+      "update_available": true
+    }
+  ]
+}
+```
+
+Every container has these fields:
+
+| Field              | Meaning                                                                         |
+|:-------------------|:--------------------------------------------------------------------------------|
+| `name`             | Container name                                                                  |
+| `image`            | Image name with tag                                                             |
+| `image_id`         | Current short image ID                                                          |
+| `latest_image_id`  | Latest short image ID                                                           |
+| `state`            | Container state (`Updated`, `Fresh`, `Failed`, `Skipped`, `Restarted`, `Stale`) |
+| `update_available` | Whether the latest image differs from the current one                           |
+
+These fields are left out when they are empty:
+
+| Field                   | Meaning                                                                      |
+|:------------------------|:-----------------------------------------------------------------------------|
+| `error`                 | Error message for the container                                              |
+| `git_repo`              | Git repository URL, as the `.GitRepo` template field                         |
+| `git_ref`               | Git ref, as the `.GitRef` template field                                     |
+| `changelog`             | Changelog or releases URL, as the `.Changelog` template field                |
+| `oci_source`            | OCI image source, as the `.Source` template field                            |
+| `image_url`             | OCI image URL, as the `.ImageURL` template field                             |
+| `documentation`         | OCI documentation URL, as the `.Documentation` template field                |
+| `current_image_version` | Version of the running image, as the `.CurrentImageVersion` template field   |
+| `latest_image_version`  | Version of a newer image, as the `.LatestImageVersion` template field        |
+| `current_revision`      | Revision of the running image, as the `.CurrentImageRevision` template field |
+| `latest_revision`       | Revision of a newer image, as the `.LatestImageRevision` template field      |
+
+See [Git and OCI report fields](../../notifications/templates/#git-and-oci-report-fields) for where each Git and OCI value comes from.
+

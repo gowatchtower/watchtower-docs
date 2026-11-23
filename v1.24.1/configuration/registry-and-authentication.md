@@ -1,0 +1,165 @@
+# Registry & Authentication
+### REPO_USER
+
+Sets the username for authenticating with a private registry, such as Docker Hub.
+
+```text
+            Argument: None
+Environment Variable: REPO_USER
+                Type: String
+             Default: None
+```
+
+{{< callout type="info" >}}
+Must be used with `REPO_PASS` to provide valid credentials.
+Suitable for simple username/password authentication.
+
+For Docker Hub, the registry is implicitly `https://index.docker.io/v1/`.
+
+{{< /callout >}}
+
+### REPO_PASS
+
+Sets the password for authenticating with a private registry, such as Docker Hub.
+
+```text
+            Argument: None
+Environment Variable: REPO_PASS
+                Type: String
+             Default: None
+```
+
+{{< callout type="info" >}}
+Must be used with `REPO_USER`.
+
+Can be a password or a personal access token for registries requiring 2FA (e.g., Docker Hub).
+
+`REPO_PASS` holds the password itself and cannot point to a file, so a Docker secret path is sent as the password. To keep the password out of command lines, set it in an environment file, or mount a Docker `config.json` and set [`DOCKER_CONFIG`](#docker_config).
+
+{{< /callout >}}
+
+### DOCKER_CONFIG
+
+Specifies the directory containing the Docker configuration file (`config.json`) for registry authentication.
+
+```text
+            Argument: None
+Environment Variable: DOCKER_CONFIG
+                Type: String
+             Default: `/`
+```
+
+{{< callout type="info" >}}
+Useful for registries requiring complex authentication (e.g., 2FA on Docker Hub) or credential helpers (e.g., AWS ECR).
+
+Mount the `config.json` file to the container (e.g., `-v ~/.docker/config.json:/config.json`) and set this variable to the directory containing the file (e.g., `/`).
+
+Changes to the mounted file may require a symlink to ensure updates propagate.
+
+See [Usage](../../getting-started/usage/) and [Private Registries](../../advanced-features/private-registries/).
+
+Public `lscr.io` images are hosted on GitHub Container Registry. Watchtower remaps them to `ghcr.io` for digest checks. Authenticate to **`ghcr.io`** in this config (not only `lscr.io`) to separate your checks from anonymous throttling and restore parallel GHCR checks. Pulls of a public org can still share that org's bucket, which is empty for the first minute or two of each hour.
+
+{{< /callout >}}
+
+### Skip Registry TLS Verification
+
+Disables TLS certificate verification for registry connections, useful for self-signed certificates or insecure registries.
+
+```text
+            Argument: --registry-tls-skip
+Environment Variable: WATCHTOWER_REGISTRY_TLS_SKIP
+                Type: Boolean
+             Default: false
+```
+
+{{< callout type="warning" >}}
+Use cautiously, as it reduces security.
+Suitable for testing or private registries.
+
+{{< /callout >}}
+
+{{< callout type="info" >}}
+**Local registries that serve plain HTTP**
+This option applies only to Watchtower's own registry requests. The Docker daemon pulls the image itself, and it pulls from a plain-HTTP registry, such as one at `localhost:5000`, only when its `insecure-registries` setting covers that registry.
+
+Docker Engine 29.10.0 and later count `localhost` and other loopback addresses as insecure only while `insecure-registries` is not set ([moby/moby#53868](https://github.com/moby/moby/pull/53868)). Once the list names any registry, add the local one in the same form your images use, such as `localhost:5000`. A pull by `127.0.0.1:5000` needs its own entry. Otherwise the daemon's pull fails with `http: server gave HTTP response to HTTPS client`.
+
+```json
+{
+    "insecure-registries": ["registry.example.com", "localhost:5000"]
+}
+```
+
+{{< /callout >}}
+
+### Minimum Registry TLS Version
+
+Sets the minimum TLS version for registry connections, overriding the default (TLS 1.2).
+
+```text
+            Argument: --registry-tls-min-version
+Environment Variable: WATCHTOWER_REGISTRY_TLS_MIN_VERSION
+     Possible Values: TLS1.2, TLS1.3
+             Default: TLS1.2
+```
+
+{{< callout type="info" >}}
+Older versions such as TLS1.0 and TLS1.1 are not accepted. Any other value logs a warning, and Watchtower uses TLS 1.2.
+
+{{< /callout >}}
+
+### Proxy Configuration
+
+Watchtower supports HTTP/HTTPS proxies for registry connections by respecting standard environment variables.
+Set these in the Watchtower container to route requests (e.g., to Docker Hub or private registries) through a proxy.
+This is useful in environments without direct internet access.
+
+Proxy settings are read from the following variables (uppercase and lowercase variants are supported for compatibility):
+
+```text
+            Argument: None
+Environment Variable: HTTP_PROXY / http_proxy
+                Type: String (e.g., "http://proxy.example.com:3128")
+             Default: None
+```
+
+```text
+            Argument: None
+Environment Variable: HTTPS_PROXY / https_proxy
+                Type: String (e.g., "http://proxy.example.com:3128")
+             Default: None
+```
+
+```text
+            Argument: None
+Environment Variable: NO_PROXY / no_proxy
+                Type: Comma-separated string (e.g., "localhost,127.0.0.1,internal.example.com")
+             Default: None
+```
+
+{{< callout type="info" >}}
+Proxies may require authentication.
+Include it in the URL, such as `http://USERNAME:PASSWORD@proxy.example.com:3128` with your proxy user name and password, but avoid exposing credentials in the command line by using Docker secrets or environment files instead.
+
+If your proxy uses a self-signed certificate, combine with `--registry-tls-skip` to disable TLS verification (use cautiously).
+
+{{< /callout >}}
+
+For details on how Go handles these variables, see the [net/http.ProxyFromEnvironment](https://pkg.go.dev/net/http#ProxyFromEnvironment) documentation.
+
+### Warn on HEAD Failure
+
+Controls warnings for failed HEAD requests to registries.
+When a HEAD request fails, Watchtower falls back to a full pull, which counts against the registry's pull rate limit.
+`Auto` warns for registries known to support HEAD requests and rate-limit pulls (docker.io and ghcr.io).
+
+The warning is written to the log only and is not sent as a notification, because the fallback pull decides the outcome and reports its own failures.
+
+```text
+            Argument: --warn-on-head-failure
+Environment Variable: WATCHTOWER_WARN_ON_HEAD_FAILURE
+     Possible Values: always, auto, never
+             Default: auto
+```
+

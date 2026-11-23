@@ -1,0 +1,910 @@
+# Lifecycle Hooks
+Watchtower's lifecycle hooks are a feature that allows monitored containers to execute custom commands at specific points during the container update process. These hooks leverage Docker's [exec API](https://docs.docker.com/reference/api/engine/version/v1.55/#tag/Exec) to run commands inside containers.
+
+## Overview
+
+Lifecycle hooks enable containers to perform custom actions such as:
+
+- Graceful shutdown procedures
+- Database backups or migrations
+- Configuration validation
+- Notification systems
+- Cleanup operations
+
+## Hook Types
+
+Watchtower supports four distinct lifecycle hook types that execute at different stages of the update process:
+
+| Hook Type       | Description                                                           | Execution Timing                           |
+|-----------------|-----------------------------------------------------------------------|--------------------------------------------|
+| **Pre-check**   | Executed for each filtered container before the update cycle begins   | Per container, before scanning containers  |
+| **Pre-update**  | Executed before stopping the old container                            | Per container, immediately before stopping |
+| **Post-update** | Executed after starting the new container                             | Per container, immediately after starting  |
+| **Post-check**  | Executed for each filtered container after the update cycle completes | Per container, after all updates           |
+
+An update cycle that ends before it checks any container runs no check hooks. This happens when the monitored containers cannot be ordered by their dependencies, for example when two of them share a name.
+
+## Configuration
+
+### Enabling Lifecycle Hooks
+
+Lifecycle hooks are disabled by default.
+Enable them by using the following on the Watchtower container:
+
+{{< tabs >}}
+
+{{< tab name="Command Line Flag" >}}
+```bash
+--enable-lifecycle-hooks
+```
+
+{{< /tab >}}
+
+{{< tab name="Environment Variable" >}}
+```dockerfile
+WATCHTOWER_LIFECYCLE_HOOKS=true
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+### Defining Hook Commands
+
+Hook commands are defined using Docker labels on the containers being monitored by Watchtower:
+
+{{< callout type="warning" >}}
+These commands require all necessary tooling (i.e. `sh`, `jq`, etc.) to be installed in the monitored container.
+
+{{< /callout >}}
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-check="echo 'Starting update cycle'"
+```
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update="echo 'Preparing container for update'"
+```
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update="echo 'Container updated successfully'"
+```
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.post-check="echo 'Update cycle completed'"
+```
+
+{{< callout type="info" >}}
+If the container is not running, lifecycle hooks (including pre-update hooks) cannot run, as the stop phase is skipped, and the update proceeds directly to removal (if applicable) or completion.
+
+{{< /callout >}}
+
+### Advanced Configuration
+
+#### Custom Timeouts
+
+By default, hook commands timeout after 1 minute. Override this with timeout labels:
+
+{{< tabs >}}
+
+{{< tab name="Pre-check timeout" >}}
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-check-timeout="5"
+```
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-check-timeout="0"
+```
+
+{{< /tab >}}
+
+{{< tab name="Post-check timeout" >}}
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.post-check-timeout="5"
+```
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.post-check-timeout="0"
+```
+
+{{< /tab >}}
+
+{{< tab name="Pre-update timeout" >}}
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update-timeout="5"
+```
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update-timeout="0"
+```
+
+{{< /tab >}}
+
+{{< tab name="Post-update timeout" >}}
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update-timeout="5"
+```
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update-timeout="0"
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< callout type="info" >}}
+A timeout must be a whole number of minutes of 0 or more.
+Any other value, such as `-1` or `1.5`, logs a warning and uses the 1 minute default.
+
+{{< /callout >}}
+
+#### Custom User Execution
+
+By default, hooks run as the monitored container's configured user and group (`uid:gid`).
+
+Both global and individual, container-specific uid/gid configurations are supported.
+
+{{< callout type="info" >}}
+- Container labels take precedence over global flags/variables.
+- A UID or GID label outside 0 to 2147483647 logs a warning. The hook then uses the global UID or GID. Without one, it runs as the container's configured user.
+
+{{< /callout >}}
+
+{{< tabs >}}
+
+{{< tab name="Global Configuration" >}}
+{{< tabs >}}
+
+{{< tab name="Command Line Flags" >}}
+```bash
+--lifecycle-uid 1000
+```
+```bash
+--lifecycle-gid 1000
+```
+
+{{< /tab >}}
+
+{{< tab name="Environment Variables" >}}
+```bash
+WATCHTOWER_LIFECYCLE_UID=1000
+```
+
+```bash
+WATCHTOWER_LIFECYCLE_GID=1000
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< tab name="Individual Container Configuration" >}}
+```dockerfile
+LABEL com.centurylinklabs.watchtower.lifecycle.uid="1000"
+```
+
+``` dockerfile title="Run hooks as user ID 1000 and group ID 1000"
+LABEL com.centurylinklabs.watchtower.lifecycle.uid="1000"
+LABEL com.centurylinklabs.watchtower.lifecycle.gid="1000"
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+## Execution Details
+
+### Docker API Integration
+
+Lifecycle hooks utilize Docker's exec API through the following sequence:
+
+1. **Exec Creation**: `ExecCreate` creates an exec instance with the specified command
+2. **Exec Start and Output Capture**: `ExecAttach` starts the command and reads its stdout and stderr output to the end
+3. **Status Monitoring**: `ExecInspect` monitors execution status and exit codes
+
+### Hook Output and Security
+
+A hook runs inside the container. Its output therefore comes from whatever runs there, which may be a compromised application or a third-party image. Watchtower treats the output as untrusted text:
+
+- It reads the whole output. A command that prints a lot never blocks.
+- It keeps only the last 2 KiB. A leading `…` marks output whose beginning was dropped.
+- Before the text is logged or sent, it removes:
+    - Terminal escape sequences, such as colours, cursor movement, window titles, clipboard writes and hyperlinks
+    - Control characters other than newlines, tabs and carriage returns
+    - Invisible Unicode format characters, such as bidirectional text controls, zero-width characters and tag characters
+- A carriage return directly before a newline is dropped. Any other carriage return becomes a newline, as do the Unicode line and paragraph separators.
+- It replaces the user information of URLs, such as the `dana:s3cret` in `https://dana:s3cret@git.example.com`, with `xxxxx`. Query values such as `?token=…` stay as printed.
+- It puts the output on one line, joining its lines with ` | `. No line of hook output can then pass for one of Watchtower's own notification lines.
+- The output never changes what Watchtower does. Only the exit code decides whether the update continues, is skipped or fails.
+
+Notifications clean all other text from outside Watchtower the same way. They also show at most 1,024 characters of any such text, including hook output. [Text from outside Watchtower](../../notifications/templates/#text-from-outside-watchtower) describes both.
+
+The kept output goes to these places:
+
+| Hook                  | When the command succeeds                     | When the command fails                                                                                                                                                                              |
+|-----------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Pre-update            | The debug log, in the "Executed command" line | The error-level "Could not update container" log line and the notifications that carry it. The failed container's error in report templates such as `default`, `json.v1` and the porcelain formats. |
+| Pre-check, post-check | The debug log, in the "Executed command" line | The debug log only                                                                                                                                                                                  |
+| Post-update           | The debug log, in the "Executed command" line | The debug log only                                                                                                                                                                                  |
+
+The HTTP API and its event stream do not include hook output.
+
+{{< callout type="warning" >}}
+**Keep secrets out of hook output**
+Notification services are third parties. Debug logs are often shipped to other systems. Apart from the user information of URLs, Watchtower sends hook output as the command printed it. It does not try to recognize other secrets. The replacement runs on the kept 2 KiB. When the cut falls inside a URL, a fragment such as `token@host` can remain. Guessing from names and formats would hide ordinary output and still miss real secrets.
+
+A failing pre-update hook that prints credentials, for example through `set -x`, `env` or `curl -v`, can send them to every notification service. Write verbose output to a file inside the container or to `/dev/null`. Print only a short reason when the command fails.
+
+{{< /callout >}}
+
+{{< callout type="info" >}}
+**Markup, mentions and look-alike characters**
+Watchtower does not escape the text for each notification service. A service may act on markup or mentions in it:
+
+- Discord renders Markdown in a message. It pings only the mentions that the URL's `mentions` key lists. Discord counts `@everyone` and `@here` as one kind of mention, so listing either one lets both ping.
+- A Discord URL with the `/raw` path sends the template's JSON payload as written and ignores the `mentions` key. Without `allowed_mentions` in that payload, Discord pings every mention in its content.
+- Email sent with Shoutrrr's `usehtml` option renders the text as HTML.
+- Telegram's HTML and Markdown parse modes format it.
+
+Characters that look alike, such as a Cyrillic `а` in place of a Latin `a`, stay as written, since removing them would break text in other languages.
+
+{{< /callout >}}
+
+### Environment Variables
+
+Lifecycle hook commands receive container metadata via the `WT_CONTAINER` environment variable containing a JSON object with the following fields:
+
+| Field         | Type   | Description                              | Example                                                                |
+|---------------|--------|------------------------------------------|------------------------------------------------------------------------|
+| `name`        | string | Container name (may include leading `/`) | `"/my-app"` or `"my-app"`                                              |
+| `id`          | string | Full container ID                        | `"abc123def456..."`                                                    |
+| `image_name`  | string | Container image name with tag            | `"nginx:latest"`                                                       |
+| `stop_signal` | string | Container's configured stop signal       | `"SIGTERM"`                                                            |
+| `labels`      | object | Watchtower-specific labels only          | `{"com.centurylinklabs.watchtower.lifecycle.pre-update": "backup.sh"}` |
+
+{{< callout type="info" >}}
+The `labels` object contains only Watchtower-specific labels (those starting with `com.centurylinklabs.watchtower.`) to keep the JSON payload small and focused on Watchtower configuration.
+
+{{< /callout >}}
+
+#### Usage Examples
+
+{{< tabs >}}
+
+{{< tab name="Bash" >}}
+{{< tabs >}}
+
+{{< tab name="Container Name" >}}
+```bash
+#!/bin/bash
+CONTAINER_NAME=$(echo $WT_CONTAINER | jq -r '.name')
+echo "Processing container: $CONTAINER_NAME"
+```
+
+{{< /tab >}}
+
+{{< tab name="Container ID" >}}
+```bash
+#!/bin/bash
+CONTAINER_ID=$(echo $WT_CONTAINER | jq -r '.id')
+echo "Container ID: $CONTAINER_ID"
+```
+
+{{< /tab >}}
+
+{{< tab name="Image Name" >}}
+```bash
+#!/bin/bash
+IMAGE=$(echo $WT_CONTAINER | jq -r '.image_name')
+echo "Image: $IMAGE"
+```
+
+{{< /tab >}}
+
+{{< tab name="Labels" >}}
+```bash
+#!/bin/bash
+BACKUP_SCRIPT=$(echo $WT_CONTAINER | jq -r '.labels["com.centurylinklabs.watchtower.lifecycle.pre-update"]')
+if [ -n "$BACKUP_SCRIPT" ]; then
+    echo "Running backup: $BACKUP_SCRIPT"
+    $BACKUP_SCRIPT
+fi
+```
+
+{{< /tab >}}
+
+{{< tab name="Stop Signal" >}}
+```bash
+#!/bin/bash
+SIGNAL=$(echo $WT_CONTAINER | jq -r '.stop_signal')
+echo "Stop signal: $SIGNAL"
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< tab name="Python" >}}
+{{< tabs >}}
+
+{{< tab name="Container Name" >}}
+```python
+import os
+import json
+
+container_info = json.loads(os.environ['WT_CONTAINER'])
+print(f"Processing container: {container_info['name']}")
+```
+
+{{< /tab >}}
+
+{{< tab name="Container ID" >}}
+```python
+import os
+import json
+
+container_info = json.loads(os.environ['WT_CONTAINER'])
+print(f"Container ID: {container_info['id']}")
+```
+
+{{< /tab >}}
+
+{{< tab name="Image Name" >}}
+```python
+import os
+import json
+
+container_info = json.loads(os.environ['WT_CONTAINER'])
+print(f"Image: {container_info['image_name']}")
+```
+
+{{< /tab >}}
+
+{{< tab name="Labels" >}}
+```python
+import os
+import json
+
+container_info = json.loads(os.environ['WT_CONTAINER'])
+backup_script = container_info['labels'].get('com.centurylinklabs.watchtower.lifecycle.pre-update')
+if backup_script:
+    print(f"Running backup: {backup_script}")
+    # Execute backup_script
+```
+
+{{< /tab >}}
+
+{{< tab name="Stop Signal" >}}
+```python
+import os
+import json
+
+container_info = json.loads(os.environ['WT_CONTAINER'])
+print(f"Stop signal: {container_info['stop_signal']}")
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< tab name="Go" >}}
+{{< tabs >}}
+
+{{< tab name="Container Name" >}}
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+
+func main() {
+    var container struct {
+        Name string `json:"name"`
+    }
+
+    if err := json.Unmarshal([]byte(os.Getenv("WT_CONTAINER")), &container); err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("Processing container: %s\n", container.Name)
+}
+```
+
+{{< /tab >}}
+
+{{< tab name="Container ID" >}}
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+
+func main() {
+    var container struct {
+        ID string `json:"id"`
+    }
+
+    if err := json.Unmarshal([]byte(os.Getenv("WT_CONTAINER")), &container); err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("Container ID: %s\n", container.ID)
+}
+```
+
+{{< /tab >}}
+
+{{< tab name="Image Name" >}}
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+
+func main() {
+    var container struct {
+        ImageName string `json:"image_name"`
+    }
+
+    if err := json.Unmarshal([]byte(os.Getenv("WT_CONTAINER")), &container); err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("Image: %s\n", container.ImageName)
+}
+```
+
+{{< /tab >}}
+
+{{< tab name="Labels" >}}
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+
+func main() {
+    var container struct {
+        Labels map[string]string `json:"labels"`
+    }
+
+    if err := json.Unmarshal([]byte(os.Getenv("WT_CONTAINER")), &container); err != nil {
+        panic(err)
+    }
+
+    if backupScript, exists := container.Labels["com.centurylinklabs.watchtower.lifecycle.pre-update"]; exists {
+        fmt.Printf("Running backup: %s\n", backupScript)
+        // Execute backupScript
+    }
+}
+```
+
+{{< /tab >}}
+
+{{< tab name="Stop Signal" >}}
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+
+func main() {
+    var container struct {
+        StopSignal string `json:"stop_signal"`
+    }
+
+    if err := json.Unmarshal([]byte(os.Getenv("WT_CONTAINER")), &container); err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("Stop signal: %s\n", container.StopSignal)
+}
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< tab name="Conditional Logic" >}}
+{{< tabs >}}
+
+{{< tab name="Image-Based Logic" >}}
+```bash
+#!/bin/bash
+IMAGE=$(echo $WT_CONTAINER | jq -r '.image_name')
+if [[ $IMAGE == *"postgres"* ]]; then
+    echo "Running PostgreSQL-specific backup"
+    pg_dump mydb > backup.sql
+elif [[ $IMAGE == *"mysql"* ]]; then
+    echo "Running MySQL-specific backup"
+    mysqldump mydb > backup.sql
+fi
+```
+
+{{< /tab >}}
+
+{{< tab name="Label-Based Logic" >}}
+```bash
+#!/bin/bash
+BACKUP_TYPE=$(echo $WT_CONTAINER | jq -r '.labels["com.centurylinklabs.watchtower.backup-type"] // "default"')
+case $BACKUP_TYPE in
+    "full")
+        echo "Performing full backup"
+        # Full backup logic
+        ;;
+    "incremental")
+        echo "Performing incremental backup"
+        # Incremental backup logic
+        ;;
+    *)
+        echo "Performing default backup"
+        # Default backup logic
+        ;;
+esac
+```
+
+{{< /tab >}}
+
+{{< tab name="Container State Logic" >}}
+```bash
+#!/bin/bash
+CONTAINER_NAME=$(echo $WT_CONTAINER | jq -r '.name')
+
+# Check if this is a production container
+if [[ $CONTAINER_NAME == *"prod"* ]]; then
+    echo "Production container - extra caution"
+    # Additional safety checks
+else
+    echo "Non-production container - proceeding"
+fi
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+### Execution Flow
+
+#### Complete Update Cycle
+
+```mermaid
+flowchart TD
+    START([START])
+    START --> PRECHECK
+    PRECHECK[Pre-check hook]
+    PRECHECK --> SCAN
+    SCAN[Scan for updates<br/>Check images<br/>Find stale containers]
+    SCAN --> DECISION{Stale containers<br/>found?}
+    DECISION -->|No| POSTCHECK
+    DECISION -->|Yes| LOOPSTART
+    LOOPSTART[For each stale container]
+    LOOPSTART --> PREUPDATE
+    PREUPDATE[Pre-update hook]
+    PREUPDATE --> STOP[Stop old container]
+    STOP --> STARTNEW[Start new container]
+    STARTNEW --> POSTUPDATE[Post-update hook]
+    POSTUPDATE --> LOOPEND{All containers<br/>processed?}
+    LOOPEND -->|No| LOOPSTART
+    LOOPEND -->|Yes| POSTCHECK
+    POSTCHECK[Post-check hook]
+    POSTCHECK --> END([END])
+
+    classDef hook fill:#406170,stroke:#000,stroke-width:2px;
+    classDef action fill:#003343,stroke:#000,stroke-width:2px;
+    classDef decision fill:#003343,stroke:#000,stroke-width:2px;
+
+    class PRECHECK,PREUPDATE,POSTUPDATE,POSTCHECK hook
+    class SCAN,STOP,STARTNEW,LOOPSTART action
+    class DECISION,LOOPEND decision
+```
+
+#### Hook Execution Conditions
+
+| Hook Type       | Scope                                      | Timing                                   | Conditions                                                           | Container State                    |
+|-----------------|--------------------------------------------|------------------------------------------|----------------------------------------------------------------------|------------------------------------|
+| **Pre-check**   | Per filtered container                     | Beginning of update cycle                | Command defined + hooks enabled                                      | Ignored                            |
+| **Pre-update**  | Individual containers being updated        | Immediately before stopping              | Command defined + hooks enabled + container running + not restarting | Must be running and not restarting |
+| **Post-update** | Individual containers successfully updated | Immediately after starting new container | Command defined + hooks enabled + update successful                  | New container running              |
+| **Post-check**  | Per filtered container                     | End of update cycle                      | Command defined + hooks enabled                                      | Ignored                            |
+
+### Exit Code Handling
+
+Hook execution results are evaluated based on exit codes, with different behaviors per hook type:
+
+{{< tabs >}}
+
+{{< tab name="Pre-check" >}}
+Failures are logged but ignored; update process continues
+
+{{< /tab >}}
+
+{{< tab name="Pre-update" >}}
+| Exit Code        | Description       | Action                       |
+|------------------|-------------------|------------------------------|
+| 0                | Success           | Continue with update process |
+| 75 (EX_TEMPFAIL) | Temporary failure | Skip updating this container |
+| Other Exit Codes | Command failure   | Abort the update process     |
+
+{{< /tab >}}
+
+{{< tab name="Post-update" >}}
+Failures are logged but ignored; update process continues
+
+{{< /tab >}}
+
+{{< tab name="Post-check" >}}
+Failures are logged but ignored; update process continues
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+## Practical Examples
+
+{{< tabs >}}
+
+{{< tab name="Database Backup and Migration" >}}
+{{< tabs >}}
+
+{{< tab name="Dockerfile" >}}
+```dockerfile
+FROM postgres:13
+
+# Pre-update: Create backup before stopping
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update="/usr/local/bin/backup.sh"
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update-timeout="10"
+
+# Post-update: Run migrations after starting new version
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update="/usr/local/bin/migrate.sh"
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update-timeout="15"
+
+COPY backup.sh migrate.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/backup.sh /usr/local/bin/migrate.sh
+```
+
+{{< /tab >}}
+
+{{< tab name="Docker Compose" >}}
+```yaml
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 'DB_PASSWORD'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backup.sh:/usr/local/bin/backup.sh:ro
+      - ./migrate.sh:/usr/local/bin/migrate.sh:ro
+    labels:
+      - "com.centurylinklabs.watchtower.lifecycle.pre-update=/usr/local/bin/backup.sh"
+      - "com.centurylinklabs.watchtower.lifecycle.pre-update-timeout=10"
+      - "com.centurylinklabs.watchtower.lifecycle.post-update=/usr/local/bin/migrate.sh"
+      - "com.centurylinklabs.watchtower.lifecycle.post-update-timeout=15"
+
+  watchtower:
+    image: nickfedor/watchtower:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_LIFECYCLE_HOOKS=true
+      - WATCHTOWER_POLL_INTERVAL=30
+
+volumes:
+  postgres_data:
+```
+
+Replace *`DB_PASSWORD`* with a password for the database user, inside the single quotes so that YAML reads every character as part of it. Inside the quotes, write each `'` as `''`. Write each `$` as `$$`, because Compose reads a `$` as the start of a variable even inside quotes.
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< tab name="Application Graceful Shutdown" >}}
+{{< tabs >}}
+
+{{< tab name="Dockerfile" >}}
+```dockerfile
+FROM node:18
+
+# Pre-update: Signal application to shutdown gracefully
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update="pkill -TERM node"
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update-timeout="2"
+
+# Post-update: Wait for application to be ready
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update="/wait-for-app.sh"
+LABEL com.centurylinklabs.watchtower.lifecycle.post-update-timeout="5"
+
+COPY wait-for-app.sh /
+RUN chmod +x /wait-for-app.sh
+```
+
+{{< /tab >}}
+
+{{< tab name="Docker Compose" >}}
+```yaml
+services:
+  node-app:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./app:/app
+      - ./wait-for-app.sh:/wait-for-app.sh:ro
+    ports:
+      - "3000:3000"
+    command: npm start
+    labels:
+      - "com.centurylinklabs.watchtower.lifecycle.pre-update=pkill -TERM node"
+      - "com.centurylinklabs.watchtower.lifecycle.pre-update-timeout=2"
+      - "com.centurylinklabs.watchtower.lifecycle.post-update=/wait-for-app.sh"
+      - "com.centurylinklabs.watchtower.lifecycle.post-update-timeout=5"
+
+  watchtower:
+    image: nickfedor/watchtower:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_LIFECYCLE_HOOKS=true
+      - WATCHTOWER_POLL_INTERVAL=30
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< tab name="Notification System" >}}
+{{< tabs >}}
+
+{{< tab name="Dockerfile" >}}
+```dockerfile
+FROM alpine:latest
+
+# Pre-check: Send start notification
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-check="curl -X POST -d 'Update cycle starting' http://notification-service/start"
+
+# Post-check: Send completion notification
+LABEL com.centurylinklabs.watchtower.lifecycle.post-check="curl -X POST -d 'Update cycle completed' http://notification-service/complete"
+
+# Pre-update: Notify about specific container
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update="curl -X POST -d \"Updating $(echo $WT_CONTAINER | jq -r '.name')\" http://notification-service/updating"
+```
+
+{{< /tab >}}
+
+{{< tab name="Docker Compose" >}}
+```yaml
+services:
+  notification-service:
+    image: alpine:latest
+    volumes:
+      - ./notify.sh:/usr/local/bin/notify.sh:ro
+    labels:
+      - "com.centurylinklabs.watchtower.lifecycle.pre-check=curl -X POST -d 'Update cycle starting' http://notification-service/start"
+      - "com.centurylinklabs.watchtower.lifecycle.post-check=curl -X POST -d 'Update cycle completed' http://notification-service/complete"
+      - "com.centurylinklabs.watchtower.lifecycle.pre-update=/usr/local/bin/notify.sh"
+
+  watchtower:
+    image: nickfedor/watchtower:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_LIFECYCLE_HOOKS=true
+      - WATCHTOWER_POLL_INTERVAL=30
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< tab name="Conditional Updates" >}}
+{{< tabs >}}
+
+{{< tab name="Dockerfile" >}}
+```dockerfile
+FROM myapp:latest
+
+# Pre-update: Check if update is safe
+LABEL com.centurylinklabs.watchtower.lifecycle.pre-update="/bin/bash -c 'if [ -f /tmp/maintenance ]; then exit 75; else exit 0; fi'"
+
+# Use exit code 75 to skip updates during maintenance
+```
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+{{< /tab >}}
+
+{{< /tabs >}}
+
+### Synology DSM Graceful Shutdown
+
+{{< callout type="warning" >}}
+This is an example implementation that requires additional testing and validation.
+
+{{< /callout >}}
+
+There is a well-known issue with Synology devices sending warning notifications when containers are stopped by anything other than the Synology's Docker service. This can be problematic when using tools like Watchtower that stop and restart containers.
+
+The [examples/lifecycle-hooks/synology-stop](https://github.com/nicholas-fedor/watchtower/tree/main/examples/lifecycle-hooks/synology-stop) directory provides examples for implementing graceful shutdowns using Synology's DSM Web API. This includes both shell script and Go implementations that authenticate with DSM, stop containers gracefully, and handle session management.
+
+See the [synology-stop README](https://github.com/nicholas-fedor/watchtower/blob/main/examples/lifecycle-hooks/synology-stop/README.md) for detailed setup instructions, environment variables, and deployment examples using docker-compose.
+
+## Troubleshooting
+
+### Common Issues
+
+#### Hook Commands Not Executing
+
+- Verify `--enable-lifecycle-hooks` / `WATCHTOWER_LIFECYCLE_HOOKS=true` is set
+- Check that labels are correctly formatted
+- Ensure container is running (for pre-update hooks)
+
+#### Timeout Errors
+
+- Increase timeout values using timeout labels
+- Set timeout to "0" to disable timeouts
+- Check command execution time
+
+#### Permission Issues
+
+- Use appropriate UID/GID labels
+- Ensure user has permissions to execute commands
+- Check container's user configuration
+
+#### Exit Code Confusion
+
+- Exit code 0: Success, continue
+- Exit code 75: Skip this container update
+- Other codes: Fail the entire update process
+
+### Debugging
+
+Enable debug logging to see hook execution details:
+
+```bash
+watchtower --debug --enable-lifecycle-hooks
+```
+
+Look for log messages containing:
+
+- "Executing pre-check command"
+- "Executing pre-update command"
+- "Executed command"
+- "Command execution failed"
+
