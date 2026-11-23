@@ -5,6 +5,15 @@ Watchtower includes a `notify-upgrade` command to help convert legacy notificati
 
 It parses legacy Watchtower notification configurations and outputs Shoutrrr URLs to a temporary file inside the Watchtower container.
 
+{{< callout type="info" >}}
+**Settings the file leaves out**
+The file holds only the notification URL. It leaves out two legacy email settings, which are not part of a Shoutrrr URL. Watchtower applies both while your legacy settings are in place. When you switch to the generated URL, set their replacements yourself:
+
+- [`notification-email-delay`](../../../configuration/notifications/#email-delay) is replaced by [`notifications-delay`](../../../configuration/notifications/#notifications-delay).
+- [`notification-email-subjecttag`](../../../configuration/notifications/#email-subject-tag) is replaced by [`notification-title-tag`](../../../configuration/notifications/#notification-title-tag).
+
+{{< /callout >}}
+
 ## Usage
 
 The `notify-upgrade` command converts legacy Watchtower notification configurations into Shoutrrr URLs and writes them to a temporary file inside the container.
@@ -51,8 +60,8 @@ services:
       WATCHTOWER_NOTIFICATIONS: email
       WATCHTOWER_NOTIFICATION_EMAIL_SERVER: smtp.example.com
       WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: 587
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: user@example.com
-      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: secret
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: USERNAME
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: 'PASSWORD'
       WATCHTOWER_NOTIFICATION_EMAIL_FROM: sender@example.com
       WATCHTOWER_NOTIFICATION_EMAIL_TO: recipient@example.com
     volumes:
@@ -70,8 +79,8 @@ docker run --rm \
   -e WATCHTOWER_NOTIFICATIONS=email \
   -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER=smtp.example.com \
   -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=587 \
-  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=user@example.com \
-  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=secret \
+  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=USERNAME \
+  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD='PASSWORD' \
   -e WATCHTOWER_NOTIFICATION_EMAIL_FROM=sender@example.com \
   -e WATCHTOWER_NOTIFICATION_EMAIL_TO=recipient@example.com \
   nickfedor/watchtower \
@@ -91,8 +100,8 @@ docker run --rm \
   --notifications email \
   --notification-email-server smtp.example.com \
   --notification-email-server-port 587 \
-  --notification-email-server-user user@example.com \
-  --notification-email-server-password secret \
+  --notification-email-server-user USERNAME \
+  --notification-email-server-password 'PASSWORD' \
   --notification-email-from sender@example.com \
   --notification-email-to recipient@example.com
 ```
@@ -100,6 +109,13 @@ docker run --rm \
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace the following:
+
+- *`USERNAME`*: the user name for your SMTP server. `notify-upgrade` writes an `@` in it as `%40`.
+- *`PASSWORD`*: the password for your SMTP server, inside the single quotes. In a Compose file, write each `'` in it as `''` and each `$` as `$$`. In a shell command, write each `'` as `'\''`.
+
+Use your SMTP server's host name in place of `smtp.example.com` and your own addresses in place of `sender@example.com` and `recipient@example.com`.
 
 {{< /tab >}}
 
@@ -115,8 +131,8 @@ services:
     command: notify-upgrade
     environment:
       WATCHTOWER_NOTIFICATIONS: gotify
-      WATCHTOWER_NOTIFICATION_GOTIFY_URL: "https://my.gotify.tld/"
-      WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN: "SuperSecretToken"
+      WATCHTOWER_NOTIFICATION_GOTIFY_URL: "https://gotify.example.com/"
+      WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN: "TOKEN"
       WATCHTOWER_NOTIFICATION_GOTIFY_TLS_SKIP_VERIFY: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -131,8 +147,8 @@ docker run --rm \
   --name watchtower-notify-upgrade \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e WATCHTOWER_NOTIFICATIONS=gotify \
-  -e WATCHTOWER_NOTIFICATION_GOTIFY_URL="https://my.gotify.tld/" \
-  -e WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN="SuperSecretToken" \
+  -e WATCHTOWER_NOTIFICATION_GOTIFY_URL="https://gotify.example.com/" \
+  -e WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN="TOKEN" \
   -e WATCHTOWER_NOTIFICATION_GOTIFY_TLS_SKIP_VERIFY=true \
   nickfedor/watchtower \
   notify-upgrade
@@ -149,14 +165,16 @@ docker run --rm \
   nickfedor/watchtower \
   notify-upgrade \
   --notifications gotify \
-  --notification-gotify-url "https://my.gotify.tld/" \
-  --notification-gotify-token "SuperSecretToken" \
+  --notification-gotify-url "https://gotify.example.com/" \
+  --notification-gotify-token "TOKEN" \
   --notification-gotify-tls-skip-verify
 ```
 
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace *`TOKEN`* with the application token from your Gotify server and `gotify.example.com` with your server's host name.
 
 {{< /tab >}}
 
@@ -172,7 +190,7 @@ services:
     command: notify-upgrade
     environment:
       WATCHTOWER_NOTIFICATIONS: slack
-      WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL: "https://hooks.slack.com/services/AAA/BBB/CCC"
+      WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL: "https://hooks.slack.com/services/WORKSPACE_ID/WEBHOOK_ID/WEBHOOK_TOKEN"
       WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER: watchtower-server-1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -187,7 +205,7 @@ docker run --rm \
   --name watchtower-notify-upgrade \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e WATCHTOWER_NOTIFICATIONS=slack \
-  -e WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL="https://hooks.slack.com/services/AAA/BBB/CCC" \
+  -e WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL="https://hooks.slack.com/services/WORKSPACE_ID/WEBHOOK_ID/WEBHOOK_TOKEN" \
   -e WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=watchtower-server-1 \
   nickfedor/watchtower \
   notify-upgrade
@@ -204,13 +222,19 @@ docker run --rm \
   nickfedor/watchtower \
   notify-upgrade \
   --notifications slack \
-  --notification-slack-hook-url "https://hooks.slack.com/services/AAA/BBB/CCC" \
+  --notification-slack-hook-url "https://hooks.slack.com/services/WORKSPACE_ID/WEBHOOK_ID/WEBHOOK_TOKEN" \
   --notification-slack-identifier watchtower-server-1
 ```
 
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace the following with the parts of your Slack webhook URL:
+
+- *`WORKSPACE_ID`*: the workspace ID, which starts with `T`
+- *`WEBHOOK_ID`*: the webhook ID, which starts with `B`
+- *`WEBHOOK_TOKEN`*: the webhook token
 
 {{< /tab >}}
 
@@ -226,7 +250,7 @@ services:
     command: notify-upgrade
     environment:
       WATCHTOWER_NOTIFICATIONS: msteams
-      WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL: "https://prod-00.westus.logic.azure.com:443/workflows/abc123/triggers/manual/paths/invoke?api-version=2016-06-00&sp=/triggers/manual/run&sv=1.0&sig=XXXXXXXX"
+      WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL: "https://ENVIRONMENT.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/WORKFLOW_ID/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 ```
@@ -240,7 +264,7 @@ docker run --rm \
   --name watchtower-notify-upgrade \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e WATCHTOWER_NOTIFICATIONS=msteams \
-  -e WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL="https://prod-00.westus.logic.azure.com:443/workflows/abc123/triggers/manual/paths/invoke?api-version=2016-06-00&sp=/triggers/manual/run&sv=1.0&sig=XXXXXXXX" \
+  -e WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL="https://ENVIRONMENT.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/WORKFLOW_ID/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE" \
   nickfedor/watchtower \
   notify-upgrade
 ```
@@ -256,12 +280,20 @@ docker run --rm \
   nickfedor/watchtower \
   notify-upgrade \
   --notifications msteams \
-  --notification-msteams-hook "https://prod-00.westus.logic.azure.com:443/workflows/abc123/triggers/manual/paths/invoke?api-version=2016-06-00&sp=/triggers/manual/run&sv=1.0&sig=XXXXXXXX"
+  --notification-msteams-hook "https://ENVIRONMENT.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/WORKFLOW_ID/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE"
 ```
 
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace the following with the parts of the webhook URL that your workflow's trigger shows:
+
+- *`ENVIRONMENT`*: the Power Platform environment
+- *`WORKFLOW_ID`*: the workflow ID
+- *`SIGNATURE`*: the value of the `sig` parameter
+
+An Azure Logic Apps workflow's URL has a different form. Use the whole URL that its trigger shows.
 
 {{< /tab >}}
 
@@ -275,18 +307,23 @@ The `notify-upgrade` command inspects the container's current configuration, so 
 
 ### Retrieving the Generated File
 
-After running `notify-upgrade`, the converted Shoutrrr URL is written to a temporary file in the container's working directory, with a filename like `watchtower-notif-urls-XXXXXX`.
+After running `notify-upgrade`, the converted Shoutrrr URL is written to a temporary file in the container's working directory. Its name starts with `watchtower-notif-urls-` and ends in a random number.
 
-The command logs the exact container path and prints a copy command, for example:
+The command logs a copy command with the container and the file name:
 
 ```text
-INFO To get the environment file, use: docker cp abc123:watchtower-notif-urls-123456789 ./watchtower-notifications.env
+INFO To get the environment file, use: docker cp CONTAINER_ID:FILE_NAME ./watchtower-notifications.env
 ```
 
-Copy it to your local machine with:
+This output includes the following values:
+
+- *`CONTAINER_ID`*: the ID of the container that ran `notify-upgrade`. When `notify-upgrade` cannot find its own container ID, the line shows `<CONTAINER>` instead. Replace it with the container's name or ID before you run the command, because a shell reads `<` and `>` as redirections.
+- *`FILE_NAME`*: the name of the temporary file, such as `watchtower-notif-urls-1234567890`
+
+Run that command to copy the file to your local machine:
 
 ```bash
-docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
+docker cp CONTAINER_ID:FILE_NAME ./watchtower-notifications.env
 ```
 
 The temporary file is automatically removed after **5 minutes** or when the container stops, so copy it promptly after generation.
@@ -316,10 +353,12 @@ services:
             WATCHTOWER_NOTIFICATIONS: email
             WATCHTOWER_NOTIFICATION_EMAIL_SERVER: smtp.example.com
             WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: 587
-            WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: user@example.com
-            WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: secret
+            WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: USERNAME
+            WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: 'PASSWORD'
             WATCHTOWER_NOTIFICATION_EMAIL_FROM: sender@example.com
             WATCHTOWER_NOTIFICATION_EMAIL_TO: recipient@example.com
+            WATCHTOWER_NOTIFICATION_EMAIL_DELAY: 10
+            WATCHTOWER_NOTIFICATION_EMAIL_SUBJECTTAG: Watchtower
         volumes:
         - /var/run/docker.sock:/var/run/docker.sock
 ```
@@ -335,10 +374,12 @@ docker run -d \
   -e WATCHTOWER_NOTIFICATIONS=email \
   -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER=smtp.example.com \
   -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=587 \
-  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=user@example.com \
-  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=secret \
+  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=USERNAME \
+  -e WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD='PASSWORD' \
   -e WATCHTOWER_NOTIFICATION_EMAIL_FROM=sender@example.com \
   -e WATCHTOWER_NOTIFICATION_EMAIL_TO=recipient@example.com \
+  -e WATCHTOWER_NOTIFICATION_EMAIL_DELAY=10 \
+  -e WATCHTOWER_NOTIFICATION_EMAIL_SUBJECTTAG=Watchtower \
   nickfedor/watchtower
 ```
 
@@ -354,15 +395,24 @@ docker run -d \
   --notifications email \
   --notification-email-server smtp.example.com \
   --notification-email-server-port 587 \
-  --notification-email-server-user user@example.com \
-  --notification-email-server-password secret \
+  --notification-email-server-user USERNAME \
+  --notification-email-server-password 'PASSWORD' \
   --notification-email-from sender@example.com \
-  --notification-email-to recipient@example.com
+  --notification-email-to recipient@example.com \
+  --notification-email-delay 10 \
+  --notification-email-subjecttag Watchtower
 ```
 
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace the following:
+
+- *`USERNAME`*: the user name for your SMTP server. `notify-upgrade` writes an `@` in it as `%40`.
+- *`PASSWORD`*: the password for your SMTP server, inside the single quotes. In a Compose file, write each `'` in it as `''` and each `$` as `$$`. In a shell command, write each `'` as `'\''`.
+
+Use your SMTP server's host name in place of `smtp.example.com` and your own addresses in place of `sender@example.com` and `recipient@example.com`.
 
 **2.** With the container running, execute the `notify-upgrade` command:
 
@@ -370,19 +420,19 @@ docker run -d \
 docker exec watchtower /watchtower notify-upgrade
 ```
 
-Then copy the resulting file out of the container:
+Then copy the resulting file out of the container with the command that `notify-upgrade` logs:
 
 ```bash
-docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
+docker cp CONTAINER_ID:FILE_NAME ./watchtower-notifications.env
 ```
 
 **3.** The following converted Shoutrrr URL should be produced:
 
 ```text
-smtp://user@example.com:secret@smtp.example.com:587/?fromaddress=sender@example.com&toaddresses=recipient@example.com&encryption=ExplicitTLS&usestarttls=yes
+smtp://USERNAME:PASSWORD@smtp.example.com:587/?auth=Plain&clienthost=localhost&encryption=Auto&fromaddress=sender%40example.com&fromname=Watchtower&subject=&toaddresses=recipient%40example.com&usehtml=No&usestarttls=Yes&timeout=10s
 ```
 
-**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the converted Shoutrrr URL. The URL does not carry the email delay or the subject tag. Set the notifications delay and the title tag in their place:
 
 {{< tabs >}}
 
@@ -393,7 +443,7 @@ services:
     watchtower:
         image: nickfedor/watchtower:latest
         environment:
-            WATCHTOWER_NOTIFICATION_URL: smtp://user@example.com:secret@smtp.example.com:587/?fromaddress=sender@example.com&toaddresses=recipient@example.com&encryption=ExplicitTLS&usestarttls=yes
+            WATCHTOWER_NOTIFICATION_URL: 'smtp://USERNAME:PASSWORD@smtp.example.com:587/?auth=Plain&clienthost=localhost&encryption=Auto&fromaddress=sender%40example.com&fromname=Watchtower&subject=&toaddresses=recipient%40example.com&usehtml=No&usestarttls=Yes&timeout=10s'
             WATCHTOWER_NOTIFICATIONS_DELAY: "10"
             WATCHTOWER_NOTIFICATION_TITLE_TAG: Watchtower
         volumes:
@@ -408,7 +458,7 @@ services:
 docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e "WATCHTOWER_NOTIFICATION_URL=smtp://user@example.com:secret@smtp.example.com:587/?fromaddress=sender@example.com&toaddresses=recipient@example.com&encryption=ExplicitTLS&usestarttls=yes" \
+  -e 'WATCHTOWER_NOTIFICATION_URL=smtp://USERNAME:PASSWORD@smtp.example.com:587/?auth=Plain&clienthost=localhost&encryption=Auto&fromaddress=sender%40example.com&fromname=Watchtower&subject=&toaddresses=recipient%40example.com&usehtml=No&usestarttls=Yes&timeout=10s' \
   -e WATCHTOWER_NOTIFICATIONS_DELAY=10 \
   -e WATCHTOWER_NOTIFICATION_TITLE_TAG=Watchtower \
   nickfedor/watchtower
@@ -423,7 +473,7 @@ docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower \
-  --notification-url "smtp://user@example.com:secret@smtp.example.com:587/?fromaddress=sender@example.com&toaddresses=recipient@example.com&encryption=ExplicitTLS&usestarttls=yes" \
+  --notification-url 'smtp://USERNAME:PASSWORD@smtp.example.com:587/?auth=Plain&clienthost=localhost&encryption=Auto&fromaddress=sender%40example.com&fromname=Watchtower&subject=&toaddresses=recipient%40example.com&usehtml=No&usestarttls=Yes&timeout=10s' \
   --notifications-delay 10 \
   --notification-title-tag Watchtower
 ```
@@ -431,6 +481,8 @@ docker run -d \
 {{< /tab >}}
 
 {{< /tabs >}}
+
+    The single quotes keep YAML and the shell from changing the URL. `notify-upgrade` writes a `'` in the password as `%27` but leaves a `$` as it is. In a Compose file, write each `$` in the URL as `$$`.
 
 {{< callout type="info" >}}
 
@@ -455,8 +507,8 @@ services:
         image: nickfedor/watchtower:latest
         environment:
             WATCHTOWER_NOTIFICATIONS: gotify
-            WATCHTOWER_NOTIFICATION_GOTIFY_URL: "https://my.gotify.tld/"
-            WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN: "SuperSecretToken"
+            WATCHTOWER_NOTIFICATION_GOTIFY_URL: "https://gotify.example.com/"
+            WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN: "TOKEN"
             WATCHTOWER_NOTIFICATION_GOTIFY_TLS_SKIP_VERIFY: true
         volumes:
         - /var/run/docker.sock:/var/run/docker.sock
@@ -471,8 +523,8 @@ docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e WATCHTOWER_NOTIFICATIONS=gotify \
-  -e WATCHTOWER_NOTIFICATION_GOTIFY_URL="https://my.gotify.tld/" \
-  -e WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN="SuperSecretToken" \
+  -e WATCHTOWER_NOTIFICATION_GOTIFY_URL="https://gotify.example.com/" \
+  -e WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN="TOKEN" \
   -e WATCHTOWER_NOTIFICATION_GOTIFY_TLS_SKIP_VERIFY=true \
   nickfedor/watchtower
 ```
@@ -487,8 +539,8 @@ docker run -d \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower \
   --notifications gotify \
-  --notification-gotify-url "https://my.gotify.tld/" \
-  --notification-gotify-token "SuperSecretToken" \
+  --notification-gotify-url "https://gotify.example.com/" \
+  --notification-gotify-token "TOKEN" \
   --notification-gotify-tls-skip-verify
 ```
 
@@ -496,25 +548,27 @@ docker run -d \
 
 {{< /tabs >}}
 
+Replace *`TOKEN`* with the application token from your Gotify server and `gotify.example.com` with your server's host name.
+
 **2.** With the container running, execute the `notify-upgrade` command:
 
 ```bash
 docker exec watchtower /watchtower notify-upgrade
 ```
 
-Then copy the resulting file out of the container:
+Then copy the resulting file out of the container with the command that `notify-upgrade` logs:
 
 ```bash
-docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
+docker cp CONTAINER_ID:FILE_NAME ./watchtower-notifications.env
 ```
 
 **3.** The following converted Shoutrrr URL should be produced:
 
 ```text
-gotify://my.gotify.tld/SuperSecretToken?title=
+gotify://gotify.example.com/TOKEN?skiptlsverify=Yes&title=
 ```
 
-**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the converted Shoutrrr URL:
 
 {{< tabs >}}
 
@@ -525,7 +579,7 @@ services:
     watchtower:
         image: nickfedor/watchtower:latest
         environment:
-            WATCHTOWER_NOTIFICATION_URL: "gotify://my.gotify.tld/SuperSecretToken?title="
+            WATCHTOWER_NOTIFICATION_URL: "gotify://gotify.example.com/TOKEN?skiptlsverify=Yes&title="
         volumes:
         - /var/run/docker.sock:/var/run/docker.sock
 ```
@@ -538,7 +592,7 @@ services:
 docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e WATCHTOWER_NOTIFICATION_URL="gotify://my.gotify.tld/SuperSecretToken?title=" \
+  -e WATCHTOWER_NOTIFICATION_URL="gotify://gotify.example.com/TOKEN?skiptlsverify=Yes&title=" \
   nickfedor/watchtower
 ```
 
@@ -551,7 +605,7 @@ docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower \
-  --notification-url "gotify://my.gotify.tld/SuperSecretToken?title="
+  --notification-url "gotify://gotify.example.com/TOKEN?skiptlsverify=Yes&title="
 ```
 
 {{< /tab >}}
@@ -574,7 +628,7 @@ services:
         image: nickfedor/watchtower:latest
         environment:
             WATCHTOWER_NOTIFICATIONS: slack
-            WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL: "https://hooks.slack.com/services/AAA/BBB/CCC"
+            WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL: "https://hooks.slack.com/services/WORKSPACE_ID/WEBHOOK_ID/WEBHOOK_TOKEN"
             WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER: watchtower-server-1
         volumes:
         - /var/run/docker.sock:/var/run/docker.sock
@@ -589,7 +643,7 @@ docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e WATCHTOWER_NOTIFICATIONS=slack \
-  -e WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL="https://hooks.slack.com/services/AAA/BBB/CCC" \
+  -e WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL="https://hooks.slack.com/services/WORKSPACE_ID/WEBHOOK_ID/WEBHOOK_TOKEN" \
   -e WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=watchtower-server-1 \
   nickfedor/watchtower
 ```
@@ -604,7 +658,7 @@ docker run -d \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower \
   --notifications slack \
-  --notification-slack-hook-url "https://hooks.slack.com/services/AAA/BBB/CCC" \
+  --notification-slack-hook-url "https://hooks.slack.com/services/WORKSPACE_ID/WEBHOOK_ID/WEBHOOK_TOKEN" \
   --notification-slack-identifier watchtower-server-1
 ```
 
@@ -612,25 +666,31 @@ docker run -d \
 
 {{< /tabs >}}
 
+Replace the following with the parts of your Slack webhook URL:
+
+- *`WORKSPACE_ID`*: the workspace ID, which starts with `T`
+- *`WEBHOOK_ID`*: the webhook ID, which starts with `B`
+- *`WEBHOOK_TOKEN`*: the webhook token
+
 **2.** With the container running, execute the `notify-upgrade` command:
 
 ```bash
 docker exec watchtower /watchtower notify-upgrade
 ```
 
-Then copy the resulting file out of the container:
+Then copy the resulting file out of the container with the command that `notify-upgrade` logs:
 
 ```bash
-docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
+docker cp CONTAINER_ID:FILE_NAME ./watchtower-notifications.env
 ```
 
 **3.** The following converted Shoutrrr URL should be produced:
 
 ```text
-slack://hook:AAA-BBB-CCC@webhook?botname=watchtower&color=%23406170
+slack://hook:WORKSPACE_ID-WEBHOOK_ID-WEBHOOK_TOKEN@webhook?botname=watchtower-server-1&color=%23406170
 ```
 
-**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the converted Shoutrrr URL:
 
 {{< tabs >}}
 
@@ -641,7 +701,7 @@ services:
     watchtower:
         image: nickfedor/watchtower:latest
         environment:
-            WATCHTOWER_NOTIFICATION_URL: "slack://hook:AAA-BBB-CCC@webhook?botname=watchtower&color=%23406170"
+            WATCHTOWER_NOTIFICATION_URL: "slack://hook:WORKSPACE_ID-WEBHOOK_ID-WEBHOOK_TOKEN@webhook?botname=watchtower-server-1&color=%23406170"
         volumes:
         - /var/run/docker.sock:/var/run/docker.sock
 ```
@@ -654,7 +714,7 @@ services:
 docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e WATCHTOWER_NOTIFICATION_URL="slack://hook:AAA-BBB-CCC@webhook?botname=watchtower&color=%23406170" \
+  -e WATCHTOWER_NOTIFICATION_URL="slack://hook:WORKSPACE_ID-WEBHOOK_ID-WEBHOOK_TOKEN@webhook?botname=watchtower-server-1&color=%23406170" \
   nickfedor/watchtower
 ```
 
@@ -667,7 +727,7 @@ docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower \
-  --notification-url "slack://hook:AAA-BBB-CCC@webhook?botname=watchtower&color=%23406170"
+  --notification-url "slack://hook:WORKSPACE_ID-WEBHOOK_ID-WEBHOOK_TOKEN@webhook?botname=watchtower-server-1&color=%23406170"
 ```
 
 {{< /tab >}}
@@ -690,7 +750,7 @@ services:
         image: nickfedor/watchtower:latest
         environment:
             WATCHTOWER_NOTIFICATIONS: msteams
-            WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL: "https://prod-00.westus.logic.azure.com:443/workflows/abc123/triggers/manual/paths/invoke?api-version=2016-06-00&sp=/triggers/manual/run&sv=1.0&sig=XXXXXXXX"
+            WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL: "https://ENVIRONMENT.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/WORKFLOW_ID/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE"
         volumes:
         - /var/run/docker.sock:/var/run/docker.sock
 ```
@@ -704,7 +764,7 @@ docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e WATCHTOWER_NOTIFICATIONS=msteams \
-  -e WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL="https://prod-00.westus.logic.azure.com:443/workflows/abc123/triggers/manual/paths/invoke?api-version=2016-06-00&sp=/triggers/manual/run&sv=1.0&sig=XXXXXXXX" \
+  -e WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL="https://ENVIRONMENT.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/WORKFLOW_ID/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE" \
   nickfedor/watchtower
 ```
 
@@ -718,12 +778,20 @@ docker run -d \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower \
   --notifications msteams \
-  --notification-msteams-hook "https://prod-00.westus.logic.azure.com:443/workflows/abc123/triggers/manual/paths/invoke?api-version=2016-06-00&sp=/triggers/manual/run&sv=1.0&sig=XXXXXXXX"
+  --notification-msteams-hook "https://ENVIRONMENT.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/WORKFLOW_ID/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE"
 ```
 
 {{< /tab >}}
 
 {{< /tabs >}}
+
+Replace the following with the parts of the webhook URL that your workflow's trigger shows:
+
+- *`ENVIRONMENT`*: the Power Platform environment
+- *`WORKFLOW_ID`*: the workflow ID
+- *`SIGNATURE`*: the value of the `sig` parameter
+
+An Azure Logic Apps workflow's URL has a different form. Use the whole URL that its trigger shows.
 
 **2.** With the container running, execute the `notify-upgrade` command:
 
@@ -731,19 +799,19 @@ docker run -d \
 docker exec watchtower /watchtower notify-upgrade
 ```
 
-Then copy the resulting file out of the container:
+Then copy the resulting file out of the container with the command that `notify-upgrade` logs:
 
 ```bash
-docker cp <CONTAINER>:<FILE_PATH> ./watchtower-notifications.env
+docker cp CONTAINER_ID:FILE_NAME ./watchtower-notifications.env
 ```
 
 **3.** The following converted Shoutrrr URL should be produced:
 
 ```text
-teams://?host=https%3A%2F%2Fprod-00.westus.logic.azure.com%3A443%2Fworkflows%2Fabc123%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D2016-06-00%26sp%3D%2Ftriggers%2Fmanual%2Frun%26sv%3D1.0%26sig%3DXXXXXXXX&color=%23406170
+teams:?color=%23406170&host=https%3A%2F%2FENVIRONMENT.environment.api.powerplatform.com%3A443%2Fpowerautomate%2Fautomations%2Fdirect%2Fworkflows%2FWORKFLOW_ID%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D1%26sp%3D%252Ftriggers%252Fmanual%252Frun%26sv%3D1.0%26sig%3DSIGNATURE
 ```
 
-**4.** Replace the deprecated configuration with the coverted Shoutrrr URL:
+**4.** Replace the deprecated configuration with the converted Shoutrrr URL:
 
 {{< tabs >}}
 
@@ -754,7 +822,7 @@ services:
     watchtower:
         image: nickfedor/watchtower:latest
         environment:
-            WATCHTOWER_NOTIFICATION_URL: "teams://?host=https%3A%2F%2Fprod-00.westus.logic.azure.com%3A443%2Fworkflows%2Fabc123%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D2016-06-00%26sp%3D%2Ftriggers%2Fmanual%2Frun%26sv%3D1.0%26sig%3DXXXXXXXX&color=%23406170"
+            WATCHTOWER_NOTIFICATION_URL: "teams:?color=%23406170&host=https%3A%2F%2FENVIRONMENT.environment.api.powerplatform.com%3A443%2Fpowerautomate%2Fautomations%2Fdirect%2Fworkflows%2FWORKFLOW_ID%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D1%26sp%3D%252Ftriggers%252Fmanual%252Frun%26sv%3D1.0%26sig%3DSIGNATURE"
         volumes:
         - /var/run/docker.sock:/var/run/docker.sock
 ```
@@ -767,7 +835,7 @@ services:
 docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -e WATCHTOWER_NOTIFICATION_URL="teams://?host=https%3A%2F%2Fprod-00.westus.logic.azure.com%3A443%2Fworkflows%2Fabc123%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D2016-06-00%26sp%3D%2Ftriggers%2Fmanual%2Frun%26sv%3D1.0%26sig%3DXXXXXXXX&color=%23406170" \
+  -e WATCHTOWER_NOTIFICATION_URL="teams:?color=%23406170&host=https%3A%2F%2FENVIRONMENT.environment.api.powerplatform.com%3A443%2Fpowerautomate%2Fautomations%2Fdirect%2Fworkflows%2FWORKFLOW_ID%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D1%26sp%3D%252Ftriggers%252Fmanual%252Frun%26sv%3D1.0%26sig%3DSIGNATURE" \
   nickfedor/watchtower
 ```
 
@@ -780,7 +848,7 @@ docker run -d \
   --name watchtower \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nickfedor/watchtower \
-  --notification-url "teams://?host=https%3A%2F%2Fprod-00.westus.logic.azure.com%3A443%2Fworkflows%2Fabc123%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D2016-06-00%26sp%3D%2Ftriggers%2Fmanual%2Frun%26sv%3D1.0%26sig%3DXXXXXXXX&color=%23406170"
+  --notification-url "teams:?color=%23406170&host=https%3A%2F%2FENVIRONMENT.environment.api.powerplatform.com%3A443%2Fpowerautomate%2Fautomations%2Fdirect%2Fworkflows%2FWORKFLOW_ID%2Ftriggers%2Fmanual%2Fpaths%2Finvoke%3Fapi-version%3D1%26sp%3D%252Ftriggers%252Fmanual%252Frun%26sv%3D1.0%26sig%3DSIGNATURE"
 ```
 
 {{< /tab >}}
@@ -847,7 +915,7 @@ cat "${OUTPUT}"
 
 - The service must already be defined in `docker-compose.yaml` with your legacy notification environment variables. The script assumes the service name defaults to `watchtower`.
 - The command will self-cleanup after 5 minutes or when the script exits.
-- `notify-upgrade` keeps a Slack channel only when it is a Slack channel ID, such as `C0123456789`. A channel name such as `#ops` or a user such as `@alice` cannot be carried into the Shoutrrr URL, so the generated URL uses the webhook's own channel and `notify-upgrade` logs a warning. Webhooks created by a Slack app always post to their own channel.
+- `notify-upgrade` keeps a Slack channel only when it is a Slack channel ID, such as `C0123456789`. A channel name such as `#ops` or a user such as `@dana` cannot be carried into the Shoutrrr URL, so the generated URL uses the webhook's own channel and `notify-upgrade` logs a warning. Webhooks created by a Slack app always post to their own channel.
 
 {{< /callout >}}
 

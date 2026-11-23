@@ -79,6 +79,20 @@ Suitable for testing or private registries.
 
 {{< /callout >}}
 
+{{< callout type="info" >}}
+**Local registries that serve plain HTTP**
+This option applies only to Watchtower's own registry requests. The Docker daemon pulls the image itself, and it pulls from a plain-HTTP registry, such as one at `localhost:5000`, only when its `insecure-registries` setting covers that registry.
+
+Docker Engine 29.10.0 and later count `localhost` and other loopback addresses as insecure only while `insecure-registries` is not set ([moby/moby#53868](https://github.com/moby/moby/pull/53868)). Once the list names any registry, add the local one in the same form your images use, such as `localhost:5000`. A pull by `127.0.0.1:5000` needs its own entry. Otherwise the daemon's pull fails with `http: server gave HTTP response to HTTPS client`.
+
+```json
+{
+    "insecure-registries": ["registry.example.com", "localhost:5000"]
+}
+```
+
+{{< /callout >}}
+
 ### Minimum Registry TLS Version
 
 Sets the minimum TLS version for registry connections, overriding the default (TLS 1.2).
@@ -126,7 +140,7 @@ Environment Variable: NO_PROXY / no_proxy
 
 {{< callout type="info" >}}
 Proxies may require authentication.
-Include it in the URL (e.g., `http://user:pass@proxy.example.com:3128`), but avoid exposing credentials in the command line by using Docker secrets or environment files instead.
+Include it in the URL, such as `http://USERNAME:PASSWORD@proxy.example.com:3128` with your proxy user name and password, but avoid exposing credentials in the command line by using Docker secrets or environment files instead.
 
 If your proxy uses a self-signed certificate, combine with `--registry-tls-skip` to disable TLS verification (use cautiously).
 

@@ -33,7 +33,13 @@ Environment Variable: DOCKER_TLS_VERIFY
 **When TLS verification is enabled**
 
 - The use of `tcp://` or `https://` schemes for the Docker host URL is required.
-- `tcp://` is converted to `https://` when TLS verification is enabled.
+- An `https://` host is treated as `tcp://`, since the certificates, not the scheme, make the connection use TLS.
+- The [TLS certificate path](#tls-certificate-path) is required for a remote host. Without it, Watchtower stops at startup rather than connect without TLS.
+
+{{< /callout >}}
+
+{{< callout type="info" >}}
+Watchtower reads `DOCKER_TLS_VERIFY` as a boolean, so `0` or `false` turns verification off. The Docker CLI verifies when the variable has any value.
 
 {{< /callout >}}
 
@@ -74,7 +80,7 @@ Specifying multiple connections, such as both the local socket (i.e. `/var/run/d
 
 - This is required for connections to any Docker host.
 - The use of `tcp://` or `https://` schemes is required when using a TLS connection.
-- `tcp://` is internally converted to `https://` when TLS verification is enabled.
+- An `https://` host is treated as `tcp://`.
 
 {{< /callout >}}
 
@@ -84,7 +90,7 @@ Specifying multiple connections, such as both the local socket (i.e. `/var/run/d
             Argument: --api-version
 Environment Variable: DOCKER_API_VERSION
                 Type: String
-             Default: <Auto-negotiated>
+             Default: Auto-negotiated
 ```
 
 {{< callout type="info" >}}
@@ -96,10 +102,10 @@ Environment Variable: DOCKER_API_VERSION
 
 ## Examples
 
-{{< callout type="info" >}}
-Replace `remote-host` with your actual Docker host address and `/path/to/certs` with the path to your certificate directory.
+Replace the following:
 
-{{< /callout >}}
+- *`CERT_DIR`*: the absolute path of a directory that holds only the client's `ca.pem`, `cert.pem` and `key.pem` files
+- *`HOST`*: the host name or IP address of the Docker host, as named in its server certificate. Enclose an IPv6 address in brackets, such as `[2001:db8::1]`.
 
 {{< tabs >}}
 
@@ -108,16 +114,16 @@ Replace `remote-host` with your actual Docker host address and `/path/to/certs` 
 ```bash
 docker run -d \
   --name watchtower \
-  -v /path/to/certs:/etc/ssl/docker:ro \
-  nickfedor/watchtower --host tcp://remote-host:2376 --cert-path /etc/ssl/docker --tlsverify
+  -v "CERT_DIR:/etc/ssl/docker:ro" \
+  nickfedor/watchtower --host tcp://HOST:2376 --cert-path /etc/ssl/docker --tlsverify
 ```
 
 | Parameter                              | Description                                                                            |
 |----------------------------------------|----------------------------------------------------------------------------------------|
 | `--name watchtower`                    | Assigns the name "watchtower" to the container for easy identification and management. |
-| `-v /path/to/certs:/etc/ssl/docker:ro` | Mounts the local certificate directory to the container's SSL directory as read-only.  |
+| `-v "CERT_DIR:/etc/ssl/docker:ro"`     | Mounts the local certificate directory to the container's SSL directory as read-only.  |
 | `nickfedor/watchtower`                 | Specifies the Docker image to run, which is the Watchtower container image.            |
-| `--host tcp://remote-host:2376`        | Sets the Docker host to connect to via TCP on port 2376.                               |
+| `--host tcp://HOST:2376`               | Sets the Docker host to connect to via TCP on port 2376.                               |
 | `--cert-path /etc/ssl/docker`          | Defines the path inside the container where TLS certificates are located.              |
 | `--tlsverify`                          | Enables TLS verification for secure connections to the Docker host.                    |
 
@@ -135,21 +141,21 @@ services:
     watchtower:
         image: nickfedor/watchtower
         environment:
-            - DOCKER_HOST=tcp://remote-host:2376
+            - DOCKER_HOST=tcp://HOST:2376
             - DOCKER_CERT_PATH=/etc/ssl/docker
             - DOCKER_TLS_VERIFY=1
         volumes:
-            - /path/to/certs:/etc/ssl/docker:ro
+            - CERT_DIR:/etc/ssl/docker:ro
         restart: unless-stopped
 ```
 
 | Parameter                              | Description                                                                           |
 |----------------------------------------|---------------------------------------------------------------------------------------|
 | `image: nickfedor/watchtower`          | Specifies the Docker image for the Watchtower service.                                |
-| `- DOCKER_HOST=tcp://remote-host:2376` | Sets the Docker host connection URL.                                      |
+| `- DOCKER_HOST=tcp://HOST:2376`        | Sets the Docker host connection URL.                                      |
 | `- DOCKER_CERT_PATH=/etc/ssl/docker`   | Specifies the path to the directory containing TLS certificates.                      |
 | `- DOCKER_TLS_VERIFY=1`                | Enables TLS verification for secure connections.                                      |
-| `/path/to/certs:/etc/ssl/docker:ro`    | Mounts the local certificate directory to the container's SSL directory as read-only. |
+| `CERT_DIR:/etc/ssl/docker:ro`          | Mounts the local certificate directory to the container's SSL directory as read-only. |
 | `restart: unless-stopped`              | Configures the container to restart automatically unless it was manually stopped.     |
 
 {{< /tab >}}
@@ -202,7 +208,7 @@ Setting up TLS for Docker involves several key steps:
 
   4. **Environment Variables:**
 
-       - Set `DOCKER_HOST` to the secure endpoint (e.g., `tcp://host:2376`)
+       - Set `DOCKER_HOST` to the secure endpoint (e.g., `tcp://docker.example.com:2376`)
        - Set `DOCKER_CERT_PATH` to the directory containing client certificates
        - Set `DOCKER_TLS_VERIFY=1` to enable verification
 
@@ -247,11 +253,11 @@ Generate self-signed certificates for testing (replace with proper certificates 
 3. Sign the server CSR with the CA certificate, creating a server certificate valid for 365 days with the specified extensions, and save it to `server-cert.pem`:
 
     ```bash
-    echo "subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1" > extfile-server.cnf
+    echo "subjectAltName = DNS:$HOST,IP:192.0.2.20,IP:127.0.0.1" > extfile-server.cnf
     ```
 
     {{< callout type="info" >}}
-    `IP:10.10.10.20` is an example IP. Replace with your host's actual IP.
+    `IP:192.0.2.20` is an example IP. Replace it with your host's actual IP.
     {{< /callout >}}
 
     {{< callout type="info" >}}
@@ -420,11 +426,11 @@ services:
     watchtower:
         image: nickfedor/watchtower
         environment:
-            - DOCKER_HOST=tcp://remote-host:2376
+            - DOCKER_HOST=tcp://HOST:2376
             - DOCKER_CERT_PATH=/etc/ssl/docker
             - DOCKER_TLS_VERIFY=1
         volumes:
-            - /path/to/certs:/etc/ssl/docker:ro
+            - CERT_DIR:/etc/ssl/docker:ro
         restart: unless-stopped
 ```
 
@@ -435,17 +441,18 @@ services:
 ```bash
 docker run -d \
   --name watchtower \
-  -v /path/to/certs:/etc/ssl/docker:ro \
-  nickfedor/watchtower --host tcp://remote-host:2376 --cert-path /etc/ssl/docker --tlsverify
+  -v "CERT_DIR:/etc/ssl/docker:ro" \
+  nickfedor/watchtower --host tcp://HOST:2376 --cert-path /etc/ssl/docker --tlsverify
 ```
 
 {{< /tab >}}
 
 {{< /tabs >}}
 
-{{< callout type="info" >}}
-`remote-host` is used, but can be replaced with `localhost` for local testing.
-{{< /callout >}}
+Replace the following:
+
+- *`HOST`*: the host name or IP address of the Docker host, as named in its server certificate. Enclose an IPv6 address in brackets, such as `[2001:db8::1]`.
+- *`CERT_DIR`*: the absolute path of a directory that holds only the client's `ca.pem`, `cert.pem` and `key.pem` files. Do not use `/etc/docker/certs`, which also holds the CA and server private keys.
 
 ## Troubleshooting
 
@@ -454,12 +461,12 @@ docker run -d \
 When [TLS verification](#tls-verification) is enabled and the [Docker host URL](#docker-host-url) uses `http://`,  Watchtower logs the following warning:
 
 {{< callout type="warning" >}}
-TLS verification is enabled but DOCKER_HOST uses insecure scheme 'http://'. Consider using 'https://' or disable TLS verification.
+TLS verification is enabled but DOCKER_HOST uses insecure scheme 'http://'. Consider using 'tcp://' or disable TLS verification.
 {{< /callout >}}
 
 Possible Solutions:
 
-- If using a secure connection, then use `https://`.
+- If using a secure connection, then use `tcp://`.
 - If using `http://`, then disable TLS verification.
 
 ### Local Socket with TLS Verification

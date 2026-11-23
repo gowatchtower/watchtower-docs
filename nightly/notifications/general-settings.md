@@ -89,7 +89,7 @@ Shoutrrr's own messages, such as a warning that a service sends without TLS, go 
 
 ## Split by Container
 
-Send separate notifications for each updated container instead of grouping them.
+Send a separate notification for each container instead of grouping them.
 
 ```text
             Argument: --notification-split-by-container
@@ -100,7 +100,12 @@ Environment Variable: WATCHTOWER_NOTIFICATION_SPLIT_BY_CONTAINER
 
 {{< callout type="info" >}}
 - By default, notifications are grouped for all updated containers in a single session.
-- When split notifications is enabled, a separate notification is sent for each container update event.
+- When split notifications is enabled, a separate notification is sent for each of these containers:
+    - a container that was updated or restarted
+    - a container whose update failed
+    - a monitor-only container with a newer image
+    - a container skipped during its update cooldown
+- Messages that none of these notifications carries are sent after them, one notification per container. A failed update check and a disk-space warning are examples. Messages that name no container are sent together. These notifications carry no report. A [report template](../templates/#report-templates) shows them only if it lists `.Entries`.
 
 {{< /callout >}}
 

@@ -30,8 +30,10 @@ This option can also reference a file, in which case the contents of the file ar
 
 To send notifications to multiple services simultaneously, you can:
 
-- Use comma-separated URLs: `--notification-url="discord://xxx,telegram://yyy"`
-- Specify the flag multiple times: `--notification-url=discord://xxx --notification-url=telegram://yyy`
+- Use comma-separated URLs: `--notification-url="DISCORD_URL,TELEGRAM_URL"`
+- Specify the flag multiple times: `--notification-url=DISCORD_URL --notification-url=TELEGRAM_URL`
+
+Replace *`DISCORD_URL`* and *`TELEGRAM_URL`* with the `discord://` and `telegram://` URLs of your services.
 
 See [Configuring Multiple Notification URLs](../../notifications/introduction/#using-multiple-notification-services) for detailed examples.
 
@@ -49,7 +51,7 @@ For environment variables, use comma-separated or space-separated values.
 
 ## Notification Split by Container
 
-Send separate notifications for each updated container instead of grouping them.
+Send a separate notification for each container instead of grouping them.
 
 ```text
             Argument: --notification-split-by-container
@@ -60,7 +62,7 @@ Environment Variable: WATCHTOWER_NOTIFICATION_SPLIT_BY_CONTAINER
 
 {{< callout type="info" >}}
 When disabled (default), notifications are grouped for all updated containers in a single session.
-When enabled, a separate notification is sent for each container update.
+When enabled, a separate notification is sent for each container that needs one. See [Split by Container](../../notifications/general-settings/#split-by-container) for the containers that get one.
 
 {{< /callout >}}
 
@@ -293,6 +295,11 @@ Environment Variable: WATCHTOWER_NOTIFICATION_EMAIL_SUBJECTTAG
              Default: ""
 ```
 
+{{< callout type="info" >}}
+Use the [Notification Title Tag](#notification-title-tag) option instead. The `notify-upgrade` command does not carry this setting into the generated URL.
+
+{{< /callout >}}
+
 #### Email Server Port
 
 The port the SMTP server listens on. Watchtower exits at startup if the value is outside 0 to 65535.
@@ -315,6 +322,11 @@ Environment Variable: WATCHTOWER_NOTIFICATION_EMAIL_DELAY
              Default: None
 ```
 
+{{< callout type="info" >}}
+Use the [Notifications Delay](#notifications-delay) option instead. The `notify-upgrade` command does not carry this setting into the generated URL.
+
+{{< /callout >}}
+
 ### Gotify
 
 #### Gotify URL
@@ -330,7 +342,9 @@ Environment Variable: WATCHTOWER_NOTIFICATION_GOTIFY_URL
 
 #### Gotify Token
 
-Sets the Gotify token for notifications.
+Sets the Gotify application token for notifications.
+A client token is rejected at startup.
+Watchtower sends the token in the `X-Gotify-Key` header, which keeps it out of the server's access logs.
 
 ```text
             Argument: --notification-gotify-token
@@ -372,8 +386,8 @@ Environment Variable: WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL
 ```
 
 {{< callout type="warning" >}}
-The value of `--notification-msteams-hook` **must** be an absolute URL using the `https://` scheme (including the host).
-Relative URLs and non-HTTPS schemes are rejected at runtime.
+The value of the `notification-msteams-hook` configuration option **must** be a Power Automate or Azure Logic Apps workflow webhook URL. It uses `https://` and carries a `sig` signature parameter.
+Watchtower refuses to start with any other URL, such as a retired Office 365 connector URL on `webhook.office.com`.
 
 {{< /callout >}}
 

@@ -64,6 +64,28 @@ Environment Variable: WATCHTOWER_LOG_FORMAT
              Default: Auto
 ```
 
+### Escaped Characters
+
+Log lines can carry text from outside Watchtower, such as an error message from a registry. To keep that text from changing how a terminal shows a log line, every format escapes these characters in messages, field names and field values:
+
+- Control characters, such as the escape character that starts terminal sequences
+- Unicode format characters, such as bidirectional overrides and zero-width spaces
+- Line and paragraph separators
+
+These escapes apply only to text that holds one of these characters.
+
+| Format         | Messages, field names and text values | Lists and other values             | Example                           |
+|:---------------|:--------------------------------------|:-----------------------------------|:----------------------------------|
+| JSON           | JSON escapes                          | JSON escapes                       | `"error":"manifest abc\u202edef"` |
+| LogFmt, Pretty | Quoted, with Go string escapes        | Written as JSON, with JSON escapes | `error="manifest abc\u202edef"`   |
+
+In the example, `\u202e` stands for a right-to-left override in the registry's error text.
+
+{{< callout type="info" >}}
+The escapes protect the raw log line. JSON escapes decode to the original characters, so a log viewer that decodes JSON values and shows them as text must guard against those characters itself.
+
+{{< /callout >}}
+
 ## Disable ANSI Colors
 
 Disables ANSI color escape codes in log output for plain text logs.

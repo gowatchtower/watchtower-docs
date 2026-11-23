@@ -78,7 +78,7 @@ secrets:
 docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $(pwd)/secrets/api_token.txt:/run/secrets/api_token:ro \
+    -v "$(pwd)/secrets/api_token.txt:/run/secrets/api_token:ro" \
     -e WATCHTOWER_HTTP_API_TOKEN=/run/secrets/api_token \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=metrics \
     -p 8080:8080 \
@@ -126,7 +126,7 @@ secrets:
 docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $(pwd)/secrets/events_token.txt:/run/secrets/events_token:ro \
+    -v "$(pwd)/secrets/events_token.txt:/run/secrets/events_token:ro" \
     -e WATCHTOWER_HTTP_API_EVENTS_TOKEN=/run/secrets/events_token \
     -e WATCHTOWER_HTTP_API_ENDPOINTS=events \
     -p 8080:8080 \
@@ -171,7 +171,7 @@ secrets:
 docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $(pwd)/secrets/notification_url.txt:/run/secrets/notification_url:ro \
+    -v "$(pwd)/secrets/notification_url.txt:/run/secrets/notification_url:ro" \
     -e WATCHTOWER_NOTIFICATION_URL=/run/secrets/notification_url \
     --restart unless-stopped \
     nickfedor/watchtower
@@ -215,7 +215,7 @@ secrets:
 docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $(pwd)/secrets/git_auth_token.txt:/run/secrets/git_auth_token:ro \
+    -v "$(pwd)/secrets/git_auth_token.txt:/run/secrets/git_auth_token:ro" \
     -e WATCHTOWER_GIT_ENABLE=true \
     -e WATCHTOWER_GIT_AUTH_TOKEN=/run/secrets/git_auth_token \
     --restart unless-stopped \
@@ -261,7 +261,7 @@ secrets:
 docker run -d \
     --name watchtower \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $(pwd)/secrets/git_password.txt:/run/secrets/git_password:ro \
+    -v "$(pwd)/secrets/git_password.txt:/run/secrets/git_password:ro" \
     -e WATCHTOWER_GIT_ENABLE=true \
     -e WATCHTOWER_GIT_USERNAME=git \
     -e WATCHTOWER_GIT_PASSWORD=/run/secrets/git_password \
