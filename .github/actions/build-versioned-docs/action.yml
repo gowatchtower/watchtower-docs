@@ -1,0 +1,41 @@
+---
+name: Build Versioned Docs
+description: >-
+  Builds a Hugo site as one version of a multi-version docs site kept on a
+  branch. The build lands in a worktree of that branch and is not committed.
+
+# The site branch uses mike's layout. Each version has its own directory, and
+# a versions.json beside them lists {version, title, aliases} entries. A
+# release, such as v1.24.0, also becomes latest when no newer release is
+# listed. It is then built a second time into latest/.
+#
+# The caller checks out the Hugo site with fetch-depth: 0 and installs Hugo
+# first. The site reads its version from HUGO_PARAMS_VERSIONING_VERSION.
+
+inputs:
+  version:
+    description: Directory and versions.json entry to build, such as nightly or v1.24.0.
+    required: true
+  base-url:
+    description: URL the site branch is served from, such as https://example.org.
+    required: true
+  branch:
+    description: Branch that holds the published site.
+    default: cf-pages
+
+outputs:
+  path:
+    description: Worktree of the site branch that holds the build.
+    value: ${{ steps.build.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Build Version
+      id: build
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        BASE_URL: ${{ inputs.base-url }}
+        BRANCH: ${{ inputs.branch }}
+      run: '"$GITHUB_ACTION_PATH/build.sh" --version "$VERSION" --base-url "$BASE_URL" --branch "$BRANCH"'

@@ -98,7 +98,7 @@ params:
   externalLinkDecoration: true
 
   # Version this build is published as (for example nightly or v1.24.0). Empty renders no version selector.
-  # Set at build time with HUGO_PARAMS_VERSIONING_VERSION by scripts/publish-version.sh.
+  # Set at build time with HUGO_PARAMS_VERSIONING_VERSION by the build-versioned-docs action.
   versioning:
     version: ""
 

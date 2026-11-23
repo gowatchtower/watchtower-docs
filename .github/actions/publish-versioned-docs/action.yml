@@ -1,0 +1,31 @@
+---
+name: Publish Versioned Docs
+description: >-
+  Commits a docs version built by the build-versioned-docs action and pushes it
+  to the site branch.
+
+inputs:
+  path:
+    description: Worktree of the site branch that holds the build.
+    required: true
+  version:
+    description: Version that was built, named in the commit message.
+    required: true
+  branch:
+    description: Branch that holds the published site.
+    default: cf-pages
+  token:
+    description: Token used to push to the branch.
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - name: Push to Branch
+      shell: bash
+      env:
+        SITE: ${{ inputs.path }}
+        VERSION: ${{ inputs.version }}
+        BRANCH: ${{ inputs.branch }}
+        TOKEN: ${{ inputs.token }}
+      run: '"$GITHUB_ACTION_PATH/publish.sh" --site "$SITE" --version "$VERSION" --branch "$BRANCH"'

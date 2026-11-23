@@ -19,7 +19,7 @@ hugo server
 
 Open <http://localhost:1313/>
 
-To preview every version, including the legacy MkDocs builds:
+To preview the published site with this checkout as `nightly`:
 
 ```bash
 task preview:build
@@ -42,35 +42,29 @@ Output is written to `public/`.
 Versions follow mike's layout, so the legacy MkDocs builds and the Hugo builds share one site.
 Each version has its own directory (`nightly/`, `v1.24.0/`, `latest/`), and both version selectors read the root `versions.json`.
 
-Each tag, such as `v1.23.2`, marks the commit that documents that Watchtower release.
-Publish a tag as a version, built with this checkout's layouts:
+The `cf-pages` branch holds the published site.
+The Build and Publish Site workflow (`.github/workflows/hugo.yaml`) updates it.
+A push to `main` rebuilds `nightly`.
 
-```bash
-./scripts/publish-version.sh --tree public --version v1.23.2 --ref v1.23.2 --base-url https://watchtower.nickfedor.com --alias latest
-```
+Each tag, such as `v1.24.0`, marks the commit that documents that Watchtower release.
+Pushing a tag builds it as its own version, and as `latest` when it is the newest release.
 
-Without `--ref`, the script publishes the working tree.
+The workflow uses two composite actions in `.github/actions/`.
+`build-versioned-docs` builds one version into a worktree of the site branch, and `publish-versioned-docs` commits and pushes it.
 
 ## Cloudflare Pages
 
-| Setting                | Value                                                                                                                   |
-|------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| Production branch      | `main`                                                                                                                  |
-| Preview branch         | `feat/hugh`                                                                                                             |
-| Build command          | `if [ "$CF_PAGES_BRANCH" = "feat/hugh" ]; then ./scripts/build-preview.sh; else hugo mod get && hugo --gc --minify; fi` |
-| Build output directory | `public`                                                                                                                |
-| Environment variable   | `HUGO_VERSION` = `0.167.0` (or current Extended release), in Production and Preview                                     |
-
-Hugo Modules require Go on the build image.
-Cloudflare Pages provides Go by default for Hugo projects.
-If module fetch fails, set `GO_VERSION` (e.g. `1.27.x`) in the project environment variables.
+| Setting                | Value      |
+|------------------------|------------|
+| Production branch      | `cf-pages` |
+| Build command          | (none)     |
+| Build output directory | `/`        |
 
 Custom domain: `gowatchtower.org` (configure in Cloudflare Pages → Custom domains).
-Preview: <https://feat-hugh.watchtower-docs.pages.dev/> (the `feat/hugh` branch).
 
 ## Content layout
 
-Documentation lives under `content/` with URL paths matching the legacy MkDocs site (no `/docs/` prefix):
+Documentation lives under `content/` with URL paths matching the legacy MkDocs site (no `/docs/` prefix), within each version's directory:
 
 - `/quickstart/`
 - `/getting-started/`
@@ -94,7 +88,7 @@ Rebuild the checked-in WASM after changing the module:
 
 Run module tests with `go -C tools/tplprev test ./...`.
 
-CI runs tplprev tests, golangci-lint, gosec, govulncheck, a WASM compile, and a Hugo build. Deploy stays on Cloudflare Pages.
+CI runs tplprev tests, golangci-lint, gosec, govulncheck, a WASM compile, and a Hugo build. The same workflow publishes the site to `cf-pages`.
 
 ## Theme
 

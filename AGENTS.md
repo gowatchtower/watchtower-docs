@@ -8,7 +8,7 @@ Root `go.mod` / `go.sum` exist only for Hugo Modules (theme pin). Do not add a r
 
 ## Commands
 
-Hugo Extended **v0.146+** required (developed on **0.167**). Fetch the theme before any build or server:
+Hugo Extended **v0.146+** required (developed on **0.170**). Fetch the theme before any build or server:
 
 ```bash
 hugo mod get
@@ -25,37 +25,34 @@ golangci-lint run --timeout 60s ./...   # from tools/tplprev
 ./scripts/build-tplprev.sh
 ```
 
-GitHub Actions (`.github/workflows/`):
+GitHub Actions (`.github/workflows/`, with the site's composite actions in `.github/actions/`):
 
-- `hugo.yaml` — Hugo Extended build
+- `hugo.yaml` builds the site on pull requests, and publishes `nightly` and tagged versions to the `cf-pages` branch
 - `test.yaml` — tplprev tests, vet, and WASM build
 - `lint-go.yaml` — golangci-lint on `tools/tplprev`
 - `lint-gh.yaml` — actionlint
 - `security.yaml` — gosec + govulncheck on tplprev
 
-Renovate config is `.github/renovate.json`. Deploy stays on Cloudflare Pages.
+Renovate config is `.github/renovate.json`.
 
 Do not commit `public/`, `resources/`, `_vendor/`, or `.hugo_build.lock`.
 
 ## Deploy
 
-Cloudflare Pages (`main`):
+The `cf-pages` branch holds the published site, with one directory per version beside `versions.json`. Cloudflare Pages deploys that branch as it is, with no build step. Do not merge it into `main` or commit source files to it.
 
-- Build: `hugo mod get && hugo --gc --minify`
-- Output: `public`
-- `HUGO_VERSION=0.167.0` (Extended). Go is needed for module fetch; set `GO_VERSION` if fetch fails.
+`hugo.yaml` updates `cf-pages` through the `build-versioned-docs` and `publish-versioned-docs` actions. A push to `main` rebuilds `nightly`. A push of a `v*` tag builds that tag's checkout as its own version. Each version is built once, from its own tag, so later layout changes do not reach published versions.
 
 ## Versioning
 
-Versioned docs use mike's layout: each version in its own directory (`nightly/`, `v1.24.0/`, `latest/`) beside a `versions.json` of `{version, title, aliases}` entries. Legacy MkDocs builds from the `gh-pages` branch of `nicholas-fedor/watchtower` sit in the same tree unchanged. Their Material selector and this site's selector both read `../versions.json` and link to `../<version>/`, so each lists every version.
+Versioned docs use mike's layout. Each version has its own directory, such as `nightly/` or `v1.24.0/`, beside a `versions.json` of `{version, title, aliases}` entries. Legacy MkDocs builds, copied from the `gh-pages` branch of `nicholas-fedor/watchtower`, sit in the same tree. Their Material selector and this site's selector both read `../versions.json` and link to `../<version>/`, so each lists every version.
 
 - `params.versioning.version` names the version a build is published as. It is empty by default, which hides the selector, and is set through `HUGO_PARAMS_VERSIONING_VERSION`.
-- Each `v*` tag marks the commit that documents that Watchtower release, such as `v1.23.2`. Tag the commit that finishes a release's sync.
-- `scripts/publish-version.sh --tree DIR --version V --base-url URL [--ref REF] [--alias latest] [--replaces OLD]` builds this checkout into `DIR/V/` and updates `DIR/versions.json`. With `--ref`, it builds REF's `content/` and `static/` with this checkout's layouts, so old tags get the current selector. With `--alias`, it moves the alias to V and builds a second full copy into `DIR/<alias>/`. With `--replaces`, it removes OLD's directory and entry and moves OLD's aliases to V. It replaces `mike deploy`.
-- `scripts/build-preview.sh` (`task preview:build`, then `task preview:serve` on <http://localhost:1314/>) assembles the legacy tree in `public/`. It publishes each tag over the legacy build of that release, then this checkout as `nightly`. The newest tag takes `latest` unless a newer legacy release holds it. `nightly` replaces the legacy rolling `dev` build.
-- `--ref` builds keep the ref's `static/` except `static/template-preview/`, which pairs with the shortcode in `layouts/`. Keep the `WATCHTOWER.tplprev` WASM interface compatible with every tag's `tplprev.wasm`.
-
-The experimental `feat/hugh` branch deploys as a Preview branch of the same Cloudflare Pages project, at <https://feat-hugh.watchtower-docs.pages.dev/>. The project's build command picks the build by branch, so `main` keeps the command above: `if [ "$CF_PAGES_BRANCH" = "feat/hugh" ]; then ./scripts/build-preview.sh; else hugo mod get && hugo --gc --minify; fi`. Cloudflare keeps separate Production and Preview variables, so `HUGO_VERSION` is set in both.
+- Each `v*` tag marks the commit that documents that Watchtower release, such as `v1.23.2`. Tag the commit that finishes a release's sync. Pushing the tag publishes it.
+- `.github/actions/build-versioned-docs` builds the checkout as one version into a worktree of the site branch. It also rewrites `versions.json`. The newest release listed holds the `latest` alias, and is built a second time into `latest/`.
+- `.github/actions/publish-versioned-docs` commits that worktree and pushes it to the site branch. The workflow runs it only for a push or manual run on `main` or a `v*` tag.
+- Keep both actions free of Watchtower specifics, so other Hugo sites can use them. Pass those as inputs.
+- `scripts/build-preview.sh` (`task preview:build`, then `task preview:serve` on <http://localhost:1314/>) copies `cf-pages` from origin into `public/` and builds this checkout over its `nightly` version. `scripts/` holds local tools only. CI logic belongs in the actions.
 
 ## Theme and layouts
 
@@ -105,7 +102,7 @@ Do not point readers at `containrrr/watchtower` (archived).
 ./scripts/build-tplprev.sh
 ```
 
-Commit the updated `static/tplprev.wasm` and `static/wasm_exec.js`. Cloudflare Pages does not compile WASM.
+Commit the updated `static/tplprev.wasm` and `static/wasm_exec.js`. The publish job does not compile WASM.
 
 ## Outputs
 
