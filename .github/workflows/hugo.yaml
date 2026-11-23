@@ -72,7 +72,9 @@ jobs:
           base-url: https://gowatchtower.org
 
       - name: Publish Site
-        if: github.event_name != 'pull_request'
+        if: >-
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+          (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
         uses: ./.github/actions/publish-versioned-docs # zizmor: ignore[self-repository]
         with:
           path: ${{ steps.build.outputs.path }}

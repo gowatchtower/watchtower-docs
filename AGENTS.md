@@ -50,7 +50,7 @@ Versioned docs use mike's layout. Each version has its own directory, such as `n
 - `params.versioning.version` names the version a build is published as. It is empty by default, which hides the selector, and is set through `HUGO_PARAMS_VERSIONING_VERSION`.
 - Each `v*` tag marks the commit that documents that Watchtower release, such as `v1.23.2`. Tag the commit that finishes a release's sync. Pushing the tag publishes it.
 - `.github/actions/build-versioned-docs` builds the checkout as one version into a worktree of the site branch. It also rewrites `versions.json`. The newest release listed holds the `latest` alias, and is built a second time into `latest/`.
-- `.github/actions/publish-versioned-docs` commits that worktree and pushes it to the site branch. The workflow skips it on pull requests.
+- `.github/actions/publish-versioned-docs` commits that worktree and pushes it to the site branch. The workflow runs it only for a push or manual run on `main` or a `v*` tag.
 - Keep both actions free of Watchtower specifics, so other Hugo sites can use them. Pass those as inputs.
 - `scripts/build-preview.sh` (`task preview:build`, then `task preview:serve` on <http://localhost:1314/>) copies `cf-pages` from origin into `public/` and builds this checkout over its `nightly` version. `scripts/` holds local tools only. CI logic belongs in the actions.
 
