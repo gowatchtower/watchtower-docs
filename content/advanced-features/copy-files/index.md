@@ -137,6 +137,8 @@ Watchtower copies labeled files in two phases and a failure in either one stops 
 
 **After the container is stopped.** Watchtower writes the files into the replacement container. A failure here discards the replacement, and the container is not recreated for that cycle.
 
+A container whose network other containers join gets its replacement before it is stopped, so its files are written while it still runs (see [Containers Sharing a Recreated Container's Network](../linked-containers/#containers-sharing-a-recreated-containers-network)). A file under a mount then lands in the mount at that point and stays there if the replacement is undone.
+
 | Condition | Why |
 | --- | --- |
 | The copy into the new container fails | The Engine refused the write, or the connection failed. |
@@ -157,6 +159,8 @@ A [named volume](https://docs.docker.com/engine/storage/volumes/) is preserved o
 
 Docker gives each container a fresh anonymous volume for every `VOLUME` an image declares. Watchtower therefore creates a new empty one on each update.
 Only the files named by the copy-file label are written back into it. Everything else under that path is discarded.
+
+A container recreated only because it joins the network of a recreated container keeps its anonymous volumes instead (see [Containers Sharing a Recreated Container's Network](../linked-containers/#containers-sharing-a-recreated-containers-network)).
 
 The [`--remove-volumes`](../../configuration/update-behavior/#remove-anonymous-volumes) flag deletes the previous anonymous volume after an update, which also removes the labeled files it held.
 

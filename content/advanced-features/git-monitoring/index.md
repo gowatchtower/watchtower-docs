@@ -1018,7 +1018,7 @@ When a later apply omits an optional field, for example no tag or no dockerfile,
 
 ### HTTPS and HTTP
 
-Use a token or a username and password when the clone URL starts with `https://` or `http://`.
+Use a token or a username and password when the clone URL starts with `https://`.
 
 Watchtower tries the configured credentials in this order and stops at the first match:
 
@@ -1026,12 +1026,17 @@ Watchtower tries the configured credentials in this order and stops at the first
 2. [Git Username](../../configuration/git-monitoring/#git-username) together with [Git Password](../../configuration/git-monitoring/#git-password)
 3. No credentials. The remote must allow anonymous reads.
 
+Watchtower sends these credentials to the host that a container's `com.centurylinklabs.watchtower.git-repo` label names, including a self-hosted server.
+An image can carry that label, so configure them only when you trust the Git labels of the containers Watchtower monitors.
+
 A [Git URL context](#git-url-context) build is performed by the Docker daemon, not by Watchtower.
 The daemon is given those credentials inside an `https://` clone URL.
 It is not given an SSH key.
 A private repository on this path needs an `https://` URL and either a token or a username and password.
 
-A plain `http://` URL is not given those credentials for the build.
+A plain `http://` clone URL never receives the token, username, or password.
+Watchtower reads it without them for ref checks and checkouts.
+The Docker daemon also builds it without them.
 Use HTTPS for a private repository.
 
 ### SSH
@@ -1042,8 +1047,12 @@ Mount the private key and set [Git SSH Key Path](../../configuration/git-monitor
 Also mount a `known_hosts` file and set [Git SSH Known Hosts](../../configuration/git-monitoring/#git-ssh-known-hosts).
 The Watchtower image has no host keys of its own, so the connection fails when that file is missing.
 
+Without [Git SSH Key Path](../../configuration/git-monitoring/#git-ssh-key-path), the connection falls back to an SSH agent named by the `SSH_AUTH_SOCK` environment variable.
+The Watchtower image runs no SSH agent, so an SSH remote needs the key unless you mount an agent socket and set that variable.
+
 The HTTPS token and password are not sent on the SSH connection.
-They can still be used for the HTTP API when [Hosts](#hosts) names the same hostname as the clone URL.
+They are still used for the clone host's HTTP API.
+A self-hosted server needs a matching `git-host` label for that, as described under [Hosts](#hosts).
 
 SSH lists refs, and it checks out a [local path context](#local-path-context) whose origin is SSH.
 It does not build a Git URL context.

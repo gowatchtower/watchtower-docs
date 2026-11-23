@@ -120,6 +120,8 @@ var Templates = map[string]string{
     Skipped {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}}: invalid git-host
 {{- else if or (eq $msg "Registry rate limit retries exhausted. Container failed for this cycle") (eq $msg "Could not update container") -}}
     Update failed for {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}} ({{with (index $e.Data "image")}}{{.}}{{else}}unknown{{end}}){{with (index $e.Data "error")}}: {{.}}{{end}}
+{{- else if eq $msg "Could not reconnect container to the network of a recreated container" -}}
+    Could not reconnect {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}} to the network of {{with (index $e.Data "network_container")}}{{.}}{{else}}a recreated container{{end}}{{with (index $e.Data "error")}}: {{.}}{{end}}
 {{- else if eq $msg "Ignoring depends-on entry that names no container" -}}
     Ignored depends-on {{with (index $e.Data "depends_on")}}{{.}}{{else}}entry{{end}} for {{with (index $e.Data "container")}}{{.}}{{else}}container{{end}}: no container has that name
 {{- else if eq $msg "Skipping container update (self-dependency)" -}}
@@ -159,7 +161,7 @@ var Templates = map[string]string{
 {{- end -}}
 {{- end -}}`,
 	"json.v1":        `{{ . | ToJSON }}`,
-	"porcelain.json": `{{ .Report | ToPorcelainJSON }}`,
+	"porcelain.json": `{{ with .Report }}{{ ToPorcelainJSON . }}{{ end }}`,
 	"porcelain.v1.summary-no-log": `
 {{- if .Report -}}
   {{- /* Iterate over all containers */ -}}
@@ -169,7 +171,5 @@ var Templates = map[string]string{
   {{- else -}}
     no containers matched filter
   {{- end -}}
-{{- else -}}
-  no containers matched filter
 {{- end -}}`,
 }

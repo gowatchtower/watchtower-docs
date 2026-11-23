@@ -25,7 +25,7 @@ Environment Variable: WATCHTOWER_REVIVE_STOPPED
 ```
 
 {{< callout type="info" >}}
-Requires `--include-stopped`.
+Requires the [include-stopped](#include-stopped-containers) configuration option. Without it, Watchtower updates no stopped containers, so this option has no effect. Watchtower logs a warning at startup when it is set alone.
 
 {{< /callout >}}
 
