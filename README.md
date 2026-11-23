@@ -42,11 +42,14 @@ Output is written to `public/`.
 Versions follow mike's layout, so the legacy MkDocs builds and the Hugo builds share one site.
 Each version has its own directory (`nightly/`, `v1.24.0/`, `latest/`), and both version selectors read the root `versions.json`.
 
-Publish this checkout as a version:
+Each tag, such as `v1.23.2`, marks the commit that documents that Watchtower release.
+Publish a tag as a version, built with this checkout's layouts:
 
 ```bash
-./scripts/publish-version.sh --tree public --version v1.24.0 --base-url https://watchtower.nickfedor.com --alias latest
+./scripts/publish-version.sh --tree public --version v1.23.2 --ref v1.23.2 --base-url https://watchtower.nickfedor.com --alias latest
 ```
+
+Without `--ref`, the script publishes the working tree.
 
 ## Cloudflare Pages
 

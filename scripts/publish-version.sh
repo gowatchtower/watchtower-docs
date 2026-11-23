@@ -8,11 +8,15 @@
 # selector and the Hugo selector read.
 #
 # Usage:
-#   publish-version.sh --tree DIR --version VERSION --base-url URL [--alias NAME] [--replaces OLD]
+#   publish-version.sh --tree DIR --version VERSION --base-url URL [--ref REF] [--alias NAME] [--replaces OLD]
 #
 #   --tree      Directory holding the assembled site. Created if missing.
 #   --version   Directory and versions.json entry to publish, such as nightly or v1.24.0.
 #   --base-url  URL the tree is served from, such as https://watchtower.nickfedor.com.
+#   --ref       Git ref whose pages to publish, such as the tag v1.23.2. Its
+#               content/ and static/ are built with this checkout's layouts,
+#               so every version gets the current version selector. Without
+#               it, the working tree is published as it is.
 #   --alias     Alias to move to this version, such as latest. The version is
 #               also built a second time into DIR/NAME/, so alias URLs serve
 #               full pages rather than redirects.
@@ -32,6 +36,7 @@ usage() {
 tree=""
 version=""
 base_url=""
+ref=""
 alias_name=""
 replaces=""
 
@@ -40,6 +45,7 @@ while [ $# -gt 0 ]; do
     --tree) tree="${2:-}"; shift 2 ;;
     --version) version="${2:-}"; shift 2 ;;
     --base-url) base_url="${2:-}"; shift 2 ;;
+    --ref) ref="${2:-}"; shift 2 ;;
     --alias) alias_name="${2:-}"; shift 2 ;;
     --replaces) replaces="${2:-}"; shift 2 ;;
     *) usage ;;
@@ -68,23 +74,64 @@ for tool in hugo python3; do
 done
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [ -n "$ref" ] && ! git -C "$repo_root" rev-parse --verify --quiet "$ref^{commit}" >/dev/null; then
+    echo "Error: unknown ref: $ref" >&2
+    exit 2
+fi
+
 mkdir -p "$tree"
 tree="$(cd "$tree" && pwd)"
 base_url="${base_url%/}"
 
+# Hugo builds from the working tree, or with --ref from a temporary worktree of
+# the ref. That worktree keeps the ref's content/ and static/, so each version
+# keeps its own pages, images, and template preview WASM, and Hugo dates its
+# pages from the ref's history. Everything else comes from the working tree.
+# That includes static/template-preview/, because the template-preview
+# shortcode in layouts/ loads it.
+source="$repo_root"
+if [ -n "$ref" ]; then
+    source="$(mktemp -d)"
+    trap 'git -C "$repo_root" worktree remove --force "$source" 2>/dev/null || rm -rf "$source"' EXIT
+    git -C "$repo_root" worktree add --quiet --detach "$source" "$ref"
+
+    find "$source" -mindepth 1 -maxdepth 1 ! -name .git ! -name content ! -name static -exec rm -rf {} +
+    rm -rf "$source/static/template-preview"
+
+    # Copies the files git tracks or would track outside content/ and static/,
+    # skipping tracked files deleted from the working tree.
+    (
+        cd "$repo_root"
+        {
+            git ls-files -z --cached --others --exclude-standard --deduplicate -- . ':!content' ':!static'
+            git ls-files -z --cached --others --exclude-standard --deduplicate -- static/template-preview
+        } |
+            while IFS= read -r -d '' file; do
+                [ -e "$file" ] && printf '%s\0' "$file"
+            done |
+            tar --null -T - -cf -
+    ) | tar -C "$source" -xf -
+
+    # Homepages tagged before versioning link from the host root, such as
+    # link="/quickstart/", which skips the version's directory. Dropping the
+    # leading slash makes them relative to the version's base URL.
+    sed -i -E 's#(link|src)="/([^/])#\1="\2#g' "$source/content/_index.md"
+fi
+
 build() {
     local dir="$1"
-    echo "Building $version into $tree/$dir/ (base URL $base_url/$dir/)..."
+    echo "Building $version${ref:+ from $ref} into $tree/$dir/ (base URL $base_url/$dir/)..."
     rm -rf "${tree:?}/$dir"
     HUGO_PARAMS_VERSIONING_VERSION="$version" hugo \
-        --source "$repo_root" \
+        --source "$source" \
         --gc \
         --minify \
         --baseURL "$base_url/$dir/" \
         --destination "$tree/$dir"
 }
 
-(cd "$repo_root" && hugo mod get)
+(cd "$source" && hugo mod get)
 
 build "$version"
 if [ -n "$alias_name" ]; then
