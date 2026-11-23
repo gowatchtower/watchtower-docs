@@ -91,7 +91,7 @@ services:
         image: nginx
         labels:
             com.centurylinklabs.watchtower.cooldown-delay: "48h"
-        ...
+        # ...
 ```
 
 {{< /tab >}}
@@ -100,8 +100,8 @@ services:
 
 ```bash
 docker run -d \
---label=com.centurylinklabs.watchtower.cooldown-delay="48h" \
-nginx
+  --label=com.centurylinklabs.watchtower.cooldown-delay="48h" \
+  nginx
 ```
 
 {{< /tab >}}
@@ -239,10 +239,16 @@ flowchart TD
     class C decision
 ```
 
-1. **Manifest fetch**: Watchtower sends a `GET` request to `/v2/<image>/manifests/<tag>` with `Accept` headers covering both OCI and Docker manifest formats.
+1. **Manifest fetch**: Watchtower sends a `GET` request to `/v2/IMAGE/manifests/TAG` with `Accept` headers covering both OCI and Docker manifest formats.
 2. **Platform selection**: For multi-platform images (manifest lists or OCI indexes), Watchtower selects the manifest matching the runtime OS and architecture. Cross-platform monitoring can be configured via `WATCHTOWER_COOLDOWN_PLATFORM_OS` and `WATCHTOWER_COOLDOWN_PLATFORM_ARCH`. For ARM images with multiple variants (e.g., `v7`, `v8`), specify `WATCHTOWER_COOLDOWN_PLATFORM_VARIANT` to disambiguate.
-3. **Config blob fetch**: The manifest's config digest is used to fetch `/v2/<image>/blobs/<digest>`. This is a small JSON document (typically <15 KB).
+3. **Config blob fetch**: The manifest's config digest is used to fetch `/v2/IMAGE/blobs/DIGEST`. This is a small JSON document (typically <15 KB).
 4. **Timestamp extraction**: The `created` field from the config JSON is parsed as the image creation time.
+
+These requests include the following values:
+
+- *`IMAGE`*: the image repository, such as `library/nginx`
+- *`TAG`*: the image tag
+- *`DIGEST`*: the config digest from the manifest
 
 No image layers are downloaded during this process.
 
@@ -352,6 +358,17 @@ The subsequent config blob fetch does not count.
 
 Users running Watchtower against Docker Hub with many monitored containers or short polling intervals should be aware that each stale image detected during a cooldown window consumes one or two pulls.
 Authenticating with a Docker Hub account raises the limit from 100 to 200 pulls, and paid tiers have unlimited pulls.
+
+##### Reaching the Pull Limit
+
+Over the limit, Docker Hub responds with a `429` whose message reads "You have reached your pull rate limit" and gives no time to wait.
+The limit holds for the rest of its six-hour window, so Watchtower does not retry within the cycle:
+
+- The container is marked **Failed** for the cycle.
+- One warning naming the container is logged and included in log-based notifications.
+- The next scheduled run checks the container again.
+
+Docker Hub's abuse rate limit returns a plain `429 Too Many Requests` instead, which Watchtower handles as described in [Handling a 429 Response](#handling-a-429-response).
 
 #### GitHub Container Registry (ghcr.io)
 
