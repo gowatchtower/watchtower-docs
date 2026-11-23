@@ -137,6 +137,9 @@ Builds and Compose applies run Dockerfile steps that can take minutes, so the Gi
 
 {{< /callout >}}
 
+A ref check sends its request to the provider's [HTTP API](../../advanced-features/git-monitoring/#hosts) first when one is available, then falls back to Git ls-remote if the API request fails.
+The API request may use up to half of the Git timeout, so ls-remote still has time when the API does not respond.
+
 ## Git CA Bundle
 
 Path to a PEM file of extra CA certificates for Git HTTPS.

@@ -25,6 +25,7 @@ A container is monitored only if it passes every filter in the chain. The filter
 
 - If an image name pattern is configured, then Watchtower will exclusively manage only the respective container(s).
 - If a container name is provided as an argument, then Watchtower will exclusively manage only the specified container(s).
+- A container these filters exclude is still recreated when it joins the network of a container Watchtower recreates, with the exceptions listed in [Containers Sharing a Recreated Container's Network](../../advanced-features/linked-containers/#containers-sharing-a-recreated-containers-network).
 
 {{< /callout >}}
 
@@ -154,7 +155,7 @@ LABEL com.centurylinklabs.watchtower.enable="false"
 
 ## Monitor-Only Mode
 
-Individual containers can be set to [monitor-only mode](../../configuration/update-behavior/#monitor-only), where Watchtower checks for updates and sends notifications but does not recreate the container.
+Individual containers can be set to [monitor-only mode](../../configuration/update-behavior/#monitor-only), where Watchtower checks for updates and sends notifications but does not recreate the container. The exception is a container that joins the network of a container Watchtower recreates, which is recreated with its own image (see [Containers Sharing a Recreated Container's Network](../../advanced-features/linked-containers/#containers-sharing-a-recreated-containers-network)).
 
 Set the `com.centurylinklabs.watchtower.monitor-only` label to `true` on the container:
 
@@ -483,7 +484,7 @@ docker run -d \
 ## Monitoring Scopes
 
 Scopes allow multiple Watchtower instances to run on the same Docker host without interfering with each other.
-Each instance manages only the containers within its scope.
+Each instance manages only the containers within its scope, apart from a container that joins the network of a container it recreates (see [Containers Sharing a Recreated Container's Network](../../advanced-features/linked-containers/#containers-sharing-a-recreated-containers-network)).
 
 1. Use the [scope filter](../../configuration/container-selection/#scope-filter) option to define a scope.
 2. Then, use the `com.centurylinklabs.watchtower.scope` label on containers to assign them to that scope.

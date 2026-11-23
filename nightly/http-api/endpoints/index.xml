@@ -1588,6 +1588,7 @@ Invalid regex patterns are treated as literal strings for exact matching.&lt;/p&
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;p&gt;A targeted update also recreates the containers that join the network of a container it recreates, which the image and container filters do not have to match (see &lt;a href="../../../advanced-features/linked-containers/#containers-sharing-a-recreated-containers-network"&gt;Containers Sharing a Recreated Container&amp;rsquo;s Network&lt;/a&gt;).&lt;/p&gt;
 &lt;h3 data-hextra-search-id="timeout"&gt;Timeout&lt;span class="hx:absolute hx:-mt-20" id="timeout"&gt;&lt;/span&gt;
 &lt;a href="#timeout" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The &lt;code&gt;timeout&lt;/code&gt; parameter overrides the per-request timeout for this update.
 It accepts Go durations such as &lt;code&gt;30s&lt;/code&gt;, &lt;code&gt;2m&lt;/code&gt;, or &lt;code&gt;10m&lt;/code&gt;.
