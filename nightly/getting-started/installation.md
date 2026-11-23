@@ -52,9 +52,16 @@ curl -L $(curl -s https://api.github.com/repos/nicholas-fedor/watchtower/release
 
 {{< /tab >}}
 
-{{< tab name="macOS (amd64)" >}}
+{{< tab name="macOS (Apple Silicon)" >}}
 ```bash
-curl -L $(curl -s https://api.github.com/repos/nicholas-fedor/watchtower/releases/latest | grep -o 'https://[^"]*darwin_amd64[^"]*\.tar\.gz') | tar -xz -C . watchtower && if [ -f ./watchtower ]; then echo "Successfully installed watchtower to current directory"; else echo "Failed to install watchtower"; fi
+curl -L $(curl -s https://api.github.com/repos/nicholas-fedor/watchtower/releases/latest | grep -o 'https://[^"]*macOS_arm64v8[^"]*\.tar\.gz') | tar -xz -C . watchtower && if [ -f ./watchtower ]; then echo "Successfully installed watchtower to current directory"; else echo "Failed to install watchtower"; fi
+```
+
+{{< /tab >}}
+
+{{< tab name="macOS (Intel)" >}}
+```bash
+curl -L $(curl -s https://api.github.com/repos/nicholas-fedor/watchtower/releases/latest | grep -o 'https://[^"]*macOS_amd64[^"]*\.tar\.gz') | tar -xz -C . watchtower && if [ -f ./watchtower ]; then echo "Successfully installed watchtower to current directory"; else echo "Failed to install watchtower"; fi
 ```
 
 {{< /tab >}}

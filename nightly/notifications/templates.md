@@ -74,7 +74,7 @@ Environment Variable: WATCHTOWER_NOTIFICATION_REPORT
              Default: false
 ```
 
-The template is a [Go template](https://golang.org/pkg/text/template/) that processes either a list of log entries (`Message`, `Data`, `Level`, `Time`) captured from [zerolog](https://pkg.go.dev/github.com/rs/zerolog) events or a `notifications.Data` struct, depending on the [`notification-report`](#notification-report) configuration option.
+The template is a [Go template](https://golang.org/pkg/text/template/) that processes either a list of log entries (`Message`, `Data`, `Level`, `Time`) captured from [zerolog](https://pkg.go.dev/github.com/rs/zerolog) events or a `format.Data` struct, depending on the [`notification-report`](#notification-report) configuration option.
 
 ### Named Templates
 
@@ -110,8 +110,6 @@ Simple templates are used when the [`notification-report`](#notification-report)
     Removed stale image: {{with $e.Data.image_id}}{{.}}{{else}}unknown{{end}}
 {{- else if eq $msg "Failed to list containers for image usage check, skipping removal" -}}
     Skipped image cleanup: {{with $e.Data.image_name}}{{.}}{{else}}unknown{{end}} ({{with $e.Data.image_id}}{{.}}{{else}}unknown{{end}}){{with $e.Data.error}}: {{.}}{{end}}
-{{- else if eq $msg "Detected multiple Watchtower instances - initiating cleanup" -}}
-    Detected {{$e.Data.count}} Watchtower instances - initiating cleanup
 {{- else if eq $msg "Docker image usage exceeds configured maximum" -}}
     Docker image usage exceeds configured maximum: {{if HasKey $e.Data "usage"}}{{FormatDiskSpace (index $e.Data "usage")}}{{else}}unknown{{end}} of {{if HasKey $e.Data "max"}}{{FormatDiskSpace (index $e.Data "max")}}{{else}}unknown{{end}} used ({{if HasKey $e.Data "reclaimable"}}{{FormatDiskSpace (index $e.Data "reclaimable")}}{{else}}unknown{{end}} reclaimable, {{if HasKey $e.Data "image_count"}}{{index $e.Data "image_count"}}{{else}}unknown{{end}} images)
 {{- else if eq $msg "Docker image usage exceeds configured warning threshold" -}}
@@ -136,7 +134,7 @@ Simple templates are used when the [`notification-report`](#notification-report)
 The [Template Preview Tool](../template-preview/) uses the same template root as Watchtower:
 
 - Report toggle off (legacy mode): the root is the log entry slice. Range over `.`, the same as the default simple template above.
-- Report toggle on (report mode): the root is a `notifications.Data` value. Range over `.Entries` (and use `.Report` for session results).
+- Report toggle on (report mode): the root is a `format.Data` value. Range over `.Entries` (and use `.Report` for session results).
 
 {{< callout type="info" >}}
 The example below is for report mode. With the report toggle off, use `range .` instead of `range .Entries`.
@@ -157,8 +155,6 @@ The example below is for report mode. With the report toggle off, use `range .` 
     Removed stale image: {{with $e.Data.image_id}}{{.}}{{else}}unknown{{end}}
 {{- else if eq $msg "Failed to list containers for image usage check, skipping removal" -}}
     Skipped image cleanup: {{with $e.Data.image_name}}{{.}}{{else}}unknown{{end}} ({{with $e.Data.image_id}}{{.}}{{else}}unknown{{end}}){{with $e.Data.error}}: {{.}}{{end}}
-{{- else if eq $msg "Detected multiple Watchtower instances - initiating cleanup" -}}
-    Detected {{$e.Data.count}} Watchtower instances - initiating cleanup
 {{- else if eq $msg "Docker image usage exceeds configured maximum" -}}
     Docker image usage exceeds configured maximum: {{if HasKey $e.Data "usage"}}{{FormatDiskSpace (index $e.Data "usage")}}{{else}}unknown{{end}} of {{if HasKey $e.Data "max"}}{{FormatDiskSpace (index $e.Data "max")}}{{else}}unknown{{end}} used ({{if HasKey $e.Data "reclaimable"}}{{FormatDiskSpace (index $e.Data "reclaimable")}}{{else}}unknown{{end}} reclaimable, {{if HasKey $e.Data "image_count"}}{{index $e.Data "image_count"}}{{else}}unknown{{end}} images)
 {{- else if eq $msg "Docker image usage exceeds configured warning threshold" -}}
@@ -183,7 +179,7 @@ Found new image: repo/image:latest (abcdef123456)
 
 ## Report Templates
 
-When the [`notification-report`](#notification-report) configuration option is set, the template processes a `notifications.Data` struct containing a session report and log entries.
+When the [`notification-report`](#notification-report) configuration option is set, the template processes a `format.Data` struct containing a session report and log entries.
 
 ```go
 {{- if .Report -}}
@@ -419,7 +415,6 @@ Results are cached per session, so sibling containers on the same image only pay
 When the option is enabled and a URL resolves, the `default-legacy` notification gains one line per updated container:
 
 ```text
-Updated container: /app (org/app:latest): abcdef12 updated to 34567890
 Changelog: https://github.com/org/app/releases/tag/v1.2.3
 ```
 
@@ -465,5 +460,5 @@ When the preview report toggle is off, simple templates can range over `.` just 
 ## Additional Resources
 
 - For detailed template syntax, refer to the [Go Template documentation](https://golang.org/pkg/text/template/).
-- For log entry fields, each entry exposes `Message`, `Data` (map of structured fields), `Level`, and `Time` (see `pkg/notifications` notification entries and [zerolog](https://pkg.go.dev/github.com/rs/zerolog)).
+- For log entry fields, each entry exposes `Message`, `Data` (map of structured fields), `Level`, and `Time` (see the `Entry` type in `internal/observability/notify/format` and [zerolog](https://pkg.go.dev/github.com/rs/zerolog)).
 

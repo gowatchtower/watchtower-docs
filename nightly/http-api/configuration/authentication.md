@@ -26,11 +26,13 @@ This token is required when any of the following endpoints are enabled:
 - [`/v1/status`](../../endpoints/status/)
 - [`/v1/update`](../../endpoints/update/)
 
-Clients must include the token using the `Authorization: Bearer <token>` header:
+Clients send the token in the `Authorization` header, usually as `Authorization: Bearer <token>`:
 
 ```bash
 curl -H "Authorization: Bearer your-secure-token" http://localhost:8080/v1/metrics
 ```
+
+The header may also carry the token on its own, as `Authorization: <token>`. Swagger UI sends the token this way when you authorize with it.
 
 Invalid or missing tokens result in `401 Unauthorized`.
 Failed authentication attempts are logged with the client IP address.
@@ -63,9 +65,10 @@ The [`/v1/events`](../../endpoints/events/) endpoint uses a separate token set v
 
 This token is **required** when the [`/v1/events`](../../endpoints/events/) endpoint is enabled.
 
-The events token can be supplied in two ways:
+The events token can be supplied in three ways:
 
 - `Authorization: Bearer` header (recommended for most clients)
+- `Authorization` header with the token on its own, as Swagger UI sends it
 - `access_token` query parameter (required for browser `EventSource`, which cannot set custom headers)
 
 Example using the header:

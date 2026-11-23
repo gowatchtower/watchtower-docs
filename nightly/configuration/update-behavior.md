@@ -139,7 +139,7 @@ This does not affect named volumes.
 
 ## Container Stop Timeout
 
-Sets the timeout (e.g., `30s`) before forcibly stopping a container during updates.
+Sets the timeout (e.g., `30s`) before forcibly stopping a container during updates. Watchtower exits at startup if the value is negative.
 
 ```text
             Argument: --stop-timeout
@@ -151,6 +151,12 @@ Environment Variable: WATCHTOWER_TIMEOUT
 {{< callout type="info" >}}
 Bare numeric values (e.g., `60` or `1.5`) without a time unit are interpreted as seconds.
 Using a unit suffix (`s`, `m`, etc.) is recommended and required for other time units.
+
+{{< /callout >}}
+
+{{< callout type="info" >}}
+A stop timeout set on the container itself takes precedence, such as one set with [`docker run --stop-timeout`](https://docs.docker.com/reference/cli/docker/container/run/#stop-timeout) or the Compose [`stop_grace_period`](https://docs.docker.com/reference/compose-file/services/#stop_grace_period) option.
+A container stop timeout of `-1`, which tells Docker to wait indefinitely, is ignored in favor of this option.
 
 {{< /callout >}}
 

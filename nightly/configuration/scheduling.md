@@ -1,9 +1,14 @@
 # Scheduling
 ## Schedule
 
-Defines when and how often Watchtower checks for new images using a 6-field [Cron expression](https://pkg.go.dev/github.com/robfig/cron@v1.2.0?tab=doc#hdr-CRON_Expression_Format).
+Defines when and how often Watchtower checks for new images using a [cron expression](https://pkg.go.dev/github.com/robfig/cron/v3#hdr-CRON_Expression_Format). The schedule takes one of these forms:
 
-Example: `--schedule "0 0 4 * * *"` runs daily at 4 AM.
+- 5 fields: minute, hour, day of month, month and day of week.
+- 6 fields, with a seconds field before the minute.
+- A [predefined schedule](https://pkg.go.dev/github.com/robfig/cron/v3#hdr-Predefined_schedules), such as `@daily`.
+- An [interval](https://pkg.go.dev/github.com/robfig/cron/v3#hdr-Intervals), such as `@every 6h`, counted from when Watchtower starts.
+
+Example: `--schedule "0 4 * * *"` and `--schedule "0 0 4 * * *"` both run daily at 4 AM.
 
 ```text
             Argument: --schedule, -s
@@ -21,7 +26,7 @@ Environment Variable: WATCHTOWER_SCHEDULE
 
 ## Interval
 
-Sets the interval (in seconds) for polling new images.
+Sets the interval (in seconds) for polling new images. Watchtower exits at startup if the value is zero or negative.
 
 ```text
             Argument: --interval, -i

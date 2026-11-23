@@ -564,35 +564,49 @@ data-copied-label="Copied!"
 &lt;/ul&gt;
 &lt;p&gt;The events endpoint uses a separate token from the main API token to limit blast radius, since query parameters may appear in access logs, browser history, and proxy logs.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="supported-events"&gt;Supported Events&lt;span class="hx:absolute hx:-mt-20" id="supported-events"&gt;&lt;/span&gt;
-&lt;a href="#supported-events" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;h3 data-hextra-search-id="scan-events"&gt;Scan Events&lt;span class="hx:absolute hx:-mt-20" id="scan-events"&gt;&lt;/span&gt;
-&lt;a href="#scan-events" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;Started&lt;/li&gt;
-&lt;li&gt;Completed&lt;/li&gt;
-&lt;li&gt;Failed&lt;/li&gt;
-&lt;/ul&gt;
+&lt;a href="#supported-events" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Each event is sent under its type as the SSE event name:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="text-align: left"&gt;Event&lt;/th&gt;
+&lt;th style="text-align: left"&gt;Sent&lt;/th&gt;
+&lt;th style="text-align: left"&gt;&lt;code&gt;data&lt;/code&gt; fields&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;scan_started&lt;/code&gt;&lt;/td&gt;
+&lt;td style="text-align: left"&gt;Before an update session or a check begins&lt;/td&gt;
+&lt;td style="text-align: left"&gt;The update policy as booleans: &lt;code&gt;cleanup&lt;/code&gt;, &lt;code&gt;no_restart&lt;/code&gt;, &lt;code&gt;monitor_only&lt;/code&gt;, &lt;code&gt;lifecycle_hooks&lt;/code&gt;, &lt;code&gt;rolling_restart&lt;/code&gt;, &lt;code&gt;label_precedence&lt;/code&gt;, &lt;code&gt;no_pull&lt;/code&gt;, &lt;code&gt;run_once&lt;/code&gt;, &lt;code&gt;use_compose_depends_on&lt;/code&gt;, &lt;code&gt;skip_self_update&lt;/code&gt;, &lt;code&gt;ephemeral_self_update&lt;/code&gt;, &lt;code&gt;revive_stopped&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;scan_completed&lt;/code&gt;&lt;/td&gt;
+&lt;td style="text-align: left"&gt;After an update session or a check ends without an error&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;scanned&lt;/code&gt;, &lt;code&gt;updated&lt;/code&gt;, &lt;code&gt;failed&lt;/code&gt;, &lt;code&gt;skipped&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;scan_failed&lt;/code&gt;&lt;/td&gt;
+&lt;td style="text-align: left"&gt;When an update session or a check ends with an error&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;error&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;image_cleanup&lt;/code&gt;&lt;/td&gt;
+&lt;td style="text-align: left"&gt;After an update session removes old images&lt;/td&gt;
+&lt;td style="text-align: left"&gt;&lt;code&gt;images&lt;/code&gt;, each with &lt;code&gt;image_id&lt;/code&gt;, &lt;code&gt;image_name&lt;/code&gt;, &lt;code&gt;container_id&lt;/code&gt; and &lt;code&gt;container_name&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200"&gt;
 &lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2"&gt;&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/&gt;&lt;/svg&gt;&lt;/div&gt;
 &lt;div class="hx:w-full hx:min-w-0 hx:leading-7"&gt;
-&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0"&gt;Scan events are broadcasted only for updates (HTTP API or scheduled) or checks (HTTP API).&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;h3 data-hextra-search-id="update-events"&gt;Update Events&lt;span class="hx:absolute hx:-mt-20" id="update-events"&gt;&lt;/span&gt;
-&lt;a href="#update-events" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;Started&lt;/li&gt;
-&lt;li&gt;Completed&lt;/li&gt;
-&lt;li&gt;Failed&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200"&gt;
-&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2"&gt;&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/&gt;&lt;/svg&gt;&lt;/div&gt;
-&lt;div class="hx:w-full hx:min-w-0 hx:leading-7"&gt;
-&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0"&gt;Update events are broadcasted only for HTTP API or scheduled updates.&lt;/div&gt;
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0"&gt;Update sessions are scheduled runs and &lt;a href="../update/"&gt;&lt;code&gt;/v1/update&lt;/code&gt;&lt;/a&gt; requests. Checks are &lt;a href="../check/"&gt;&lt;code&gt;/v1/check&lt;/code&gt;&lt;/a&gt; requests. A check updates nothing, so it never sends &lt;code&gt;image_cleanup&lt;/code&gt;, and its &lt;code&gt;scan_completed&lt;/code&gt; reports &lt;code&gt;updated&lt;/code&gt; as 0.&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 data-hextra-search-id="event-format"&gt;Event Format&lt;span class="hx:absolute hx:-mt-20" id="event-format"&gt;&lt;/span&gt;
 &lt;a href="#event-format" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Each event is a Server-Sent Event with an event type and JSON data payload:&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
 &lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;event: scan_completed
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;data: {&amp;#34;type&amp;#34;:&amp;#34;scan_completed&amp;#34;,&amp;#34;timestamp&amp;#34;:&amp;#34;2025-01-20T11:30:45Z&amp;#34;,&amp;#34;data&amp;#34;:{&amp;#34;scanned&amp;#34;:8,&amp;#34;updated&amp;#34;:0}}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;data: {&amp;#34;type&amp;#34;:&amp;#34;scan_completed&amp;#34;,&amp;#34;timestamp&amp;#34;:&amp;#34;2025-01-20T11:30:45Z&amp;#34;,&amp;#34;data&amp;#34;:{&amp;#34;scanned&amp;#34;:8,&amp;#34;updated&amp;#34;:0,&amp;#34;failed&amp;#34;:0,&amp;#34;skipped&amp;#34;:0}}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
@@ -787,7 +801,7 @@ The field is omitted for other scans.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;</description></item><item><title>Images</title><link>https://gowatchtower.org/nightly/http-api/endpoints/images/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://gowatchtower.org/nightly/http-api/endpoints/images/</guid><description>
 &lt;h2 data-hextra-search-id="overview"&gt;Overview&lt;span class="hx:absolute hx:-mt-20" id="overview"&gt;&lt;/span&gt;
-&lt;a href="#overview" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The &lt;code&gt;/v1/images/&lt;/code&gt; endpoint lists the images tracked by Watchtower along with their current digests and container counts.
+&lt;a href="#overview" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The &lt;code&gt;/v1/images&lt;/code&gt; endpoint lists the images tracked by Watchtower along with their current digests and container counts.
 Include &lt;code&gt;images&lt;/code&gt; in &lt;a href="../../../configuration/http-api/#http-api-endpoints"&gt;&lt;code&gt;http-api-endpoints&lt;/code&gt;&lt;/a&gt; to enable this read-only endpoint.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="response-format"&gt;Response Format&lt;span class="hx:absolute hx:-mt-20" id="response-format"&gt;&lt;/span&gt;
 &lt;a href="#response-format" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The &lt;code&gt;/v1/images&lt;/code&gt; endpoint returns a JSON object with image statuses, sorted by image name and then by image ID:&lt;/p&gt;
@@ -971,6 +985,8 @@ Requests with other HTTP methods will receive a &lt;code&gt;405 Method Not Allow
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;p&gt;A scan is skipped when a scheduled run starts while the previous one is still running, or when the update at startup finds another update already running.
+A skipped scan does not change the scan total or the last-scan gauges.&lt;/p&gt;
 &lt;p&gt;The four image-usage gauges are updated when &lt;a href="../../../configuration/update-behavior/#disk-space-max"&gt;&lt;code&gt;disk-space-max&lt;/code&gt;&lt;/a&gt; or &lt;a href="../../../configuration/update-behavior/#disk-space-warn"&gt;&lt;code&gt;disk-space-warn&lt;/code&gt;&lt;/a&gt; are set.
 See &lt;a href="../../../advanced-features/disk-usage-monitor/#metrics"&gt;Disk Usage Monitor&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="example-prometheus-scrape_config"&gt;Example Prometheus &lt;code&gt;scrape_config&lt;/code&gt;&lt;span class="hx:absolute hx:-mt-20" id="example-prometheus-scrape_config"&gt;&lt;/span&gt;

@@ -139,7 +139,7 @@ Valid names (case-insensitive):
 
 ## HTTP API Rate Limit
 
-Sets the maximum number of API requests allowed per minute per IP address.
+Sets the maximum number of API requests allowed per minute per IP address. Watchtower exits at startup if the value is less than 1.
 
 ```text
             Argument: --http-api-rate-limit
@@ -155,7 +155,7 @@ When the limit is exceeded, the client receives HTTP 429 (Too Many Requests).
 
 ## HTTP API Check Timeout
 
-Sets the maximum duration for the `/v1/check` API endpoint.
+Sets the maximum duration for the `/v1/check` API endpoint. Watchtower exits at startup if the value is negative.
 
 ```text
             Argument: --http-api-check-timeout
@@ -172,7 +172,7 @@ Increase this timeout if you see `context deadline exceeded` errors during check
 
 ## HTTP API Update Timeout
 
-Sets the maximum duration for the `/v1/update` API endpoint.
+Sets the maximum duration for the `/v1/update` API endpoint. Watchtower exits at startup if the value is negative.
 
 ```text
             Argument: --http-api-update-timeout

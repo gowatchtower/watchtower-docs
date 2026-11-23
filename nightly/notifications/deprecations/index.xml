@@ -393,7 +393,9 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;The temporary file is automatically removed after &lt;strong&gt;5 minutes&lt;/strong&gt; or when the container stops, so copy it promptly after generation.
-If you are running &lt;code&gt;notify-upgrade&lt;/code&gt; as a one-off command (&lt;code&gt;docker run --rm ...&lt;/code&gt;), the process will wait up to 5 minutes before exiting.&lt;/p&gt;
+If you are running &lt;code&gt;notify-upgrade&lt;/code&gt; as a one-off command (&lt;code&gt;docker run --rm ...&lt;/code&gt;), the process will wait up to 5 minutes before exiting.
+Before it writes the file, &lt;code&gt;notify-upgrade&lt;/code&gt; checks every URL with Shoutrrr, as Watchtower does at startup. If Shoutrrr rejects a URL, such as a Discord webhook whose ID is not a number, &lt;code&gt;notify-upgrade&lt;/code&gt; writes no file. Its error never contains the URL. It usually names the service. It cannot when the URL has no scheme or does not parse. The same holds for a URL that ends in an empty &lt;code&gt;#&lt;/code&gt; fragment. The error gives a notification URL&amp;rsquo;s position, counting from 1. For a URL converted from a legacy notification type, it names that type instead. Shoutrrr&amp;rsquo;s warnings about a URL, such as a deprecated key, appear in the log.
+When the conversion fails, &lt;code&gt;notify-upgrade&lt;/code&gt; logs the error and exits with code 1. It removes any file it started to write. If it logs &amp;ldquo;Failed to remove temporary file&amp;rdquo; instead, delete the file named in that warning yourself, because it can hold your notification credentials.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="migration-walkthrough"&gt;Migration Walkthrough&lt;span class="hx:absolute hx:-mt-20" id="migration-walkthrough"&gt;&lt;/span&gt;
 &lt;a href="#migration-walkthrough" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Select the tab that matches your legacy notification service.&lt;/p&gt;
 &lt;div class="hextra-scrollbar hx:overflow-x-auto hx:overflow-y-hidden hx:overscroll-x-contain"&gt;

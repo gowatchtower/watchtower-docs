@@ -114,7 +114,7 @@ See [Git Monitoring](../../advanced-features/git-monitoring/#authentication).
 
 ## Git Timeout
 
-Timeout for Git network operations (for example `30s` or `1m`).
+Timeout for Git network operations (for example `30s` or `1m`). Watchtower exits at startup if the value is negative.
 
 ```text
             Argument: --git-timeout
@@ -122,6 +122,20 @@ Environment Variable: WATCHTOWER_GIT_TIMEOUT
                 Type: Duration
              Default: 30s
 ```
+
+Time limits for each step of a Git rebuild:
+
+| Step                                                                                                                                    | Limit       |
+|-----------------------------------------------------------------------------------------------------------------------------------------|-------------|
+| Check a hosted ref for a new commit                                                                                                     | Git timeout |
+| Check out a [local path context](../../advanced-features/git-monitoring/#local-path-context)                                    | Git timeout |
+| Build an image from a [Git URL context](../../advanced-features/git-monitoring/#git-url-context), including the daemon's clone  | 30 minutes  |
+| Apply a Compose project                                                                                                                 | 30 minutes  |
+
+{{< callout type="info" >}}
+Builds and Compose applies run Dockerfile steps that can take minutes, so the Git timeout does not limit them.
+
+{{< /callout >}}
 
 ## Git CA Bundle
 
