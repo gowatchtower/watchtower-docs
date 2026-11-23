@@ -1,0 +1,35 @@
+---
+name: Build Template Preview
+description: >-
+  Builds the notification template preview for the docs site. It compiles the
+  tplprev Go module to WebAssembly and copies the Go runtime that loads it.
+
+# The build writes tplprev.wasm and wasm_exec.js into the output directory.
+# Neither file is committed, so the site build that follows picks them up from
+# there.
+#
+# The action installs the Go version that the module's go.mod names.
+
+inputs:
+  module:
+    description: Directory of the tplprev Go module.
+    default: tools/tplprev
+  output:
+    description: Directory that receives tplprev.wasm and wasm_exec.js.
+    default: static
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      with:
+        cache: false
+        go-version-file: ${{ inputs.module }}/go.mod
+
+    - name: Build Template Preview
+      shell: bash
+      env:
+        MODULE: ${{ inputs.module }}
+        OUTPUT: ${{ inputs.output }}
+      run: '"$GITHUB_ACTION_PATH/build.sh" --module "$MODULE" --output "$OUTPUT"'

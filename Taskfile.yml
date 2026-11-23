@@ -25,6 +25,7 @@ tasks:
     aliases: [dev, docs]
     cmds:
       - task: setup
+      - task: tplprev:build
       - "{{.HUGO}} server --buildDrafts --disableFastRender"
     preconditions:
       - sh: command -v hugo
@@ -34,6 +35,7 @@ tasks:
     desc: Build the site without versions into public/
     cmds:
       - task: setup
+      - task: tplprev:build
       - "{{.HUGO}} --gc --minify"
     preconditions:
       - sh: command -v hugo
@@ -42,6 +44,7 @@ tasks:
   preview:build:
     desc: Assemble a local preview of the published site, with this checkout as nightly, into public/
     cmds:
+      - task: tplprev:build
       - ./scripts/build-preview.sh
     preconditions:
       - sh: command -v hugo
@@ -117,7 +120,7 @@ tasks:
         msg: Go must be installed
 
   tplprev:build:
-    desc: Rebuild tplprev WASM into static/
+    desc: Build the template preview WASM into static/ for local use
     aliases: [wasm]
     cmds:
       - ./scripts/build-tplprev.sh

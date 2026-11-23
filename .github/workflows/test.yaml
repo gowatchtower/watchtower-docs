@@ -6,7 +6,6 @@ on:
   pull_request:
     paths:
       - tools/tplprev/**
-      - scripts/build-tplprev.sh
       - .github/workflows/test.yaml
 
 permissions:
@@ -40,26 +39,3 @@ jobs:
       - name: Vet tplprev
         run: go -C tools/tplprev vet ./...
 
-  wasm:
-    name: Build tplprev WASM
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the Runner (Step Security)
-        uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40 # v2.20.1
-        with:
-          egress-policy: audit
-
-      - name: Checkout Repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Setup Go
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          cache: true
-          cache-dependency-path: tools/tplprev/go.sum
-          go-version-file: tools/tplprev/go.mod
-
-      - name: Build tplprev WASM
-        run: ./scripts/build-tplprev.sh

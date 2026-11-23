@@ -14,8 +14,12 @@ It is built with [Hugo](https://gohugo.io/) and the [Hextra](https://github.com/
 
 ```bash
 hugo mod get
+./scripts/build-tplprev.sh
 hugo server
 ```
+
+`build-tplprev.sh` builds the template preview's WebAssembly files into `static/`, which are not committed.
+`task serve` runs all three steps.
 
 Open <http://localhost:1313/>
 
@@ -32,6 +36,7 @@ Open <http://localhost:1314/>
 
 ```bash
 hugo mod get
+./scripts/build-tplprev.sh
 hugo --gc --minify
 ```
 
@@ -73,14 +78,15 @@ Documentation lives under `content/` with URL paths matching the legacy MkDocs s
 - `/http-api/` (nav label: API)
 - `/advanced-features/`
 
-Static assets are in `static/` (logo, favicon, WASM template preview).
+Static assets are in `static/`, such as the logo, the favicon, and the template preview's form.
 
 ## Template preview
 
 The notification template preview is a nested Go module at `tools/tplprev/` (`github.com/gowatchtower/tplprev`).
 The `template-preview` shortcode inlines `static/template-preview/form.html`.
 
-Rebuild the checked-in WASM after changing the module:
+Its WebAssembly build is not committed. The site workflow compiles it with the `build-tplprev` action before each site build.
+Build it locally, and again after changing the module, with:
 
 ```bash
 ./scripts/build-tplprev.sh
@@ -88,7 +94,7 @@ Rebuild the checked-in WASM after changing the module:
 
 Run module tests with `go -C tools/tplprev test ./...`.
 
-CI runs tplprev tests, golangci-lint, gosec, govulncheck, a WASM compile, and a Hugo build. The same workflow publishes the site to `cf-pages`.
+CI runs tplprev tests, golangci-lint, gosec, and govulncheck, and builds the template preview and the site. The same workflow publishes the site to `cf-pages`.
 
 ## Theme
 
