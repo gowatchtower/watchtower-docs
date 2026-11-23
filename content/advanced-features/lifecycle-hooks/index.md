@@ -134,6 +134,12 @@ LABEL com.centurylinklabs.watchtower.lifecycle.post-update-timeout="0"
 
 {{< /tabs >}}
 
+{{< callout type="info" >}}
+A timeout must be a whole number of minutes of 0 or more.
+Any other value, such as `-1` or `1.5`, logs a warning and uses the 1 minute default.
+
+{{< /callout >}}
+
 #### Custom User Execution
 
 By default, hooks run as the monitored container's configured user and group (`uid:gid`).
@@ -141,7 +147,8 @@ By default, hooks run as the monitored container's configured user and group (`u
 Both global and individual, container-specific uid/gid configurations are supported.
 
 {{< callout type="info" >}}
-Container labels take precedence over global flags/variables.
+- Container labels take precedence over global flags/variables.
+- A UID or GID label outside 0 to 2147483647 logs a warning. The hook then uses the global UID or GID. Without one, it runs as the container's configured user.
 
 {{< /callout >}}
 
